@@ -1490,10 +1490,10 @@ function updateCompare(){
   // Average tax as a share of the income counted for households at this level; negative means refundable credits.
   const taxRate=state.afterTax&&d.gross>0?d.tax/d.gross:0;
   const left=x*(1-taxRate)-d.essentials, perPerson=state.unit==="person"&&size>1;
-  const leftText=left<0?`<strong>${fmtFull(-left)} short</strong>`:`<strong>${fmtFull(left)} left</strong>`;
+  const leftText=left<0?`be <strong>${fmtFull(-left)} short</strong>`:`have <strong>${fmtFull(left)} left</strong>`;
   out.innerHTML=`An income of <strong>${fmtFull(x)}</strong> puts your household around the <strong>${ordinal(Math.max(1,Math.round(p)))} percentile</strong> of U.S. households in ${y} (${state.incomeSource==="cbo"?"CBO-based incomes":"BLS survey incomes"}), in the ${escapeHtml(g.label.toLowerCase())}. `+
     `Households at that income averaged ${(d.size-state.kids).toFixed(1)} people and spent about <strong>${fmtFull(d.essentials)}</strong> a year on the essentials you selected${state.afterTax?(taxRate>=0?` and paid about ${Math.round(taxRate*100)}% of income in estimated income tax`:` and received about ${Math.round(-taxRate*100)}% of income back through refundable tax credits`):""}. `+
-    `At those averages your household would have ${leftText} a year${perPerson?` (${fmtFull(left/size)} per person)`:""}, in ${y} dollars${state.afterTax?"":", before taxes"}. Your real costs will differ.`;
+    `At those averages your household would ${leftText} a year${perPerson?` (${fmtFull(left/size)} per person)`:""}, in ${y} dollars${state.afterTax?"":", before taxes"}. Your real costs will differ.`;
 }
 // Last chart inputs, reused to redraw on resize and to render the saved image at desktop width.
 let lastCharts=null;
