@@ -79,6 +79,21 @@ for (const g of ["wealth", "income"]) {
   state.f3Group = "wealth";
 }
 
+// 5c. CBO income option: each quintile's average market income and transfers match CBO (2022 dollars, CPI-grown otherwise).
+{
+  state.incomeSource = "cbo"; state.includeTransfers = true; state.transferScale = 100;
+  for (const y of [2000, 2012, 2022, 2024]) {
+    const src = CBO_QUINTILE_INCOME[Math.min(y, CBO_LAST)], f = CPI[y] / CPI[CBO_LAST];
+    for (let q = 0; q < 5; q++) {
+      let m = 0, t = 0;
+      for (let i = q * 20; i < q * 20 + 20; i++) { const d = calcPercentile(y, i + .5); m += d.market; t += d.transfers; }
+      check(y + " cbo market q" + q, near(m / 20, src.market[q] * f, 1), (m / 20) + " vs " + src.market[q] * f);
+      check(y + " cbo transfers q" + q, near(t / 20, src.transfers[q] * f, 1), (t / 20) + " vs " + src.transfers[q] * f);
+    }
+  }
+  state.incomeSource = "bls";
+}
+
 // 6. AMT: zero below the exemption, 26%/28% above.
 {
   const [ex, , , b28] = AMT_MFJ[2024];
