@@ -91,6 +91,14 @@ for (const g of ["wealth", "income"]) {
       check(y + " cbo transfers q" + q, near(t / 20, src.transfers[q] * f, 1), (t / 20) + " vs " + src.transfers[q] * f);
     }
   }
+  // Income before benefits must rise with the percentile in CBO mode too (no jumps at quintile boundaries).
+  state.includeTransfers = false; state.afterTax = false;
+  for (const y of YEARS) {
+    let drops = 0, prev = -1;
+    for (let i = 0; i < 100; i++) { const g = calcPercentile(y, i + .5).gross; if (g < prev - 1) drops++; prev = g; }
+    check(y + " cbo market income in percentile order", drops === 0, drops + " drops");
+  }
+  state.includeTransfers = true; state.afterTax = true;
   state.incomeSource = "bls";
 }
 

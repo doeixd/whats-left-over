@@ -539,7 +539,7 @@
           <div class="switchrow"><div><strong id="afterTaxLbl">After tax</strong><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Subtracts income taxes using the method chosen below. Social Security payroll contributions are never counted here; they&#x27;re under Insurance &amp; pensions spending.">?</span><div class="subnote" id="afterTaxNote">Subtract estimated personal taxes.</div></div><label class="switch"><input id="afterTax" type="checkbox" role="switch" aria-labelledby="afterTaxLbl" aria-describedby="afterTaxNote"><span class="slider"></span></label></div>
           <div class="switchrow"><div><strong id="includeTransfersLbl">Include benefits &amp; transfers</strong><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Measured by BLS for every income group in every year: Social Security and pensions (private and government); public assistance, SSI and SNAP (food stamps); unemployment, workers&#x27; compensation and veterans&#x27; benefits; and regular support payments such as child support. Pensions include private retirement income, not only government programs. When off, this income is removed.">?</span><div class="subnote" id="includeTransfersNote">Social Security, pensions, SNAP, SSI, unemployment, veterans’ benefits and support payments, as reported to BLS.</div></div><label class="switch"><input id="includeTransfers" type="checkbox" role="switch" aria-labelledby="includeTransfersLbl" aria-describedby="includeTransfersNote"><span class="slider"></span></label></div>
           <div class="control">
-            <label for="incomeSource">Income data<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="BLS survey: income as households report it to BLS’s Consumer Expenditure Survey, the same survey the spending comes from. It is known to under-report income, especially at the bottom. CBO totals: the same groups rescaled to the Congressional Budget Office’s fuller estimates of market income and total transfers (2000–2022; later years grown with inflation), with CBO’s household sizes. CBO counts the value of Medicaid, Medicare and other in-kind benefits as income, and that isn’t cash, so what’s left is overstated in this mode; treat it as an upper bound. CBO also groups people by size-adjusted income, so its groups don’t line up exactly with BLS’s.">?</span></label>
+            <label for="incomeSource">Income data<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="BLS survey: income as households report it to BLS’s Consumer Expenditure Survey, the same survey the spending comes from. It is known to under-report income, especially at the bottom. CBO totals: the same groups shifted to the Congressional Budget Office’s fuller estimates of market income and total transfers (2000–2022; later years grow the 2022 figures with inflation only). CBO counts the value of Medicaid, Medicare, employer-paid health insurance and the employer share of payroll taxes as income, and none of that is cash, so what’s left is overstated in this mode; treat it as an upper bound. Per-person amounts still use BLS household sizes. CBO also groups people by size-adjusted income, so its groups don’t line up exactly with BLS’s.">?</span></label>
             <select id="incomeSource"><option value="bls">BLS survey (as reported)</option><option value="cbo">CBO totals (fuller, counts health coverage)</option></select>
             <div class="subnote" id="incomeSourceNote"></div>
           </div>
@@ -854,8 +854,9 @@ const CHILDCARE_DEFAULT = Math.round(CHILDCARE_2023*DAYCARE_CPI[2024]/DAYCARE_CP
 const CBO_RATES = {2000:[-5.2,1.5,5,8.2,17.6],2001:[-6.5,0.4,3.9,7.1,16.5],2002:[-7,-0.1,3.6,6.7,15.7],2003:[-7.1,-0.9,2.8,5.9,13.9],2004:[-7.2,-0.8,2.9,5.9,14],2005:[-7.6,-0.8,2.9,6,14.2],2006:[-7.6,-0.7,3,6,14.3],2007:[-7.6,-0.3,3.3,6.2,14.5],2008:[-11.7,-2.8,1.3,4.8,14.1],2009:[-12.9,-3,1.4,4.7,13.5],2010:[-13,-2.7,1.6,5.1,13.8],2011:[-11.2,-1.6,2.6,6,14.3],2012:[-10.9,-1.7,2.7,6.1,14.7],2013:[-11,-1.5,2.8,6.2,15.5],2014:[-11.5,-1.8,2.8,6.4,16],2015:[-11.5,-1.5,2.9,6.6,16.2],2016:[-11,-1.3,3,6.7,16.1],2017:[-11,-1.2,3.2,6.9,16.6],2018:[-12.1,-2.3,2.1,5.9,15.4],2019:[-11.1,-1.6,2.4,6,15.3],2020:[-27.4,-8.9,-2.3,2.9,15.2],2021:[-33.3,-9.7,-2.4,3.4,16.7],2022:[-10.1,-0.9,3.1,6.8,16.6]};
 // CBO, The Distribution of Household Income, 2022 (supplemental tables 1, 3 and 9), by quintile, 2022 dollars:
 // market income; total transfers (= income after transfers and taxes + federal taxes − market income), which include
-// the value of Medicaid, Medicare and other in-kind benefits; and people per household.
-const CBO_QUINTILE_INCOME = {2000:{market:[16500,40100,68000,109900,299000],transfers:[16020,13930,11689,8012,8829],size:[2.55,2.58,2.55,2.62,2.48]},2001:{market:[15900,40100,68700,106200,272200],transfers:[16876,14257,12166,9992,8433],size:[2.53,2.59,2.57,2.55,2.48]},2002:{market:[15800,37900,66400,103600,258400],transfers:[17372,15334,13263,10811,8775],size:[2.52,2.53,2.58,2.55,2.48]},2003:{market:[15600,36900,65900,104800,267200],transfers:[17856,16188,13633,11049,8899],size:[2.53,2.51,2.55,2.57,2.49]},2004:{market:[15900,37700,69200,108100,291300],transfers:[17985,16598,13204,11176,9250],size:[2.53,2.5,2.59,2.58,2.52]},2005:{market:[16400,39000,69800,110200,315900],transfers:[18160,16274,13632,11233,9800],size:[2.49,2.52,2.56,2.57,2.51]},2006:{market:[17700,39800,70100,111700,328400],transfers:[17776,16543,14066,12272,10718],size:[2.56,2.5,2.51,2.55,2.48]},2007:{market:[18600,43300,72800,114400,340900],transfers:[17900,15915,14595,12570,11347],size:[2.44,2.54,2.53,2.56,2.47]},2008:{market:[18300,40000,69500,110800,308300],transfers:[18522,17532,15489,13271,11032],size:[2.49,2.49,2.53,2.55,2.51]},2009:{market:[17400,36900,65600,105200,277800],transfers:[20336,19958,18270,16546,12777],size:[2.61,2.49,2.53,2.54,2.51]},2010:{market:[17000,36200,64100,105200,290300],transfers:[20686,20000,18600,16164,12898],size:[2.55,2.47,2.5,2.54,2.5]},2011:{market:[17100,36300,64100,105700,293900],transfers:[20946,20184,18440,15509,12540],size:[2.5,2.45,2.49,2.52,2.51]},2012:{market:[16500,35600,64400,105900,318000],transfers:[20912,20812,18211,15960,12942],size:[2.52,2.47,2.49,2.52,2.5]},2013:{market:[17400,37100,65700,108800,306000],transfers:[21035,20255,18202,16089,13199],size:[2.5,2.47,2.47,2.53,2.49]},2014:{market:[16700,37300,67800,110900,324200],transfers:[22134,20805,18368,16421,14006],size:[2.48,2.44,2.51,2.52,2.49]},2015:{market:[17700,39300,70000,114700,335400],transfers:[23283,21829,19457,16998,14830],size:[2.44,2.43,2.48,2.51,2.49]},2016:{market:[17400,39800,70400,114800,331200],transfers:[23986,22048,19868,17570,14774],size:[2.4,2.43,2.5,2.52,2.51]},2017:{market:[17500,40000,71600,117600,345700],transfers:[24117,22605,20174,17185,14759],size:[2.42,2.42,2.49,2.51,2.5]},2018:{market:[17900,41600,72800,119000,353000],transfers:[24550,22367,19740,16978,15340],size:[2.4,2.46,2.47,2.48,2.49]},2019:{market:[19700,45000,75900,122600,359200],transfers:[24561,22469,20586,18618,16131],size:[2.4,2.46,2.46,2.48,2.51]},2020:{market:[16700,41200,73200,122200,381100],transfers:[29990,29374,27322,24166,19602],size:[2.36,2.4,2.43,2.49,2.55]},2021:{market:[16900,42200,74500,123700,428900],transfers:[29288,27031,25130,21741,18938],size:[2.37,2.39,2.46,2.48,2.49]},2022:{market:[19000,44000,75600,125600,396500],transfers:[26167,24714,23996,20686,17963],size:[2.37,2.37,2.42,2.46,2.5]}};
+// the value of Medicaid, Medicare and other in-kind benefits; people per household (kept for reference; per-person amounts use BLS sizes);
+// and the social-insurance share of those transfers (Social Security, Medicare, unemployment), which CBO's tax rates count in their base.
+const CBO_QUINTILE_INCOME = {2000:{market:[16500,40100,68000,109900,299000],transfers:[16020,13930,11689,8012,8829],size:[2.55,2.58,2.55,2.62,2.48],social:[0.3745,0.7538,0.8811,0.9111,0.94]},2001:{market:[15900,40100,68700,106200,272200],transfers:[16876,14257,12166,9992,8433],size:[2.53,2.59,2.57,2.55,2.48],social:[0.3615,0.7575,0.8795,0.9308,0.9486]},2002:{market:[15800,37900,66400,103600,258400],transfers:[17372,15334,13263,10811,8775],size:[2.52,2.53,2.58,2.55,2.48],social:[0.3396,0.75,0.8671,0.9157,0.9458]},2003:{market:[15600,36900,65900,104800,267200],transfers:[17856,16188,13633,11049,8899],size:[2.53,2.51,2.55,2.57,2.49],social:[0.3248,0.7413,0.8655,0.905,0.9214]},2004:{market:[15900,37700,69200,108100,291300],transfers:[17985,16598,13204,11176,9250],size:[2.53,2.5,2.59,2.58,2.52],social:[0.3225,0.7109,0.8406,0.9037,0.9189]},2005:{market:[16400,39000,69800,110200,315900],transfers:[18160,16274,13632,11233,9800],size:[2.49,2.52,2.56,2.57,2.51],social:[0.3249,0.7189,0.8436,0.908,0.9387]},2006:{market:[17700,39800,70100,111700,328400],transfers:[17776,16543,14066,12272,10718],size:[2.56,2.5,2.51,2.55,2.48],social:[0.3094,0.7254,0.8603,0.9045,0.9424]},2007:{market:[18600,43300,72800,114400,340900],transfers:[17900,15915,14595,12570,11347],size:[2.44,2.54,2.53,2.56,2.47],social:[0.3296,0.71,0.8428,0.9069,0.9253]},2008:{market:[18300,40000,69500,110800,308300],transfers:[18522,17532,15489,13271,11032],size:[2.49,2.49,2.53,2.55,2.51],social:[0.3239,0.7016,0.8522,0.9042,0.9427]},2009:{market:[17400,36900,65600,105200,277800],transfers:[20336,19958,18270,16546,12777],size:[2.61,2.49,2.53,2.54,2.51],social:[0.295,0.6965,0.8484,0.9126,0.9235]},2010:{market:[17000,36200,64100,105200,290300],transfers:[20686,20000,18600,16164,12898],size:[2.55,2.47,2.5,2.54,2.5],social:[0.2804,0.69,0.8548,0.9094,0.9459]},2011:{market:[17100,36300,64100,105700,293900],transfers:[20946,20184,18440,15509,12540],size:[2.5,2.45,2.49,2.52,2.51],social:[0.2817,0.6688,0.8351,0.9092,0.941]},2012:{market:[16500,35600,64400,105900,318000],transfers:[20912,20812,18211,15960,12942],size:[2.52,2.47,2.49,2.52,2.5],social:[0.2774,0.6679,0.8347,0.9148,0.9504]},2013:{market:[17400,37100,65700,108800,306000],transfers:[21035,20255,18202,16089,13199],size:[2.5,2.47,2.47,2.53,2.49],social:[0.2615,0.6665,0.8351,0.9137,0.9622]},2014:{market:[16700,37300,67800,110900,324200],transfers:[22134,20805,18368,16421,14006],size:[2.48,2.44,2.51,2.52,2.49],social:[0.253,0.6393,0.8003,0.883,0.9211]},2015:{market:[17700,39300,70000,114700,335400],transfers:[23283,21829,19457,16998,14830],size:[2.44,2.43,2.48,2.51,2.49],social:[0.2534,0.6276,0.7864,0.8766,0.9036]},2016:{market:[17400,39800,70400,114800,331200],transfers:[23986,22048,19868,17570,14774],size:[2.4,2.43,2.5,2.52,2.51],social:[0.2668,0.6304,0.7852,0.8651,0.907]},2017:{market:[17500,40000,71600,117600,345700],transfers:[24117,22605,20174,17185,14759],size:[2.42,2.42,2.49,2.51,2.5],social:[0.2737,0.637,0.7832,0.867,0.9215]},2018:{market:[17900,41600,72800,119000,353000],transfers:[24550,22367,19740,16978,15340],size:[2.4,2.46,2.47,2.48,2.49],social:[0.2811,0.6304,0.7954,0.8835,0.9192]},2019:{market:[19700,45000,75900,122600,359200],transfers:[24561,22469,20586,18618,16131],size:[2.4,2.46,2.46,2.48,2.51],social:[0.2891,0.632,0.7918,0.8701,0.9299]},2020:{market:[16700,41200,73200,122200,381100],transfers:[29990,29374,27322,24166,19602],size:[2.36,2.4,2.43,2.49,2.55],social:[0.2534,0.5515,0.7064,0.7821,0.8366]},2021:{market:[16900,42200,74500,123700,428900],transfers:[29288,27031,25130,21741,18938],size:[2.37,2.39,2.46,2.48,2.49],social:[0.2595,0.5734,0.7202,0.8233,0.8765]},2022:{market:[19000,44000,75600,125600,396500],transfers:[26167,24714,23996,20686,17963],size:[2.37,2.37,2.42,2.46,2.5],social:[0.2752,0.611,0.7668,0.846,0.8963]}};
 const CBO_LAST = 2022;
 // CBO individual income tax rates inside the top 20%: 81st–90th, 91st–95th, 96th–99th percentiles and top 1% (same table).
 const CBO_TOP_RATES = {2000:[11.3,13.7,18.1,24.6],2001:[10.3,13.0,17.1,24.6],2002:[9.8,12.3,16.3,24.2],2003:[8.6,10.9,14.6,20.9],2004:[8.7,10.9,15.0,20.2],2005:[8.6,10.9,15.3,19.8],2006:[8.8,11.1,15.3,19.4],2007:[8.9,11.2,15.6,19.5],2008:[8.0,10.8,15.4,20.5],2009:[7.8,10.4,14.7,21.1],2010:[8.2,10.8,15.2,20.2],2011:[8.9,11.4,15.7,20.3],2012:[9.1,11.6,16.1,19.9],2013:[9.3,11.7,16.1,23.7],2014:[9.5,12.0,16.5,23.9],2015:[9.7,12.3,16.9,24.0],2016:[9.8,12.3,16.9,23.7],2017:[10.1,12.6,17.3,24.4],2018:[9.1,11.4,15.5,23.5],2019:[9.1,11.6,15.7,23.3],2020:[7.3,10.9,15.7,24.0],2021:[8.3,11.8,17.0,24.2],2022:[9.9,12.5,17.1,23.9]};
@@ -1057,19 +1058,24 @@ function rebuildTaxes(){
     CURVES[y].cboRate=calibrateTaxRate({pretax:marketMean,taxRate:cbo,tax:cbo.map((r,q)=>r*marketMean[q]),topRates:CBO_TOP_RATES[Math.min(y,CBO_LAST)].map(v=>v/100)},market);
   });
 }
-// "CBO totals" income option: keep each year's BLS-shaped percentile curves, rescaled so every quintile's averages
-// match CBO's market income and total transfers (2022 dollars, grown with CPI-U for other years); household size from CBO.
+// "CBO totals" income option: keep each year's BLS percentile curves and shift every quintile so its averages match CBO's
+// market income and total transfers (2022 dollars, grown with CPI-U for other years); household size from CBO.
+// Shifting (not multiplying) keeps percentiles in order across quintile boundaries; scaling is used only if a shift would go negative.
 function rebuildCboIncome(){
   YEARS.forEach(y=>{
     const C=CURVES[y], src=CBO_QUINTILE_INCOME[Math.min(y,CBO_LAST)], f=CPI[y]/CPI[CBO_LAST];
     const scaleTo=(shape,targets)=>{
       const out=shape.slice();
-      for(let q=0;q<5;q++){ const s=q*20, m=out.slice(s,s+20).reduce((t,v)=>t+v,0)/20; for(let i=s;i<s+20;i++) out[i]=m>0?out[i]*targets[q]/m:targets[q]; }
+      for(let q=0;q<5;q++){
+        const s=q*20, m=out.slice(s,s+20).reduce((t,v)=>t+v,0)/20, add=targets[q]-m, canShift=out.slice(s,s+20).every(v=>v+add>=0);
+        for(let i=s;i<s+20;i++) out[i]=canShift?out[i]+add:(m>0?out[i]*targets[q]/m:targets[q]);
+      }
       return out;
     };
     C.cboMarket=scaleTo(C.income.map((v,i)=>Math.max(0,v-C.transfers[i])),src.market.map(v=>v*f));
     C.cboTransfers=scaleTo(C.transfers,src.transfers.map(v=>v*f));
-    C.cboPersons=calibrate(src.size);
+    // Social insurance per percentile: each quintile's share of CBO transfers (part of CBO's income base for its tax rates).
+    C.cboSocial=C.cboTransfers.map((v,i)=>v*src.social[Math.min(4,Math.floor(i/20))]);
   });
 }
 rebuildCboIncome();
@@ -1167,10 +1173,11 @@ function calcPercentile(y,p){
   const gross=state.includeTransfers?Math.max(0,observedPretax-baseTransfers+scaled):market;
   let tax=0;
   if(state.afterTax){
-    // CBO rates apply to income before benefits; BLS-based rates apply to the income shown.
-    tax=state.taxMethod==="cbo"?C.cboRate[i]*market:C.taxRate[i]*gross;
-    // Minimum taxes use the same income as the chosen tax method (income before benefits for CBO rates).
-    const taxBase=state.taxMethod==="cbo"?market:gross;
+    // Tax base. CBO rates: income before benefits; with CBO income data, plus social insurance, which is CBO's own base.
+    // BLS-based rates: the income shown; with CBO income data, income before benefits only, since CBO transfers include non-cash benefits.
+    const taxBase=state.taxMethod==="cbo"?(cboIncome?market+C.cboSocial[i]:market):(cboIncome?market:gross);
+    tax=(state.taxMethod==="cbo"?C.cboRate[i]:C.taxRate[i])*taxBase;
+    // Minimum taxes use the same base.
     if(state.minTaxMode==="simple"){
       const indexedThreshold=state.amtThreshold*(CPI[y]/CPI[INPUT_DOLLAR_YEAR]);
       tax=Math.max(tax,(state.amtRate/100)*Math.max(0,taxBase-indexedThreshold));
@@ -1183,7 +1190,7 @@ function calcPercentile(y,p){
   let essentials=childcare+custom;
   state.essentials.forEach(key=>essentials+=C.essentials[key][i]);
   const income=gross-tax;
-  return {observedPretax,market,transfers:state.includeTransfers?scaled:0,gross,tax,income,childcare,custom,essentials,residual:income-essentials,size:(cboIncome?C.cboPersons[i]:C.persons[i])+state.kids};
+  return {observedPretax,market,transfers:state.includeTransfers?scaled:0,gross,tax,income,childcare,custom,essentials,residual:income-essentials,size:C.persons[i]+state.kids};
 }
 
 function getGroups(){
@@ -1472,17 +1479,20 @@ function announceStatus(msg){ $("statusLive").textContent=""; setTimeout(()=>{ $
 function updateCompare(){
   const x=+$("myIncome").value, size=+$("mySize").value, out=$("compareOut");
   if(!(x>0)){ out.textContent="Enter an income to see roughly where your household sits among U.S. households in 2024, and what the average essential spending of similar households would leave you."; return; }
-  const y=LAST_ACTUAL, inc=CURVES[y].income;
+  const y=LAST_ACTUAL, C=CURVES[y];
+  // Rank against the same income measure the charts use: BLS as reported, or CBO-scaled market income plus transfers.
+  const inc=state.incomeSource==="cbo"?C.cboMarket.map((v,i)=>v+C.cboTransfers[i]).sort((a,b)=>a-b):C.income;
   let p;
   if(x<=inc[0]) p=.5*x/Math.max(1,inc[0]);
   else if(x>=inc[99]) p=99.5;
   else{ let i=0; while(inc[i+1]<=x) i++; p=i+.5+(x-inc[i])/(inc[i+1]-inc[i]); }
   const d=calcPercentile(y,Math.min(99.5,p)), groups=getGroups(), g=groups.find(g=>p>=g.lo&&p<g.hi)||groups.at(-1);
-  const taxRate=state.afterTax&&d.observedPretax>0?Math.max(0,d.tax/d.observedPretax):0;
+  // Average tax as a share of the income counted for households at this level; negative means refundable credits.
+  const taxRate=state.afterTax&&d.gross>0?d.tax/d.gross:0;
   const left=x*(1-taxRate)-d.essentials, perPerson=state.unit==="person"&&size>1;
   const leftText=left<0?`<strong>${fmtFull(-left)} short</strong>`:`<strong>${fmtFull(left)} left</strong>`;
-  out.innerHTML=`An income of <strong>${fmtFull(x)}</strong> puts your household around the <strong>${ordinal(Math.max(1,Math.round(p)))} percentile</strong> of U.S. households in ${y}, in the ${escapeHtml(g.label.toLowerCase())}. `+
-    `Households at that income spent about <strong>${fmtFull(d.essentials)}</strong> a year on the essentials you selected${state.afterTax?` and paid about ${Math.round(taxRate*100)}% of income in estimated income tax`:""}. `+
+  out.innerHTML=`An income of <strong>${fmtFull(x)}</strong> puts your household around the <strong>${ordinal(Math.max(1,Math.round(p)))} percentile</strong> of U.S. households in ${y} (${state.incomeSource==="cbo"?"CBO-based incomes":"BLS survey incomes"}), in the ${escapeHtml(g.label.toLowerCase())}. `+
+    `Households at that income averaged ${(d.size-state.kids).toFixed(1)} people and spent about <strong>${fmtFull(d.essentials)}</strong> a year on the essentials you selected${state.afterTax?(taxRate>=0?` and paid about ${Math.round(taxRate*100)}% of income in estimated income tax`:` and received about ${Math.round(-taxRate*100)}% of income back through refundable tax credits`):""}. `+
     `At those averages your household would have ${leftText} a year${perPerson?` (${fmtFull(left/size)} per person)`:""}, in ${y} dollars${state.afterTax?"":", before taxes"}. Your real costs will differ.`;
 }
 // Last chart inputs, reused to redraw on resize and to render the saved image at desktop width.
@@ -1541,7 +1551,7 @@ function update(){
   if(state.kids) costs.push(`childcare for ${kidsText(state.kids)}`);
   if(state.customAmount>0) costs.push(state.customName||"your custom expense");
   const costText=listText(costs);
-  const incomeText=`${state.afterTax?"after-tax":"pre-tax"} income ${state.includeTransfers?"including":"excluding"} benefits${state.incomeSource==="cbo"?" (CBO totals)":""}`;
+  const incomeText=`${state.afterTax?"after-tax":"pre-tax"} income ${state.includeTransfers?"including":"excluding"} benefits${state.incomeSource==="cbo"?" (CBO totals, based on 2022)":""}`;
   const who=state.unit==="person"?"person":"household";
   const hadText=x=>x<0?`was <strong>${fmtFull(-x)} short</strong>`:`had <strong>${fmtFull(x)} left</strong>`;
   const leftText=x=>x<0?`a <strong>${fmtFull(-x)} shortfall</strong>`:`<strong>${fmtFull(x)} left</strong>`;
@@ -1566,7 +1576,7 @@ function update(){
   const perText=state.unit==="person"?"Per person":"Per household";
   $("fig1Title").textContent=state.incomeView==="income"?"Income":"Money left after essentials";
   $("incomeSubtitle").textContent=(state.incomeView==="income"?`Yearly ${incomeText}, before essential costs. ${perText}.`:`Yearly ${incomeText}, ${costs.length?`minus ${costText}`:"with no essential costs subtracted"}. ${perText}.`)
-    +(state.incomeView==="income"&&happyOn?" Dotted green line: approximate happiness plateau (see ?)."+(state.afterTax?" That research uses income before taxes, so turn off “After tax” for a like-for-like comparison.":""):"")
+    +(state.incomeView==="income"&&happyOn?" Dotted green line: approximate happiness plateau (see ?)."+(state.afterTax?" That research uses income before taxes, so turn off “After tax” for a like-for-like comparison.":"")+(state.incomeSource==="cbo"?" CBO totals also count non-cash benefits, which that research doesn’t.":""):"")
     +(state.incomeView==="income"&&state.unit==="person"?" Switch “Show amounts” to per household to see the happiness plateau line; the research uses household income.":"");
   const baseName=view==="surplus"?"the surplus from Fig. 1":`${incomeText}`;
   $("portfolioSubtitle").textContent=view==="growth"
@@ -1733,9 +1743,12 @@ function syncStateFromUI(){
   $("minTaxMode").disabled=!state.afterTax;
   $("minTaxNote").textContent=!state.afterTax?"Turn on “After tax” to use this.":{off:"",simple:"The greater of normal tax or the rate below on income above the exemption.",amt:"That year’s AMT, married-filing-jointly rules, no deductions: a rough group-level estimate."}[state.minTaxMode]||"";
   $("taxMethod").disabled=!state.afterTax;
-  $("taxMethodNote").textContent=!state.afterTax?"Turn on “After tax” to choose a method.":{cbo:"Federal income tax only, from CBO. 2023 onward uses 2022 rates.",splice:"BLS taxes, with years before 2013 raised by each group’s 2012→2013 jump.",fixed:"Each group’s 2013–2015 BLS tax rate in every year. Ignores real tax law changes.",bls:"Federal, state and local taxes as BLS published them. Jumps in 2013."}[state.taxMethod];
+  $("taxMethodNote").textContent=!state.afterTax?"Turn on “After tax” to choose a method.":{cbo:"Federal income tax only, from CBO. 2023 onward uses 2022 rates.",splice:"BLS taxes, with years before 2013 raised by each group’s 2012→2013 jump.",fixed:"Each group’s 2013–2015 BLS tax rate in every year. Ignores real tax law changes.",bls:"Federal, state and local taxes as BLS published them. Jumps in 2013."}[state.taxMethod]+(state.afterTax&&state.incomeSource==="cbo"?(state.taxMethod==="cbo"?" With CBO totals, the rate applies to income before benefits plus social insurance, as CBO defines it.":" With CBO totals, only income before benefits is taxed, since CBO transfers include non-cash benefits."):"");
   $("transferScale").disabled=!state.includeTransfers;
-  $("incomeSourceNote").textContent=state.incomeSource==="cbo"?"Counts health coverage like Medicaid as income, so what’s left is overstated; spending is still BLS. 2023 onward grows 2022 CBO figures with inflation.":"";
+  $("includeTransfersNote").textContent=state.incomeSource==="cbo"
+    ?"CBO transfers: Social Security, Medicare, Medicaid, SNAP and other programs, including the value of health coverage. Private pensions stay in income before benefits."
+    :"Social Security, pensions, SNAP, SSI, unemployment, veterans’ benefits and support payments, as reported to BLS.";
+  $("incomeSourceNote").textContent=state.incomeSource==="cbo"?"Counts health coverage (Medicaid, Medicare, employer insurance) and employer payroll taxes as income, so what’s left is overstated; spending is still BLS. After 2022, CBO figures only grow with inflation.":"";
   $("childcareCost").disabled=state.kids===0;
 }
 function applyStateToUI(){
@@ -1801,12 +1814,12 @@ function exportCSV(){
   const {groups,rows,portfolios,gains,contribs}=buildData();
   // Dollar columns use the selected inflation display and unit. display_factor is the multiplier applied to nominal
   // dollars for the inflation display (before any per-person division).
-  const heads=["year","group","range_low_pct","range_high_pct","unit","household_size","gross_income","tax","income_after_tax","transfers","childcare","custom_expense","total_essential_spending","left_after_essentials","investment_return","cumulative_contributions","portfolio_value","avg_net_worth_fed","display_factor","projected"];
+  const heads=["year","group","range_low_pct","range_high_pct","unit","household_size","income_source","tax_method","market_income","gross_income","tax","income_after_tax","transfers","childcare","custom_expense","total_essential_spending","left_after_essentials","investment_return","cumulative_contributions","portfolio_value","avg_net_worth_fed","display_factor","projected"];
   const out=[heads.join(",")];
   YEARS.forEach((y,yi)=>groups.forEach((g,gi)=>{
     const r=rows[yi].values[gi], f=inflationFactor(y);
-    const money=[r.gross,r.tax,r.income,r.transfers,r.childcare,r.custom,r.essentials,r.residual,gains[gi][yi],contribs[gi][yi],portfolios[gi][yi],groupNetWorth(y,g)].map(n=>display(n,y,r.size).toFixed(2));
-    out.push([y,`"${g.label}"`,g.lo,g.hi,state.unit,r.size.toFixed(2),...money,f.toFixed(6),isProjected(y)?1:0].join(","));
+    const money=[r.market,r.gross,r.tax,r.income,r.transfers,r.childcare,r.custom,r.essentials,r.residual,gains[gi][yi],contribs[gi][yi],portfolios[gi][yi],groupNetWorth(y,g)].map(n=>display(n,y,r.size).toFixed(2));
+    out.push([y,`"${g.label}"`,g.lo,g.hi,state.unit,r.size.toFixed(2),state.incomeSource,state.taxMethod,...money,f.toFixed(6),isProjected(y)?1:0].join(","));
   }));
   const blob=new Blob([out.join("\n")],{type:"text/csv"}), url=URL.createObjectURL(blob), a=document.createElement("a");
   a.href=url;a.download="household-surplus-scenario.csv";a.click();URL.revokeObjectURL(url);
@@ -1823,7 +1836,8 @@ const PRESETS={default:"",market:"t=0&b=0",top1:"s=99_1&t=1&b=1&u=household",fam
 function markPreset(key){ document.querySelectorAll(".preset").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.preset===key))); }
 function applyPreset(key){
   history.replaceState(null,"",PRESETS[key]?"#"+PRESETS[key]:location.pathname+location.search);
-  state=cloneDefaults(); loadHash(); rebuildEssentials(); rebuildTaxes(); applyStateToUI(); update();
+  const keepSource=state.incomeSource;
+  state=cloneDefaults(); loadHash(); state.incomeSource=keepSource; rebuildEssentials(); rebuildTaxes(); applyStateToUI(); update();
   markPreset(key); announceStatus(`Scenario: ${document.querySelector(`.preset[data-preset="${key}"]`)?.textContent||"defaults"}.`);
 }
 document.querySelectorAll(".preset").forEach(b=>b.addEventListener("click",()=>applyPreset(b.dataset.preset)));
