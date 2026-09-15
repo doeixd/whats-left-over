@@ -131,7 +131,7 @@
         <li><span>05</span><a href="#expenses">Essentials, childcare and projections</a></li>
         <li><span>06</span><a href="#units">Per person and inflation</a></li>
         <li><span>07</span><a href="#investing">Investing</a></li>
-        <li><span>08</span><a href="#wealth">Fig. 3: wealth and wealth taxes</a></li>
+        <li><span>08</span><a href="#wealth">Figs. 3–4: wealth and wealth taxes</a></li>
         <li><span>09</span><a href="#fit">Where do you fit?</a></li>
         <li><span>10</span><a href="#checks">Outside checks</a></li>
         <li><span>11</span><a href="#limits">Known limitations</a></li>
@@ -145,7 +145,8 @@
       <ul>
         <li><strong>Fig. 1, Money left after essentials.</strong> Income under your settings (before or after tax, with or without benefits) minus the essential costs you select, averaged across each group. It can also show income alone, with an optional happiness plateau reference line.</li>
         <li><strong>Fig. 2, What investing it adds up to.</strong> A what-if portfolio built by investing a share of each year’s positive surplus since 2000.</li>
-        <li><strong>Fig. 3, Where the wealth is.</strong> Measured household net worth from the Federal Reserve, by wealth or income group, plus what-if wealth taxes.</li>
+        <li><strong>Fig. 3, Where the wealth is.</strong> Measured household net worth from the Federal Reserve, by wealth or income group.</li>
+        <li><strong>Fig. 4, What if we taxed wealth?</strong> What-if yearly wealth taxes on Fig. 3’s data, per household or as total revenue, with its own settings panel.</li>
         <li><strong>Where do you fit?</strong> Places a household income you type among 2024 percentile incomes.</li>
       </ul>
       <p>One-click <strong>presets</strong> are share-link settings applied on top of the defaults: <em>Default</em>; <em>After tax &amp; benefits</em>; <em>Top 1% vs everyone</em> (bottom 99% vs top 1%, after tax and benefits, per household); <em>Family, 2 kids in childcare</em> (after tax and benefits, per household); and <em>In 2024 dollars</em> (after tax and benefits, real 2024 dollars). All settings live in the URL hash.</p>
@@ -260,7 +261,7 @@ AMT       = 26% × min(taxable, B) + 28% × max(0, taxable − B)</code>
     </section>
 
     <section aria-labelledby="wealth">
-      <h2 id="wealth"><span class="n">08</span>Fig. 3: where the wealth is</h2>
+      <h2 id="wealth"><span class="n">08</span>Figs. 3–4: where the wealth is, and what-if wealth taxes</h2>
       <p>Fig. 3 uses the Federal Reserve’s <strong>Distributional Financial Accounts</strong> (DFA), which scale survey data to match the national balance sheet. Net worth is assets (homes, businesses, stocks, pensions and so on) minus debts. Values are nominal, fourth-quarter levels, 2000–2025. Each group’s average is its total net worth divided by the DFA’s own household count for that group.</p>
       <code class="formula">average net worth = group net worth ÷ group household count
 share of wealth    = (average × households) ÷ sum over all groups</code>
@@ -281,7 +282,7 @@ share of wealth    = (average × households) ÷ sum over all groups</code>
           </tbody>
         </table>
       </div>
-      <h3>What-if wealth taxes</h3>
+      <h3>What-if wealth taxes (Fig. 4)</h3>
       <p>The tax is applied to each group’s <em>average</em> net worth. The threshold is entered in 2024 dollars and indexed with CPI-U (defaults: 2% above $50 million, flat design).</p>
       <code class="formula">threshold(y) = threshold (2024 $) × CPI(y) ÷ CPI(2024)
 Flat:         tax = rate × max(0, average − threshold)
@@ -294,7 +295,7 @@ Revenue:      tax × households in the group</code>
         <li><strong>Zucman (2024), G20 report:</strong> a minimum tax on billionaires equal to 2% of their wealth, estimated to raise $200–250 billion a year from about 3,000 taxpayers; billionaires’ current effective tax rate is put at the equivalent of 0.3% of their wealth, the site’s default “already paid” value. <a href="https://gabriel-zucman.eu/files/report-g20.pdf">Zucman / EU Tax Observatory, June 25, 2024</a>.</li>
       </ul>
       <h3>Outside revenue estimates</h3>
-      <p>For comparison with Fig. 3’s revenue row, published estimates of Warren’s design (2% on net worth above $50 million, 3% above $1 billion):</p>
+      <p>For comparison with Fig. 4’s revenue row, published estimates of Warren’s design (2% on net worth above $50 million, 3% above $1 billion):</p>
       <ul>
         <li><strong>Saez &amp; Zucman:</strong> $2.75 trillion over 2019–2028 ($212 billion in 2019, about 1% of GDP), and in a February 2021 update $3.0 trillion over 2023–2032 (about $250 billion a year).</li>
         <li><strong>Penn Wharton Budget Model:</strong> $2.1 trillion conventional for 2022–2031 on the 2021 bill ($2.4 trillion with stronger IRS enforcement; $2.0 trillion dynamic).</li>
@@ -302,7 +303,7 @@ Revenue:      tax × households in the group</code>
         <li><strong>Summers &amp; Sarin (2019)</strong> argued collections would be far lower, about $25–75 billion in 2019.</li>
         <li>Warren’s March 2024 release cites “at least $3 trillion in revenue over 10 years.” No Joint Committee on Taxation or CBO score exists.</li>
       </ul>
-      <p>Fig. 3’s ~$364 billion for 2025 (a single 2% rate above $50 million on DFA group averages) sits above the proponents’ per-year estimates even though it has no 3% bracket. Likely reasons: it uses 2025 net worth, which has grown a lot since those scores; it assumes no avoidance, valuation discount or behavioral response; and it treats the whole top 0.1% as having the group’s average wealth.</p>
+      <p>Fig. 4’s ~$364 billion for 2025 (a single 2% rate above $50 million on DFA group averages) sits above the proponents’ per-year estimates even though it has no 3% bracket. Likely reasons: it uses 2025 net worth, which has grown a lot since those scores; it assumes no avoidance, valuation discount or behavioral response; and it treats the whole top 0.1% as having the group’s average wealth.</p>
       <p>The site implements one flat rate above one threshold, so it approximates the Warren design only at its first bracket and does not reproduce Sanders’s brackets.</p>
       <div class="notice"><strong>Big caveats</strong>Group averages treat every household as average, so a threshold can miss or overstate who is taxed. The calculation ignores avoidance, emigration, behavior and lower asset prices, and hard-to-value assets such as private businesses. The figures are not an official revenue estimate. Income-ranked and wealth-ranked groups are different households: many high earners are not among the wealthiest, and many wealthy households have modest income. CBO’s income groups rank people by size-adjusted household income, while DFA groups count households, so they don’t line up exactly either.</div>
     </section>
@@ -342,6 +343,7 @@ Revenue:      tax × households in the group</code>
       <ul>
         <li><strong>September 2026:</strong> Fig. 3 wealth view, presets, household comparison, CBO top-group tax rates, Fed DFA net worth.</li>
         <li><strong>September 2026 (later):</strong> Fig. 3 share view as a 100% stacked area with households-vs-wealth bars; a cumulative wealth-by-percentile curve (monotone cubic between the Fed’s official boundaries); a revenue row for wealth-tax scenarios (raised, households paying, per paying household); “Estimated groups” labels whenever groups are finer than BLS’s five quintiles; and an automated model test (<code>tests/model.test.mjs</code>).</li>
+        <li><strong>September 2026 (later still):</strong> wealth-tax what-ifs moved to their own Fig. 4 with a settings panel beside the chart; Inflation and Investing settings collapsed by default.</li>
       </ul>
     </section>
   </article>

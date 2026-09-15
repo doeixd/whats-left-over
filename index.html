@@ -273,6 +273,7 @@
   .report{--paper:#f4f1ea; --sheet:#fbfaf6; --ink:#1a1916; --ink-2:#4a4740; --muted:#6b665b; --rule:#d9d3c5; --rule-soft:#e8e3d8; --accent:#c8472d; --accent-soft:#f3dfd6; --accent-text:#b23e26; --control:#8f897c; --slider-off:#7d776b; --tip-rule:rgba(251,250,246,.18); color-scheme:light}
   .advanced{display:none}
   details.adv>summary{cursor:pointer;list-style:none;margin:0;flex-wrap:wrap}
+  .panel-intro{margin:2px 0 4px}
   details.adv>summary::-webkit-details-marker{display:none}
   details.adv>summary::after{content:"+";margin-left:auto;font:400 20px/1 var(--sans);color:var(--muted)}
   details.adv[open]>summary::after{content:"−"}
@@ -300,11 +301,24 @@
   .takeaway:empty{display:none}
   .compare-out{font-size:13px;line-height:1.55;color:var(--ink-2);margin:4px 0 0}
   .compare-out strong{color:var(--ink);font-weight:600}
-  /* ID selector so it beats .advanced.show{display:block}; fixed-width columns keep inputs a sensible size. */
-  #wealthControls.show{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,260px));gap:0 28px;margin-top:10px;padding:4px 0 8px;border-bottom:1px solid var(--rule-soft)}
-  #wealthControls .control{margin:12px 0}
-  @media(max-width:650px){#wealthControls.show{grid-template-columns:1fr}}
-  #wealthControls #wealthAffects{grid-column:1/-1;margin:0 0 10px;max-width:75ch}
+  /* Fig. 4 row: settings panel beside the chart on desktop (sticky while the chart is in view), inline above it on phones and tablets. */
+  .fig4-grid{padding-top:8px}
+  .fig4-side{align-self:start;position:sticky;top:16px}
+  .fig4-side .section{border-top:1px solid var(--ink);padding-top:16px}
+  .side-kicker{font:500 10px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text);margin:0 0 8px}
+  #wealthAffects{margin:4px 0 0}
+  .fig4-main{min-width:0}
+  .fig4-main .bridge{margin-top:0}
+  @media(min-width:1051px){.after-grid{margin-left:calc(340px + 44px)}}
+  @media(max-width:1050px){
+    /* .grid.fig4-grid outranks the later .grid{display:block} phone rule. */
+    .grid.fig4-grid{display:flex;flex-direction:column;padding-top:0}
+    .fig4-main{order:-1}
+    .fig4-main #fig4{margin-bottom:0}
+    .fig4-main .card-head{margin-bottom:0}
+    .fig4-side{position:static;order:0;margin:0 0 40px;background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:2px 16px 12px}
+    .fig4-side .section{border-top:0;padding-top:14px}
+  }
   .tax-stats{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--ink);margin:4px 0 6px}
   .tax-stats:empty{display:none}
   .tax-stats:empty+.tax-compare{display:none}
@@ -442,7 +456,7 @@
     @page{margin:14mm}
     :root[data-theme]{--paper:#f4f1ea; --sheet:#fbfaf6; --ink:#1a1916; --ink-2:#4a4740; --muted:#6b665b; --rule:#d9d3c5; --rule-soft:#e8e3d8; --accent:#c8472d; --accent-soft:#f3dfd6; --accent-text:#b23e26; --control:#8f897c; --slider-off:#7d776b; --tip-rule:rgba(251,250,246,.18); color-scheme:light}
     html,body{background:#fff}
-    .header-actions,.settings-fab,.drawer-backdrop,.drawer-head,.tip,.tooltip,.linkbtn,.skip,.controls,.viewrow,.howto,.datatable,.presets,.compare,.wealth-controls{display:none!important}
+    .header-actions,.settings-fab,.drawer-backdrop,.drawer-head,.tip,.tooltip,.linkbtn,.skip,.controls,.viewrow,.howto,.datatable,.presets,.compare,.fig4-side{display:none!important}
     .grid{display:block;padding-top:0}
     .card,.kpis,.method{break-inside:avoid}
     footer{margin-left:0}
@@ -542,8 +556,9 @@
           </div>
         </div>
 
-        <div class="section">
-          <h2 class="section-title" data-n="05">Inflation<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Controls whether dollars are shown as reported each year or adjusted so different years are comparable.">?</span></h2>
+        <details class="section adv" id="inflationPanel">
+          <summary class="section-title" data-n="05">Inflation<span class="adv-hint" id="inflationHint">Nominal dollars</span></summary>
+          <p class="subnote panel-intro">What these dollars mean<span class="tip summary-tip" tabindex="0" role="button" aria-label="More info" data-tip="Controls whether dollars are shown as reported each year or adjusted so different years are comparable.">?</span></p>
           <div class="control">
             <label for="inflationMode">Show dollars as<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Nominal: dollars as reported each year. Real 2000: adjusted to 2000 prices with CPI-U. Custom base year: adjusted to prices in the year you pick. Assumed: a constant inflation rate you set, relative to the base year.">?</span></label>
             <select id="inflationMode">
@@ -561,10 +576,11 @@
             <div class="rangehead"><label for="inflationRate">Assumed annual inflation<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Prices are assumed to rise at this rate every year, instead of using actual CPI-U.">?</span></label><span class="rangeval" id="inflationRateVal">2.5%</span></div>
             <input id="inflationRate" type="range" min="0" max="8" step=".1" value="2.5">
           </div>
-        </div>
+        </details>
 
-        <div class="section">
-          <h2 class="section-title" data-n="06">Investing<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A hypothetical: each group invests part of its surplus every year starting in 2000. It ignores taxes on gains, fees and withdrawals, and uses actual past S&amp;P 500 returns, which no one knew in advance.">?</span></h2>
+        <details class="section adv" id="investPanel">
+          <summary class="section-title" data-n="06">Investing<span class="adv-hint" id="investHint">10% of surplus · S&amp;P 500</span></summary>
+          <p class="subnote panel-intro">About this what-if<span class="tip summary-tip" tabindex="0" role="button" aria-label="More info" data-tip="A hypothetical: each group invests part of its surplus every year starting in 2000. It ignores taxes on gains, fees and withdrawals, and uses actual past S&amp;P 500 returns, which no one knew in advance.">?</span></p>
           <div class="control">
             <div class="rangehead"><label for="investPct">Share of each year’s surplus invested<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="This share of each year's surplus is added to the portfolio at year-end. A year with a negative surplus adds nothing, and nothing is withdrawn.">?</span></label><span class="rangeval" id="investPctVal">10%</span></div>
             <input id="investPct" type="range" min="0" max="40" step="1" value="10">
@@ -580,7 +596,7 @@
             <div class="rangehead"><label for="returnRate">Assumed return<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Annual return applied to the portfolio balance every year.">?</span></label><span class="rangeval" id="returnRateVal">8.0%</span></div>
             <input id="returnRate" type="range" min="-5" max="20" step=".5" value="8">
           </div>
-        </div>
+        </details>
         <details class="section adv" id="advancedPanel">
           <summary class="section-title" data-n="07">Advanced<span class="adv-hint">Tax method · what-if benefits · minimum tax</span></summary>
           <div class="control">
@@ -673,16 +689,7 @@
           <div><div class="fig">Fig. 3</div><h2><span id="fig3Title">Where the wealth is</span><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Real household net worth (assets such as homes, businesses, stocks and pensions, minus debts) from the Federal Reserve’s Distributional Financial Accounts, which scale survey data to match the national balance sheet. Unlike Figs. 1–2 it is measured, not a what-if, and it is per household. Group by wealth to see the very top (the top 0.1%), or by income to compare with the income groups above.">?</span></h2><p id="wealthSubtitle"></p></div>
           <div class="metric-strip"><span class="pill">Federal Reserve data</span><span class="pill" id="f3UnitPill">Per household</span></div>
         </div>
-        <div class="viewrow"><label for="f3View">Show<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Share of all household wealth: each group’s slice of total U.S. household net worth. Cumulative wealth: households lined up from least to most, with the running total of what they own; the curve is smoothed between the Fed’s official group boundaries. Average net worth: dollars per household (the top groups dwarf the rest). Wealth tax views: a what-if yearly tax on net worth, per household or summed over all households in the group.">?</span></label><select id="f3View"><option value="share">Share of all household wealth</option><option value="curve">Cumulative wealth by percentile</option><option value="avg">Average net worth per household</option><option value="tax">What-if wealth tax per household</option><option value="revenue">What-if wealth tax revenue, all households</option></select><label for="f3Group">Group by<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Wealth: households ranked by net worth, down to the top 0.1% (about 136,000 households). Income: households ranked by income, as in Figs. 1–2, down to the top 1%. They are different households: many high earners aren’t among the wealthiest, and many wealthy households have modest income.">?</span></label><select id="f3Group"><option value="wealth">Wealth · top 0.1% to bottom 50%</option><option value="income">Income · top 1% to lowest 20%</option></select></div>
-        <div class="wealth-controls advanced" id="wealthControls">
-          <div class="control"><label for="wealthMode">Wealth tax design<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Flat (Warren/Sanders-style): the rate on net worth above the threshold, every year. Zucman-style minimum: households above the threshold must pay at least the rate × their total net worth in tax each year; taxes they already pay count toward it, so only the gap is added.">?</span></label><select id="wealthMode"><option value="flat">Flat (Warren/Sanders-style)</option><option value="zucman">Minimum (Zucman-style)</option></select></div>
-          <div class="control"><div class="rangehead"><label for="wealthRate">Rate on net worth<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Yearly rate. U.S. proposals have ranged from 1% to 3% (8% at the very top in one 2019 plan); Zucman’s 2024 G20 proposal is a 2% minimum for billionaires.">?</span></label><span class="rangeval" id="wealthRateVal">2.0%</span></div><input id="wealthRate" type="range" min="0.5" max="5" step="0.5" value="2"></div>
-          <div class="control"><label for="wealthThreshold">Applies above · 2024 dollars<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Net worth below this is exempt (flat design), or households below it are not covered (Zucman-style). $50 million matches Warren’s proposals (2% from $50 million, 3% above $1 billion in the 2024 version); Zucman’s G20 proposal starts at $1 billion. Other years use the CPI-U-adjusted amount.">?</span></label><input id="wealthThreshold" type="number" min="0" step="1000000" value="50000000"><div class="subnote equiv" id="wealthEquiv" aria-live="polite"></div></div>
-          <div class="control advanced" id="wealthPaidWrap"><div class="rangehead"><label for="wealthPaid">Tax already paid, % of wealth<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Zucman-style only: the taxes covered households already pay each year, as a share of their net worth; they count toward the minimum. The default, 0.3%, is Zucman’s 2024 G20 report estimate of U.S. and global billionaires’ effective tax rate relative to wealth; less wealthy households usually pay more relative to their wealth.">?</span></label><span class="rangeval" id="wealthPaidVal">0.3%</span></div><input id="wealthPaid" type="range" min="0" max="3" step="0.1" value="0.3"></div>
-          <div class="subnote" id="wealthAffects" aria-live="polite"></div>
-          <div class="tax-stats" id="wealthStats" aria-live="polite"></div>
-          <p class="subnote tax-compare" id="wealthCompare">Published estimates for Warren’s design (2% above $50 million, 3% above $1 billion): <a href="https://eml.berkeley.edu/~saez/saez-zucman-wealthtax-warren-feb21.pdf" target="_blank" rel="noopener noreferrer">Saez &amp; Zucman</a> put it at about $250 billion a year (2021 score, 2023–2032), <a href="https://budgetmodel.wharton.upenn.edu/p/2021-03-15-conventional-budgetary-effects-of-senator-elizabeth-warrens-wealth-tax-legislation/" target="_blank" rel="noopener noreferrer">Penn Wharton</a> at $2.1–2.7 trillion over ten years, and the <a href="https://taxfoundation.org/research/all/federal/wealth-tax/" target="_blank" rel="noopener noreferrer">Tax Foundation</a> at $2.6 trillion over ten years before behavioral effects. Critics such as Summers &amp; Sarin (2019) argued real collections would be far lower. No official congressional score exists. This chart uses one flat rate on group averages, so treat it as a rough cross-check, not a forecast.</p>
-        </div>
+        <div class="viewrow"><label for="f3View">Show<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Share of all household wealth: each group’s slice of total U.S. household net worth. Cumulative wealth: households lined up from least to most, with the running total of what they own; the curve is smoothed between the Fed’s official group boundaries. Average net worth: dollars per household (the top groups dwarf the rest). What-if wealth taxes are in Fig. 4.">?</span></label><select id="f3View"><option value="share">Share of all household wealth</option><option value="curve">Cumulative wealth by percentile</option><option value="avg">Average net worth per household</option></select><label for="f3Group">Group by<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Wealth: households ranked by net worth, down to the top 0.1% (about 136,000 households). Income: households ranked by income, as in Figs. 1–2, down to the top 1%. They are different households: many high earners aren’t among the wealthiest, and many wealthy households have modest income.">?</span></label><select id="f3Group"><option value="wealth">Wealth · top 0.1% to bottom 50%</option><option value="income">Income · top 1% to lowest 20%</option></select></div>
         <div class="split" id="wealthSplit" role="img"></div>
         <div class="legend" id="wealthLegend"></div>
         <div class="chart-wrap" id="wealthChartWrap"><svg class="chart" id="wealthChart" viewBox="0 0 960 420" role="img" aria-label="Line chart: household wealth by group and year, from Federal Reserve data. The numbers are in the data table below." aria-describedby="wealthSubtitle"></svg><div class="tooltip" id="wealthTooltip" aria-hidden="true"></div></div>
@@ -690,6 +697,41 @@
         <details class="datatable"><summary>Show the numbers</summary><div class="etable-wrap"><table class="etable" id="wealthTable"></table></div></details>
       </section>
 
+    </main>
+  </div>
+
+  <div class="grid fig4-grid">
+    <aside class="fig4-side" id="fig4Controls" aria-labelledby="fig4SideTitle">
+      <div class="section">
+        <div class="side-kicker">Fig. 4 · settings</div>
+        <h2 class="section-title" data-n="W" id="fig4SideTitle">Wealth tax what-if</h2>
+          <div class="control"><label for="f4View">Show<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Per household: the yearly tax on a household with the group’s average net worth. Revenue: that tax times the number of households in the group.">?</span></label><select id="f4View"><option value="revenue">Revenue, all households</option><option value="tax">Tax per household</option></select></div>
+          <div class="control"><label for="f4Group">Group by<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Wealth: households ranked by net worth, down to the top 0.1%. This is the grouping a wealth tax is aimed at. Income: households ranked by income, down to the top 1%, which mostly misses the very wealthy.">?</span></label><select id="f4Group"><option value="wealth">Wealth · top 0.1% to bottom 50%</option><option value="income">Income · top 1% to lowest 20%</option></select></div>
+          <div class="control"><label for="wealthMode">Wealth tax design<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Flat (Warren/Sanders-style): the rate on net worth above the threshold, every year. Zucman-style minimum: households above the threshold must pay at least the rate × their total net worth in tax each year; taxes they already pay count toward it, so only the gap is added.">?</span></label><select id="wealthMode"><option value="flat">Flat (Warren/Sanders-style)</option><option value="zucman">Minimum (Zucman-style)</option></select></div>
+          <div class="control"><div class="rangehead"><label for="wealthRate">Rate on net worth<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Yearly rate. U.S. proposals have ranged from 1% to 3% (8% at the very top in one 2019 plan); Zucman’s 2024 G20 proposal is a 2% minimum for billionaires.">?</span></label><span class="rangeval" id="wealthRateVal">2.0%</span></div><input id="wealthRate" type="range" min="0.5" max="5" step="0.5" value="2"></div>
+          <div class="control"><label for="wealthThreshold">Applies above · 2024 dollars<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Net worth below this is exempt (flat design), or households below it are not covered (Zucman-style). $50 million matches Warren’s proposals (2% from $50 million, 3% above $1 billion in the 2024 version); Zucman’s G20 proposal starts at $1 billion. Other years use the CPI-U-adjusted amount.">?</span></label><input id="wealthThreshold" type="number" min="0" step="1000000" value="50000000"><div class="subnote equiv" id="wealthEquiv" aria-live="polite"></div></div>
+          <div class="control advanced" id="wealthPaidWrap"><div class="rangehead"><label for="wealthPaid">Tax already paid, % of wealth<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Zucman-style only: the taxes covered households already pay each year, as a share of their net worth; they count toward the minimum. The default, 0.3%, is Zucman’s 2024 G20 report estimate of U.S. and global billionaires’ effective tax rate relative to wealth; less wealthy households usually pay more relative to their wealth.">?</span></label><span class="rangeval" id="wealthPaidVal">0.3%</span></div><input id="wealthPaid" type="range" min="0" max="3" step="0.1" value="0.3"></div>
+          <div class="subnote" id="wealthAffects" aria-live="polite"></div>
+      </div>
+    </aside>
+    <div class="fig4-main" role="region" aria-labelledby="fig4Title">
+      <p class="bridge">Fig. 4 asks a what-if: what a yearly tax on that wealth would raise.</p>
+      <section class="card" id="fig4">
+        <div class="card-head">
+          <div><div class="fig">Fig. 4</div><h2><span id="fig4Title">What if we taxed wealth?</span><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A what-if yearly tax on household net worth, using the Federal Reserve wealth data from Fig. 3. Choose the design, rate and threshold in the panel beside this chart (above it on phones). It applies the tax to each group’s average net worth, so it is a rough order of magnitude, not a revenue forecast.">?</span></h2><p id="taxSubtitle"></p></div>
+          <div class="metric-strip"><span class="pill pill-est">What-if</span><span class="pill" id="f4UnitPill">Totals, all households</span></div>
+        </div>
+        <div class="tax-stats" id="wealthStats" aria-live="polite"></div>
+        <p class="subnote tax-compare" id="wealthCompare">Published estimates for Warren’s design (2% above $50 million, 3% above $1 billion): <a href="https://eml.berkeley.edu/~saez/saez-zucman-wealthtax-warren-feb21.pdf" target="_blank" rel="noopener noreferrer">Saez &amp; Zucman</a> put it at about $250 billion a year (2021 score, 2023–2032), <a href="https://budgetmodel.wharton.upenn.edu/p/2021-03-15-conventional-budgetary-effects-of-senator-elizabeth-warrens-wealth-tax-legislation/" target="_blank" rel="noopener noreferrer">Penn Wharton</a> at $2.1–2.7 trillion over ten years, and the <a href="https://taxfoundation.org/research/all/federal/wealth-tax/" target="_blank" rel="noopener noreferrer">Tax Foundation</a> at $2.6 trillion over ten years before behavioral effects. Critics such as Summers &amp; Sarin (2019) argued real collections would be far lower. No official congressional score exists. This chart uses one flat rate on group averages, so treat it as a rough cross-check, not a forecast.</p>
+        <div class="legend" id="taxLegend"></div>
+        <div class="chart-wrap" id="taxChartWrap"><svg class="chart" id="taxChart" viewBox="0 0 960 420" role="img" aria-label="Line chart: what-if wealth tax by group and year." aria-describedby="taxSubtitle"></svg><div class="tooltip" id="taxTooltip" aria-hidden="true"></div></div>
+        <p class="takeaway" id="fig4Takeaway"></p>
+        <details class="datatable"><summary>Show the numbers</summary><div class="etable-wrap"><table class="etable" id="taxTable"></table></div></details>
+      </section>
+    </div>
+  </div>
+
+  <div class="after-grid">
       <section class="method" aria-labelledby="methodTitle">
         <h2 class="sr-only" id="methodTitle">Method and definitions</h2>
         <div>
@@ -716,7 +758,6 @@
           </ul>
         </div>
       </section>
-    </main>
   </div>
   <footer>
     <p><strong><a href="methodology">Read the full methodology</a></strong>: every source, formula and limitation in one place.</p>
@@ -862,7 +903,7 @@ const ESSENTIAL_NAMES = {food:"food at home",housing:"housing",transport:"transp
 const DEFAULTS = {
   segmentation:"quintiles", customTop:1, unit:"person", afterTax:false, taxMethod:"cbo", includeTransfers:false, transferScale:100,
   kids:0, childcareCost:CHILDCARE_DEFAULT,
-  inflationMode:"nominal", baseYear:2000, inflationRate:2.5, minTaxMode:"off", amtRate:20, amtThreshold:200000, f3View:"share", f3Group:"wealth", wealthMode:"flat", wealthRate:2, wealthThreshold:50000000, wealthPaid:0.3,
+  inflationMode:"nominal", baseYear:2000, inflationRate:2.5, minTaxMode:"off", amtRate:20, amtThreshold:200000, f3View:"share", f3Group:"wealth", f4View:"revenue", f4Group:"wealth", wealthMode:"flat", wealthRate:2, wealthThreshold:50000000, wealthPaid:0.3,
   investPct:10, returnMode:"sp500", returnRate:8, portfolioView:"portfolio", showProjection:true, incomeView:"left", showHappiness:true, essentials:[...DEFAULT_ESSENTIALS],
   // Expense editor: per-category scaling (%), per-year per-quintile overrides, and one custom flat expense.
   expenseScale:Object.fromEntries(ESSENTIALS.map(k=>[k,100])), expenseEdits:{}, customName:"", customAmount:0
@@ -1039,8 +1080,8 @@ function groupNetWorth(y,g){
 const WEALTH_YEARS=Object.keys(WEALTH_DFA).map(Number).sort((a,b)=>a-b), WEALTH_LAST=WEALTH_YEARS.at(-1);
 const WEALTH_GROUP_LABELS=["Bottom 50%","50–90%","90–99%","99–99.9%","Top 0.1%"];
 const INCOME_GROUP_LABELS=["Lowest 20%","20–40%","40–60%","60–80%","80–99%","Top 1%"];
-function wealthGroupData(y){
-  return state.f3Group==="wealth"
+function wealthGroupData(y,group=state.f3Group){
+  return group==="wealth"
     ?{labels:WEALTH_GROUP_LABELS,avg:WEALTH_DFA[y].avg,hh:WEALTH_DFA[y].hh}
     :{labels:INCOME_GROUP_LABELS,avg:DFA_NETWORTH[y],hh:DFA_INCOME_HH[y]};
 }
@@ -1050,10 +1091,10 @@ function wealthTaxFor(w,y){
   if(state.wealthMode==="flat") return r*Math.max(0,w-cutoff);
   return w>=cutoff?Math.max(0,(r-state.wealthPaid/100)*w):0;
 }
-function wealthSeries(){
-  const view=state.f3View, labels=wealthGroupData(WEALTH_LAST).labels;
+function wealthSeries(view=state.f3View,group=state.f3Group){
+  const labels=wealthGroupData(WEALTH_LAST,group).labels;
   const series=labels.map((label,gi)=>({label,data:WEALTH_YEARS.map(y=>{
-    const d=wealthGroupData(y), total=d.avg.reduce((t,a,j)=>t+a*d.hh[j],0), f=inflationFactor(y);
+    const d=wealthGroupData(y,group), total=d.avg.reduce((t,a,j)=>t+a*d.hh[j],0), f=inflationFactor(y);
     const value=view==="share"?100*d.avg[gi]*d.hh[gi]/total
       :view==="avg"?d.avg[gi]*f
       :view==="tax"?wealthTaxFor(d.avg[gi],y)*f
@@ -1511,13 +1552,12 @@ function update(){
           +(bottomEverSurplus?` The ${bottomName} would have ${fmtMoney(finalP[0])}.`:` The ${bottomName} never had a surplus to invest.`)
         :`In ${LAST_ACTUAL}, the portfolio’s return ${gainTop>=0?"added":"took away"} <strong>${fmtMoney(Math.abs(gainTop))}</strong>${whoPer} ${gainTop>=0?"to":"from"} the ${topName}’s ${view==="surplus"?"surplus":"income"}.`;
   }
-  // ---- Fig. 3
+  // ---- Fig. 3: where the wealth is (measured)
   {
-    const f3=wealthSeries(), view3=state.f3View, taxView=view3==="tax"||view3==="revenue";
+    const view3=state.f3View, f3=wealthSeries(view3,state.f3Group);
     $("wealthLegend").innerHTML=view3==="curve"?"":legendHTML(f3.labels.map(label=>({label})));
     if(view3==="share") f3.opts.area=true;
     if(view3==="curve") f3.opts.curve=wealthCurve();
-    if(taxView) f3.opts.emptyNote="Nothing raised: no group’s average net worth reaches the threshold";
     lastCharts.wealth=[f3.series,f3.opts];
     // Households vs wealth: the same groups as a share of all households and of all net worth, latest year.
     {
@@ -1528,47 +1568,61 @@ function update(){
       $("wealthSplit").setAttribute("aria-label",d.labels.map((l,j)=>`${l}: ${hhShare[j].toFixed(1)}% of households, ${wShare[j].toFixed(1)}% of wealth`).join("; "));
     }
     renderChart("wealthChart","wealthTooltip",...lastCharts.wealth);
-    const unitTitle={share:"Share of all household wealth",curve:"Cumulative net worth by percentile",avg:"Average net worth per household",tax:"What-if wealth tax per household",revenue:"What-if wealth tax revenue"}[view3];
+    const unitTitle={share:"Share of all household wealth",curve:"Cumulative net worth by percentile",avg:"Average net worth per household"}[view3];
     if(view3==="curve"){
       const cv=f3.opts.curve, tot=cv.points.at(-1).v;
       $("wealthTable").innerHTML=`<caption class="sr-only">Cumulative net worth by percentile, ${cv.year}</caption><thead><tr><th scope="col">Households, from least</th><th scope="col">Net worth held</th><th scope="col">Share of all wealth</th></tr></thead><tbody>${cv.points.slice(1).map(q=>`<tr><th scope="row">${escapeHtml(q.label)}</th><td>${fmtMoney(q.v)}</td><td>${(100*q.v/tot).toFixed(1)}%</td></tr>`).join("")}</tbody>`;
     }else renderDataTable("wealthTable",f3.series,`${unitTitle}, by group and year`,f3.opts.fmtTip,WEALTH_LAST);
     const byText=state.f3Group==="wealth"?"households ranked by net worth":"households ranked by income";
-    const design=state.wealthMode==="flat"?`a flat ${state.wealthRate.toFixed(1)}% tax on net worth above ${fmtMoney(state.wealthThreshold)} (2024 $)`:`a Zucman-style minimum of ${state.wealthRate.toFixed(1)}% of net worth above ${fmtMoney(state.wealthThreshold)} (2024 $), minus ${state.wealthPaid.toFixed(1)}% already paid in tax`;
-    $("wealthSubtitle").textContent=view3==="curve"?`Households lined up from least to most ${state.f3Group==="wealth"?"wealth":"income"}, with the total net worth held by everyone up to each point, ${WEALTH_LAST} Q4. ${dollarText.replace(" $"," dollars")}. Dots are the Federal Reserve’s official group boundaries; the curve is smoothed between them.`:(view3==="share"?`How U.S. household net worth is split, ${byText}, Federal Reserve data 2000–${WEALTH_LAST}. The bars compare each group’s share of households with its share of wealth; the chart stacks the wealth shares to 100% for every year.`:`${unitTitle}, ${byText}, Federal Reserve data 2000–${WEALTH_LAST}.`)+(view3==="avg"||view3==="tax"||view3==="revenue"?` ${dollarText.replace(" $"," dollars")}.`:"");
-    $("wealthChart").setAttribute("aria-label",`Line chart: ${unitTitle.toLowerCase()}, ${byText}, by year. The numbers are in the data table below.`);
-    $("wealthControls").classList.toggle("show",taxView);
-    // Fig. 3 is always per household (or unit-free): the Fed doesn't publish household size by wealth group.
-    const perHH=view3==="avg"||view3==="tax";
-    $("f3UnitPill").textContent={share:"Shares of the total",curve:"Totals, all households",avg:"Per household",tax:"Per household",revenue:"Totals, all households"}[view3]+(perHH&&state.unit==="person"?" · not per person":"");
-    $("f3UnitPill").title=perHH&&state.unit==="person"?"The Federal Reserve doesn’t publish household size by wealth group, so Fig. 3 can’t show per-person amounts.":"";
-    const incomeTax=taxView&&state.f3Group==="income";
-    $("wealthPaidWrap").classList.toggle("show",state.wealthMode==="zucman");
+    $("wealthSubtitle").textContent=view3==="curve"?`Households lined up from least to most ${state.f3Group==="wealth"?"wealth":"income"}, with the total net worth held by everyone up to each point, ${WEALTH_LAST} Q4. ${dollarText.replace(" $"," dollars")}. Dots are the Federal Reserve’s official group boundaries; the curve is smoothed between them.`
+      :view3==="share"?`How U.S. household net worth is split, ${byText}, Federal Reserve data 2000–${WEALTH_LAST}. The bars compare each group’s share of households with its share of wealth; the chart stacks the wealth shares to 100% for every year.`
+      :`${unitTitle}, ${byText}, Federal Reserve data 2000–${WEALTH_LAST}. ${dollarText.replace(" $"," dollars")}.`;
+    $("wealthChart").setAttribute("aria-label",`Chart: ${unitTitle.toLowerCase()}, ${byText}. The numbers are in the data table below.`);
+    // Fig. 3 is per household or unit-free: the Fed doesn't publish household size by wealth group.
+    $("f3UnitPill").textContent={share:"Shares of the total",curve:"Totals, all households",avg:"Per household"}[view3]+(view3==="avg"&&state.unit==="person"?" · not per person":"");
+    $("f3UnitPill").title=view3==="avg"&&state.unit==="person"?"The Federal Reserve doesn’t publish household size by wealth group, so Fig. 3 can’t show per-person amounts.":"";
     const d=wealthGroupData(WEALTH_LAST), n=d.labels.length, total=d.avg.reduce((t,a,j)=>t+a*d.hh[j],0), f=inflationFactor(WEALTH_LAST);
     const share=j=>(100*d.avg[j]*d.hh[j]/total).toFixed(1);
-    const taxes=d.avg.map((a,j)=>wealthTaxFor(a,WEALTH_LAST)*d.hh[j]), revenue=taxes.reduce((t,x)=>t+x,0);
-    const reached=d.labels.filter((_,j)=>taxes[j]>0).map(x=>x.toLowerCase());
-    const paying=d.hh.reduce((t,h,j)=>t+(taxes[j]>0?h:0),0), cutoffText=fmtMoney(state.wealthThreshold).replace(/\.0(?=[kMBT])/,"");
-    $("wealthAffects").textContent=incomeTax
-      ?"Grouped by income, this understates a wealth tax: even the top 1% by income averages under $50 million, and many of the wealthiest households aren’t top earners. Group by wealth for a closer estimate."
-      :reached.length?`Reaches the ${listText(reached)}, using each group’s average net worth. A rough order of magnitude: it ignores avoidance and valuation problems.`
-      :`No group’s average net worth is above ${cutoffText}, so nothing is raised. Try a lower threshold.`;
-    // Revenue at a glance, latest year.
-    const stat=(label,value,note)=>`<div class="tax-stat"><b>${label}</b><span>${value}</span><small>${note}</small></div>`;
-    $("wealthStats").innerHTML=taxView?
-      stat(`Raised in ${WEALTH_LAST}`,fmtMoney(revenue*f),revenue>0?"a year, from group averages":"nothing is taxed")+
-      stat("Households paying",paying?(paying>=1e6?`${(paying/1e6).toFixed(1)}M`:`${Math.round(paying/1000)}k`):"0",paying?`${(100*paying/d.hh.reduce((t,h)=>t+h,0)).toFixed(paying/d.hh.reduce((t,h)=>t+h,0)<.01?2:1)}% of all households`:"none above the threshold")+
-      stat("Per paying household",paying?fmtMoney(revenue*f/paying):"—",revenue>0?`${Math.round(100*taxes[n-1]/revenue)}% of revenue from the ${escapeHtml(d.labels[n-1].toLowerCase())}`:"")
-      :"";
-    $("fig3Takeaway").innerHTML=taxView
-      ?(revenue>0?`In ${WEALTH_LAST}, ${escapeHtml(design)} would raise roughly <strong>${fmtMoney(revenue*f)}</strong> a year. Real collections would differ: avoidance, hard-to-value assets and falling asset prices all matter.`:`This design raises $0 from group averages in ${WEALTH_LAST}.`)
-      :view3==="curve"
+    $("fig3Takeaway").innerHTML=view3==="curve"
         ?(()=>{ const cv=wealthCurve(), pts=cv.points, tot=pts.at(-1).v, first=pts[1], topHeld=tot-pts.at(-2).v;
             return `In ${WEALTH_LAST}, the ${escapeHtml(first.label.toLowerCase())} of households ${state.f3Group==="wealth"?"by wealth":"by income"} held <strong>${fmtMoney(first.v)}</strong> combined (${(100*first.v/tot).toFixed(1)}% of the total). The ${d.labels[n-1].toLowerCase()} alone held <strong>${fmtMoney(topHeld)}</strong>. The curve stays flat for most households and shoots up at the very end.`; })()
       :state.f3Group==="wealth"
         ?`In ${WEALTH_LAST}, the top 0.1% of households by wealth (${householdsText(d.hh[n-1])}) held <strong>${share(n-1)}%</strong> of all U.S. household net worth, <strong>${fmtMoney(d.avg[n-1]*f)}</strong> each on average. The bottom 50% (${householdsText(d.hh[0])}) held <strong>${share(0)}%</strong> combined, ${fmtMoney(d.avg[0]*f)} each.`
         :`In ${WEALTH_LAST}, the top 1% of households by income held <strong>${share(n-1)}%</strong> of household net worth, <strong>${fmtMoney(d.avg[n-1]*f)}</strong> each on average, <strong>${Math.round(d.avg[n-1]/d.avg[2])}×</strong> a household in the middle 20% (${fmtMoney(d.avg[2]*f)}).`;
   }
+  // ---- Fig. 4: what-if wealth taxes on Fig. 3's data
+  {
+    const view4=state.f4View, g4=state.f4Group, f4=wealthSeries(view4,g4);
+    $("taxLegend").innerHTML=legendHTML(f4.labels.map(label=>({label})));
+    f4.opts.emptyNote="Nothing raised: no group’s average net worth reaches the threshold";
+    lastCharts.tax=[f4.series,f4.opts];
+    renderChart("taxChart","taxTooltip",...lastCharts.tax);
+    const unitTitle=view4==="tax"?"What-if wealth tax per household":"What-if wealth tax revenue, all households";
+    renderDataTable("taxTable",f4.series,`${unitTitle}, by group and year`,f4.opts.fmtTip,WEALTH_LAST);
+    const byText=g4==="wealth"?"households ranked by net worth":"households ranked by income";
+    $("taxSubtitle").textContent=`${view4==="tax"?"Yearly tax on a household with its group’s average net worth":"Yearly revenue from all households in each group"}, ${byText}. Federal Reserve data 2000–${WEALTH_LAST}, ${dollarText.replace(" $"," dollars").toLowerCase()}.`;
+    $("taxChart").setAttribute("aria-label",`Line chart: ${unitTitle.toLowerCase()}, ${byText}, by year. The numbers are in the data table below.`);
+    $("f4UnitPill").textContent=view4==="tax"?"Per household"+(state.unit==="person"?" · not per person":""):"Totals, all households";
+    $("wealthPaidWrap").classList.toggle("show",state.wealthMode==="zucman");
+    const d=wealthGroupData(WEALTH_LAST,g4), n=d.labels.length, f=inflationFactor(WEALTH_LAST);
+    const taxes=d.avg.map((a,j)=>wealthTaxFor(a,WEALTH_LAST)*d.hh[j]), revenue=taxes.reduce((t,x)=>t+x,0);
+    const reached=d.labels.filter((_,j)=>taxes[j]>0).map(x=>x.toLowerCase());
+    const paying=d.hh.reduce((t,h,j)=>t+(taxes[j]>0?h:0),0), cutoffText=fmtMoney(state.wealthThreshold).replace(/\.0(?=[kMBT])/,"");
+    const design=state.wealthMode==="flat"?`a flat ${state.wealthRate.toFixed(1)}% tax on net worth above ${cutoffText} (2024 $)`:`a Zucman-style minimum of ${state.wealthRate.toFixed(1)}% of net worth above ${cutoffText} (2024 $), minus ${state.wealthPaid.toFixed(1)}% already paid in tax`;
+    $("wealthAffects").textContent=g4==="income"
+      ?"Grouped by income, this understates a wealth tax: even the top 1% by income averages under $50 million, and many of the wealthiest households aren’t top earners. Group by wealth for a closer estimate."
+      :reached.length?`Reaches the ${listText(reached)}, using each group’s average net worth. A rough order of magnitude: it ignores avoidance and valuation problems.`
+      :`No group’s average net worth is above ${cutoffText}, so nothing is raised. Try a lower threshold.`;
+    const stat=(label,value,note)=>`<div class="tax-stat"><b>${label}</b><span>${value}</span><small>${note}</small></div>`;
+    $("wealthStats").innerHTML=
+      stat(`Raised in ${WEALTH_LAST}`,fmtMoney(revenue*f),revenue>0?"a year, from group averages":"nothing is taxed")+
+      stat("Households paying",paying?(paying>=1e6?`${(paying/1e6).toFixed(1)}M`:`${Math.round(paying/1000)}k`):"0",paying?`${(100*paying/d.hh.reduce((t,h)=>t+h,0)).toFixed(paying/d.hh.reduce((t,h)=>t+h,0)<.01?2:1)}% of all households`:"none above the threshold")+
+      stat("Per paying household",paying?fmtMoney(revenue*f/paying):"—",revenue>0?`${Math.round(100*taxes[n-1]/revenue)}% of revenue from the ${escapeHtml(d.labels[n-1].toLowerCase())}`:"");
+    $("fig4Takeaway").innerHTML=revenue>0?`In ${WEALTH_LAST}, ${escapeHtml(design)} would raise roughly <strong>${fmtMoney(revenue*f)}</strong> a year. Real collections would differ: avoidance, hard-to-value assets and falling asset prices all matter.`:`This design raises $0 from group averages in ${WEALTH_LAST}.`;
+  }
+  // Collapsed sidebar sections summarize their current settings.
+  $("inflationHint").textContent=dollarText.replace(" $"," dollars");
+  $("investHint").textContent=`${state.investPct}% of surplus · ${state.returnMode==="sp500"?"S&P 500":`${state.returnRate.toFixed(1)}% a year`}`;
   updateCompare();
   $("dollarModePill").textContent=dollarText;
   $("groupPill").textContent=($("segmentation").selectedOptions[0]?.text||"").split("·")[0].trim();
@@ -1598,6 +1652,8 @@ function syncStateFromUI(){
   state.wealthMode=$("wealthMode").value;
   state.f3View=$("f3View").value;
   state.f3Group=$("f3Group").value;
+  state.f4View=$("f4View").value;
+  state.f4Group=$("f4Group").value;
   state.wealthPaid=+$("wealthPaid").value;
   state.wealthRate=+$("wealthRate").value;
   state.wealthThreshold=Math.max(0,+$("wealthThreshold").value||0);
@@ -1647,17 +1703,19 @@ function syncStateFromUI(){
 function applyStateToUI(){
   Object.entries({
     segmentation:state.segmentation,customTop:state.customTop,unit:state.unit,transferScale:state.transferScale,kids:state.kids,childcareCost:state.childcareCost,
-    inflationMode:state.inflationMode,baseYear:state.baseYear,inflationRate:state.inflationRate,amtRate:state.amtRate,amtThreshold:state.amtThreshold,minTaxMode:state.minTaxMode,wealthMode:state.wealthMode,wealthRate:state.wealthRate,wealthThreshold:state.wealthThreshold,wealthPaid:state.wealthPaid,f3View:state.f3View,f3Group:state.f3Group,
+    inflationMode:state.inflationMode,baseYear:state.baseYear,inflationRate:state.inflationRate,amtRate:state.amtRate,amtThreshold:state.amtThreshold,minTaxMode:state.minTaxMode,wealthMode:state.wealthMode,wealthRate:state.wealthRate,wealthThreshold:state.wealthThreshold,wealthPaid:state.wealthPaid,f3View:state.f3View,f3Group:state.f3Group,f4View:state.f4View,f4Group:state.f4Group,
     investPct:state.investPct,returnMode:state.returnMode,returnRate:state.returnRate,portfolioView:state.portfolioView
   }).forEach(([k,v])=>{if($(k)) $(k).value=v;});
   $("showProjection").checked=state.showProjection;$("incomeView").value=state.incomeView;$("showHappiness").checked=state.showHappiness;$("taxMethod").value=state.taxMethod;$("afterTax").checked=state.afterTax;$("includeTransfers").checked=state.includeTransfers;
   document.querySelectorAll(".essential").forEach(x=>x.checked=state.essentials.includes(x.value));
   // Open the Advanced panel whenever one of its settings is in use, so nothing that changes the charts is hidden.
   if(state.taxMethod!=="cbo"||state.transferScale!==100||state.minTaxMode!=="off") $("advancedPanel").open=true;
+  if(state.inflationMode!=="nominal") $("inflationPanel").open=true;
+  if(state.investPct!==10||state.returnMode!=="sp500") $("investPanel").open=true;
 }
 function updateHash(){
   const payload={s:state.segmentation,c:state.customTop,u:state.unit,t:state.afterTax?1:0,tm:state.taxMethod,b:state.includeTransfers?1:0,ts:state.transferScale,k:state.kids,cc:state.childcareCost,
-    im:state.inflationMode,by:state.baseYear,ir:state.inflationRate,mt:state.minTaxMode,v3:state.f3View,g3:state.f3Group,wm:state.wealthMode,wr:state.wealthRate,wt:Math.round(state.wealthThreshold),wp:state.wealthPaid,ar:state.amtRate,at:Math.round(state.amtThreshold),ip:state.investPct,rm:state.returnMode,rr:state.returnRate,pv:state.portfolioView,p:state.showProjection?1:0,iv:state.incomeView,hp:state.showHappiness?1:0,e:state.essentials.join(".")};
+    im:state.inflationMode,by:state.baseYear,ir:state.inflationRate,mt:state.minTaxMode,v3:state.f3View,g3:state.f3Group,v4:state.f4View,g4:state.f4Group,wm:state.wealthMode,wr:state.wealthRate,wt:Math.round(state.wealthThreshold),wp:state.wealthPaid,ar:state.amtRate,at:Math.round(state.amtThreshold),ip:state.investPct,rm:state.returnMode,rr:state.returnRate,pv:state.portfolioView,p:state.showProjection?1:0,iv:state.incomeView,hp:state.showHappiness?1:0,e:state.essentials.join(".")};
   if(expensesEdited()) payload.x=JSON.stringify({s:state.expenseScale,e:state.expenseEdits,n:state.customName,a:state.customAmount});
   history.replaceState(null,"","#"+new URLSearchParams(payload).toString());
 }
@@ -1672,7 +1730,7 @@ function loadHash(){
     segmentation:pick("s","segmentation",DEFAULTS.segmentation), customTop:Math.round(num("c",1,1,50)), unit:pick("u","unit",DEFAULTS.unit),
     afterTax:g("t","0")==="1", taxMethod:pick("tm","taxMethod",DEFAULTS.taxMethod), includeTransfers:g("b","0")==="1", transferScale:num("ts",100,0,200),
     kids:Math.round(num("k",0,0,5)), childcareCost:num("cc",CHILDCARE_DEFAULT,0,1e6), inflationMode:pick("im","inflationMode",DEFAULTS.inflationMode),
-    baseYear:Math.round(num("by",2000,YEARS[0],YEARS.at(-1))), inflationRate:num("ir",2.5,0,8), minTaxMode:q.has("mt")?pick("mt","minTaxMode",DEFAULTS.minTaxMode):(g("ao","0")==="1"?"simple":"off"), f3View:pick("v3","f3View",DEFAULTS.f3View), f3Group:pick("g3","f3Group",DEFAULTS.f3Group), wealthMode:pick("wm","wealthMode",DEFAULTS.wealthMode), wealthRate:Math.round(num("wr",2,0.5,5)*2)/2, wealthThreshold:num("wt",DEFAULTS.wealthThreshold,0,1e12), wealthPaid:Math.round(num("wp",DEFAULTS.wealthPaid,0,3)*10)/10, amtRate:num("ar",20,5,45), amtThreshold:num("at",200000,0,1e8),
+    baseYear:Math.round(num("by",2000,YEARS[0],YEARS.at(-1))), inflationRate:num("ir",2.5,0,8), minTaxMode:q.has("mt")?pick("mt","minTaxMode",DEFAULTS.minTaxMode):(g("ao","0")==="1"?"simple":"off"), f3View:pick("v3","f3View",DEFAULTS.f3View), f3Group:pick("g3","f3Group",DEFAULTS.f3Group), f4View:q.has("v4")?pick("v4","f4View",DEFAULTS.f4View):(["tax","revenue"].includes(g("v3",""))?g("v3",""):DEFAULTS.f4View), f4Group:q.has("g4")?pick("g4","f4Group",DEFAULTS.f4Group):(["tax","revenue"].includes(g("v3",""))?pick("g3","f4Group",DEFAULTS.f4Group):DEFAULTS.f4Group), wealthMode:pick("wm","wealthMode",DEFAULTS.wealthMode), wealthRate:Math.round(num("wr",2,0.5,5)*2)/2, wealthThreshold:num("wt",DEFAULTS.wealthThreshold,0,1e12), wealthPaid:Math.round(num("wp",DEFAULTS.wealthPaid,0,3)*10)/10, amtRate:num("ar",20,5,45), amtThreshold:num("at",200000,0,1e8),
     investPct:num("ip",10,0,40), returnMode:pick("rm","returnMode",DEFAULTS.returnMode), returnRate:num("rr",8,-5,20), portfolioView:pick("pv","portfolioView",DEFAULTS.portfolioView),
     showProjection:g("p","1")==="1", incomeView:pick("iv","incomeView",DEFAULTS.incomeView), showHappiness:g("hp","1")==="1", essentials:g("e",DEFAULTS.essentials.join(".")).split(".").filter(k=>ESSENTIALS.includes(k))
   };
@@ -1728,7 +1786,7 @@ function applyPreset(key){
 }
 document.querySelectorAll(".preset").forEach(b=>b.addEventListener("click",()=>applyPreset(b.dataset.preset)));
 // Any manual change leaves the preset, except inputs that don't change the scenario.
-document.querySelectorAll("#controls select,#controls input,.viewrow select,.viewrow input,#wealthControls input,#wealthControls select").forEach(el=>el.addEventListener("input",()=>markPreset(null)));
+document.querySelectorAll("#controls select,#controls input,.viewrow select,.viewrow input,#fig4Controls input,#fig4Controls select").forEach(el=>el.addEventListener("input",()=>markPreset(null)));
 { const h=location.hash.slice(1); markPreset(h?(Object.keys(PRESETS).find(k=>PRESETS[k]&&PRESETS[k]===h)||null):"default"); }
 $("csvBtn").addEventListener("click",exportCSV);
 
@@ -1831,14 +1889,15 @@ function settingsList(){
     ["Fig. 2 view",$("portfolioView").selectedOptions[0]?.text||""],
     ["Projection",state.showProjection?"2025–2026 shown (grown with CPI-U)":"Hidden"],
     ["Fig. 3 view",`${$("f3View").selectedOptions[0]?.text||""}; grouped by ${state.f3Group}`],
-    ["Wealth tax (Fig. 3)",state.f3View==="tax"||state.f3View==="revenue"?(state.wealthMode==="flat"?`Flat ${state.wealthRate.toFixed(1)}% above ${fmtFull(state.wealthThreshold)} (2024 $)`:`Zucman-style ${state.wealthRate.toFixed(1)}% minimum above ${fmtFull(state.wealthThreshold)} (2024 $), ${state.wealthPaid.toFixed(1)}% already paid`):"Not shown"],
+    ["Fig. 4 view",`${$("f4View").selectedOptions[0]?.text||""}; grouped by ${state.f4Group}`],
+    ["Wealth tax (Fig. 4)",state.wealthMode==="flat"?`Flat ${state.wealthRate.toFixed(1)}% above ${fmtFull(state.wealthThreshold)} (2024 $)`:`Zucman-style ${state.wealthRate.toFixed(1)}% minimum above ${fmtFull(state.wealthThreshold)} (2024 $), ${state.wealthPaid.toFixed(1)}% already paid`],
   ];
 }
 function buildReport(){
   const figure=(n,svgId,titleText,subId,legendId)=>{
     // Re-render at desktop width so the saved image looks the same from any device.
     const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
-    const [series,opts]=lastCharts[{incomeChart:"income",portfolioChart:"portfolio",wealthChart:"wealth"}[svgId]];
+    const [series,opts]=lastCharts[{incomeChart:"income",portfolioChart:"portfolio",wealthChart:"wealth",taxChart:"tax"}[svgId]];
     renderChart(svgId,null,series,{...opts,width:960,target:svg,static:true,palette:THEMES.light});
     svg.setAttribute("width","1072"); svg.setAttribute("height","469");
     svg.setAttribute("font-family","JetBrains Mono, Consolas, monospace");
@@ -1856,6 +1915,7 @@ function buildReport(){
     ${figure(1,"incomeChart",escapeHtml($("fig1Title").textContent),"incomeSubtitle","incomeLegend")}
     ${figure(2,"portfolioChart",escapeHtml($("fig2Title").textContent),"portfolioSubtitle","portfolioLegend")}
     ${figure(3,"wealthChart",escapeHtml($("fig3Title").textContent),"wealthSubtitle","wealthLegend")}
+    ${figure(4,"taxChart",escapeHtml($("fig4Title").textContent),"taxSubtitle","taxLegend")}
     <section class="r-settings"><h3>Scenario settings</h3><dl>${settingsList().map(([k,v])=>`<div><dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd></div>`).join("")}</dl>
     <div class="r-link">Open this scenario: ${escapeHtml(location.href)}</div></section>
     <div class="r-foot">Data: BLS Consumer Expenditure Survey quintile tables 2000–2024, with 2025–2026 projected using CPI-U; BLS CPI; CBO federal tax rates; Federal Reserve Distributional Financial Accounts (net worth); IRS AMT parameters; S&amp;P 500 total returns; Child Care Aware of America. An illustrative model, not tax or investment advice.</div>`;
@@ -1916,7 +1976,7 @@ function setDrawer(open){
   // On phones and tablets the sheet is a modal dialog: announce it and make the page behind it inert.
   if(mobile&&open){ c.setAttribute("role","dialog"); c.setAttribute("aria-modal","true"); c.setAttribute("aria-labelledby","drawerTitle"); }
   else { c.removeAttribute("role"); c.removeAttribute("aria-modal"); c.removeAttribute("aria-labelledby"); }
-  document.querySelectorAll(".masthead,.main,footer,#openControls").forEach(el=>{ el.inert=mobile&&open; });
+  document.querySelectorAll(".masthead,.main,.fig4-grid,.after-grid,footer,#openControls").forEach(el=>{ el.inert=mobile&&open; });
   $("drawerBackdrop").hidden=!open;
   $("openControls").setAttribute("aria-expanded",String(open));
   document.body.classList.toggle("drawer-open",open);
@@ -1939,6 +1999,7 @@ addEventListener("resize",()=>{
       renderChart("incomeChart","incomeTooltip",...lastCharts.income);
       renderChart("portfolioChart","portfolioTooltip",...lastCharts.portfolio);
       renderChart("wealthChart","wealthTooltip",...lastCharts.wealth);
+      renderChart("taxChart","taxTooltip",...lastCharts.tax);
     }
   },120);
 });

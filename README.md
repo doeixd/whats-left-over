@@ -23,7 +23,9 @@ Open `index.html` in a modern browser, or serve the folder with any static serve
 - Children in paid childcare, priced from the Child Care Aware of America 2023 national average and adjusted by the day care CPI.
 - Nominal, real (CPI-U) or assumed-inflation dollars.
 - Minimum taxes (on income): a simple what-if minimum income tax, or a U.S.-style AMT (income-based) using each year's married-filing-jointly exemption, phase-out and 26%/28% rates (no deductions or filing status).
-- Fig. 3, "Where the wealth is": Federal Reserve household net worth by wealth group (top 0.1% to bottom 50%) or income group (top 1% to lowest 20%), as shares, averages, or what-if wealth taxes (flat Warren/Sanders-style, or a Zucman-style minimum) per household and in total revenue.
+- Fig. 3, "Where the wealth is": Federal Reserve household net worth by wealth group (top 0.1% to bottom 50%) or income group (top 1% to lowest 20%), as a 100% stacked area with households-vs-wealth bars, a cumulative wealth-by-percentile curve, or average net worth.
+- Fig. 4, "What if we taxed wealth?": what-if wealth taxes (flat Warren/Sanders-style, or a Zucman-style minimum) on Fig. 3's data, per household or as total revenue, with a revenue row and published outside estimates. Its settings sit in a panel beside the chart on desktop (sticky while scrolling) and directly below it on phones and tablets.
+- Inflation and Investing settings are collapsed by default, with a one-line summary of the current setting; they open automatically when a shared link changes them.
 - One-click scenario presets, each with its own share page and preview image (`/s/<preset>/`).
 - A plain-English takeaway under each chart, including the median (50th percentile) household in Fig. 1.
 - "Where do you fit?": enter a household income to see its approximate 2024 percentile and what that level's average essential costs would leave. Nothing entered is stored or shared.

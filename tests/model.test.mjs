@@ -69,6 +69,16 @@ for (const g of ["wealth", "income"]) {
   state.wealthMode = "flat";
 }
 
+// 5b. Fig. 4 revenue series equals tax × households, independent of Fig. 3's grouping.
+{
+  state.wealthMode = "flat"; state.wealthRate = 2; state.wealthThreshold = 50e6; state.f3Group = "income";
+  const s = wealthSeries("revenue", "wealth"), d = wealthGroupData(WEALTH_LAST, "wealth");
+  const expected = d.avg.reduce((t, a, j) => t + wealthTaxFor(a, WEALTH_LAST) * d.hh[j], 0);
+  const got = s.series.reduce((t, x) => t + x.data.at(-1).value, 0);
+  check("fig4 revenue uses its own grouping", s.labels[4] === "Top 0.1%" && near(got, expected, 1), got + " vs " + expected);
+  state.f3Group = "wealth";
+}
+
 // 6. AMT: zero below the exemption, 26%/28% above.
 {
   const [ex, , , b28] = AMT_MFJ[2024];
