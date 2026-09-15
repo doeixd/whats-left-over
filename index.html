@@ -515,6 +515,11 @@
     html,body{overflow-x:hidden}
     @supports (overflow:clip){ html,body{overflow-x:clip} }
   }
+  /* ---- Phones and tablets: smaller "?" info buttons. */
+  @media(max-width:1050px){
+    .tip{width:16px;height:16px;font-size:9px;vertical-align:1px;margin-left:5px}
+    .kpi .label .tip{margin-top:-1px}
+  }
 </style>
 </head>
 <body>
