@@ -506,7 +506,7 @@
       <div class="drawer-head"><strong id="drawerTitle">Settings</strong><button type="button" class="btn primary" id="closeControls">Show results</button></div>
       <div class="panel">
         <div class="section presets-section">
-          <div class="presets" role="group" aria-label="Scenario presets"><span class="presets-label">Try a scenario</span><button type="button" class="preset" data-preset="realistic" aria-pressed="false">After tax &amp; benefits</button><button type="button" class="preset" data-preset="top1" aria-pressed="false">Top 1% vs everyone (estimated)</button><button type="button" class="preset" data-preset="family" aria-pressed="false">Family, 2 kids in childcare</button><button type="button" class="preset" data-preset="today" aria-pressed="false">In 2024 dollars</button><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="One-click starting points. “After tax &amp; benefits” is the most realistic picture of spendable income. Every preset can be changed further in the settings, and the scenario link keeps your changes.">?</span></div>
+          <div class="presets" role="group" aria-label="Scenario presets"><span class="presets-label">Try a scenario</span><button type="button" class="preset" data-preset="market" aria-pressed="false">Market income only</button><button type="button" class="preset" data-preset="top1" aria-pressed="false">Top 1% vs everyone (estimated)</button><button type="button" class="preset" data-preset="family" aria-pressed="false">Family, 2 kids in childcare</button><button type="button" class="preset" data-preset="today" aria-pressed="false">In 2024 dollars</button><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="One-click starting points. The default already counts taxes and benefits; “Market income only” removes both to show income before government taxes and transfers. Every preset can be changed further in the settings, and the scenario link keeps your changes.">?</span></div>
         </div>
         <div class="section">
           <h2 class="section-title" data-n="01">Population groups<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Households are ranked by income before taxes. Each line shows the average household in that slice of the distribution.">?</span></h2>
@@ -909,7 +909,7 @@ const DEFAULT_ESSENTIALS = ["food","housing","transport","health","insurance"];
 const ESSENTIAL_NAMES = {food:"food at home",housing:"housing",transport:"transportation",health:"healthcare",insurance:"insurance & pensions",education:"education"};
 
 const DEFAULTS = {
-  segmentation:"quintiles", customTop:1, unit:"person", afterTax:false, taxMethod:"cbo", includeTransfers:false, transferScale:100,
+  segmentation:"quintiles", customTop:1, unit:"person", afterTax:true, taxMethod:"cbo", includeTransfers:true, transferScale:100,
   kids:0, childcareCost:CHILDCARE_DEFAULT,
   inflationMode:"nominal", baseYear:2000, inflationRate:2.5, minTaxMode:"off", amtRate:20, amtThreshold:200000, f3View:"share", f3Group:"wealth", f4View:"revenue", f4Group:"wealth", wealthMode:"flat", wealthRate:2, wealthThreshold:50000000, wealthPaid:0.3,
   investPct:10, returnMode:"sp500", returnRate:8, portfolioView:"portfolio", showProjection:true, incomeView:"left", showHappiness:true, essentials:[...DEFAULT_ESSENTIALS],
@@ -1740,7 +1740,7 @@ function loadHash(){
   const num=(k,d,lo,hi)=>{ const val=Number(g(k,d)); return Number.isFinite(val)?clamp(val,lo,hi):d; };
   state={...cloneDefaults(),
     segmentation:pick("s","segmentation",DEFAULTS.segmentation), customTop:Math.round(num("c",1,1,50)), unit:pick("u","unit",DEFAULTS.unit),
-    afterTax:g("t","0")==="1", taxMethod:pick("tm","taxMethod",DEFAULTS.taxMethod), includeTransfers:g("b","0")==="1", transferScale:num("ts",100,0,200),
+    afterTax:g("t","1")==="1", taxMethod:pick("tm","taxMethod",DEFAULTS.taxMethod), includeTransfers:g("b","1")==="1", transferScale:num("ts",100,0,200),
     kids:Math.round(num("k",0,0,5)), childcareCost:num("cc",CHILDCARE_DEFAULT,0,1e6), inflationMode:pick("im","inflationMode",DEFAULTS.inflationMode),
     baseYear:Math.round(num("by",2000,YEARS[0],YEARS.at(-1))), inflationRate:num("ir",2.5,0,8), minTaxMode:q.has("mt")?pick("mt","minTaxMode",DEFAULTS.minTaxMode):(g("ao","0")==="1"?"simple":"off"), f3View:pick("v3","f3View",DEFAULTS.f3View), f3Group:pick("g3","f3Group",DEFAULTS.f3Group), f4View:q.has("v4")?pick("v4","f4View",DEFAULTS.f4View):(["tax","revenue"].includes(g("v3",""))?g("v3",""):DEFAULTS.f4View), f4Group:q.has("g4")?pick("g4","f4Group",DEFAULTS.f4Group):(["tax","revenue"].includes(g("v3",""))?pick("g3","f4Group",DEFAULTS.f4Group):DEFAULTS.f4Group), wealthMode:pick("wm","wealthMode",DEFAULTS.wealthMode), wealthRate:Math.round(num("wr",2,0.5,5)*2)/2, wealthThreshold:num("wt",DEFAULTS.wealthThreshold,0,1e12), wealthPaid:Math.round(num("wp",DEFAULTS.wealthPaid,0,3)*10)/10, amtRate:num("ar",20,5,45), amtThreshold:num("at",200000,0,1e8),
     investPct:num("ip",10,0,40), returnMode:pick("rm","returnMode",DEFAULTS.returnMode), returnRate:num("rr",8,-5,20), portfolioView:pick("pv","portfolioView",DEFAULTS.portfolioView),
@@ -1789,7 +1789,7 @@ loadHash();rebuildEssentials();rebuildTaxes();applyStateToUI();
 document.querySelectorAll("select,input").forEach(el=>el.addEventListener("input",update));
 $("resetBtn").addEventListener("click",()=>{ reset(); markPreset("default"); });
 // One-click scenarios: each is a share-link hash applied on top of the defaults.
-const PRESETS={default:"",realistic:"t=1&b=1",top1:"s=99_1&t=1&b=1&u=household",family:"t=1&b=1&k=2&u=household",today:"t=1&b=1&im=realBase&by=2024"};
+const PRESETS={default:"",market:"t=0&b=0",top1:"s=99_1&t=1&b=1&u=household",family:"t=1&b=1&k=2&u=household",today:"t=1&b=1&im=realBase&by=2024"};
 function markPreset(key){ document.querySelectorAll(".preset").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.preset===key))); }
 function applyPreset(key){
   history.replaceState(null,"",PRESETS[key]?"#"+PRESETS[key]:location.pathname+location.search);

@@ -17,7 +17,7 @@ Open `index.html` in a modern browser, or serve the folder with any static serve
 ## Features
 - Income groups: quintiles, quartiles, deciles, 90/10, 95/5, 99/1, 50/40/10, or a custom top share.
 - Amounts per person (default) or per household.
-- Income before or after tax, with four tax methods: CBO federal rates (default, consistent across years), BLS adjusted for its 2013 method change, a fixed 2013–15 BLS rate, or BLS as published (marked on the chart at 2013).
+- Income after tax and including benefits by default (a "Market income only" preset removes both), with four tax methods: CBO federal rates (default, consistent across years), BLS adjusted for its 2013 method change, a fixed 2013–15 BLS rate, or BLS as published (marked on the chart at 2013).
 - Benefits and transfers on or off, with a what-if benefit amount.
 - Essential spending categories (food at home, housing, transportation, healthcare, insurance and pensions, and optional education), plus an expense editor to scale categories, edit any year and add a custom expense.
 - Children in paid childcare, priced from the Child Care Aware of America 2023 national average and adjusted by the day care CPI.
