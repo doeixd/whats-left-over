@@ -298,6 +298,10 @@
   /* Labels sit on a light tag so they stay readable (WCAG AA) on every segment color. */
   .split-bar em{font-style:normal;background:rgba(251,250,246,.92);color:#1a1916;padding:3px 6px;border-radius:3px;overflow:hidden;text-overflow:ellipsis;max-width:calc(100% - 6px)}
   @media(max-width:650px){.split-row{grid-template-columns:1fr;gap:4px}.split-bar span{font-size:10px}}
+  .fig-anchor{color:inherit;text-decoration:none}
+  .fig-anchor:hover,.fig-anchor:focus-visible{text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:1px;text-underline-offset:6px}
+  .fig-anchor:hover::after{content:"#";margin-left:8px;font:400 .6em/1 var(--mono);color:var(--accent-text);vertical-align:.35em}
+  .card{scroll-margin-top:16px}
   .takeaway{font:400 18px/1.5 var(--serif);color:var(--ink-2);margin:14px 0 4px;max-width:70ch}
   .takeaway strong{font-weight:500;color:var(--ink)}
   .takeaway:empty{display:none}
@@ -662,9 +666,9 @@
       <p class="sr-only" id="summaryLive" aria-live="polite" aria-atomic="true"></p>
       <p class="sr-only" id="statusLive" aria-live="polite"></p>
 
-      <section class="card">
+      <section class="card" id="fig1">
         <div class="card-head">
-          <div><div class="fig">Fig. 1</div><h2><span id="fig1Title">Money left after essentials</span><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Income under your settings minus the essential costs you selected, averaged across the group. The dark horizontal line marks $0.">?</span></h2><p id="incomeSubtitle">Yearly pre-tax income excluding benefits, minus essential costs. Per person.</p></div>
+          <div><div class="fig">Fig. 1</div><h2><a class="fig-anchor" href="#f=fig1" data-fig="fig1" title="Link to this figure"><span id="fig1Title">Money left after essentials</span></a><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Income under your settings minus the essential costs you selected, averaged across the group. The dark horizontal line marks $0.">?</span></h2><p id="incomeSubtitle">Yearly pre-tax income excluding benefits, minus essential costs. Per person.</p></div>
           <div class="metric-strip"><span class="pill" id="dollarModePill">Nominal $</span><span class="pill" id="groupPill">Quintiles</span><span class="pill" id="unitPill">Per person</span><span class="pill pill-est" id="estPill1" title="BLS publishes five income groups (fifths). Finer groups, such as deciles or the top 1%, are estimated from a smooth curve fitted inside those fifths. The top 1% is the least certain: BLS’s survey is known to miss very high incomes." hidden>Estimated groups</span></div>
         </div>
         <div class="viewrow"><label for="incomeView">Show<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Money left after essentials: income minus the costs you selected. Income: income alone, before any essential costs (before or after tax, with or without benefits, per your settings). Well-being research compares happiness with income, so the happiness plateau line appears on the income view.">?</span></label><select id="incomeView"><option value="left">Money left after essentials</option><option value="income">Income</option></select><span class="inline-group" id="happinessWrap" hidden><label class="checkrow"><input type="checkbox" id="showHappiness" checked>Happiness plateau line</label><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A dotted reference line on income views, at about $110,000 of yearly household income in 2024. Kahneman &amp; Deaton (2010), using 450,000+ Gallup responses from 2008–09, found day-to-day emotional well-being stopped improving above roughly $75,000 of household income, while overall life satisfaction kept rising. A 2023 reanalysis by Killingsworth, Kahneman &amp; Mellers (33,391 employed U.S. adults) found that plateau only for the least happy 15–20% of people, at about $100,000; for most people happiness keeps rising with income. The line is $75,000 in 2008–09 dollars adjusted with CPI-U for each year. Shown only for per-household amounts, since the research uses household income.">?</span></span></div>
@@ -675,9 +679,9 @@
         <details class="datatable"><summary>Show the numbers</summary><div class="etable-wrap"><table class="etable" id="incomeTable"></table></div></details>
       </section>
 
-      <section class="card">
+      <section class="card" id="fig2">
         <div class="card-head">
-          <div><div class="fig">Fig. 2</div><h2><span id="fig2Title">What investing it adds up to</span><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A what-if: each group invests part of whatever it has left every year from 2000. Use “Show as” to see the portfolio balance, that year's investment return stacked on top of surplus or income. Fig. 3 shows what households actually own.">?</span></h2><p id="portfolioSubtitle">Portfolio balance from investing part of each year’s surplus since 2000.</p></div>
+          <div><div class="fig">Fig. 2</div><h2><a class="fig-anchor" href="#f=fig2" data-fig="fig2" title="Link to this figure"><span id="fig2Title">What investing it adds up to</span></a><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A what-if: each group invests part of whatever it has left every year from 2000. Use “Show as” to see the portfolio balance, that year's investment return stacked on top of surplus or income. Fig. 3 shows what households actually own.">?</span></h2><p id="portfolioSubtitle">Portfolio balance from investing part of each year’s surplus since 2000.</p></div>
           <div class="metric-strip"><span class="pill" id="returnPill">S&amp;P 500</span><span class="pill" id="investPill">10% invested</span><span class="pill pill-est" id="estPill2" title="BLS publishes five income groups (fifths). Finer groups, such as deciles or the top 1%, are estimated from a smooth curve fitted inside those fifths. The top 1% is the least certain: BLS’s survey is known to miss very high incomes." hidden>Estimated groups</span></div>
         </div>
         <div class="viewrow"><label for="portfolioView">Show as<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Portfolio value: the balance built up since 2000. Contributions vs. growth: the dashed line is the total put in so far and the solid line is what it&#x27;s worth, so the gap is compounding. Stacked views show one year at a time: the dashed line is that year&#x27;s surplus (or income) and the solid line adds that year&#x27;s investment return. Returns can be negative, as in 2008.">?</span></label><select id="portfolioView"><option value="portfolio">Portfolio value</option><option value="growth">Contributions vs. growth</option><option value="surplus">Return stacked on yearly surplus</option><option value="income">Return stacked on yearly income</option></select></div>
@@ -690,7 +694,7 @@
       <p class="bridge">Figs. 1–2 follow yearly cash flow. Fig. 3 turns to what households actually own.</p>
       <section class="card" id="fig3">
         <div class="card-head">
-          <div><div class="fig">Fig. 3</div><h2><span id="fig3Title">Where the wealth is</span><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Real household net worth (assets such as homes, businesses, stocks and pensions, minus debts) from the Federal Reserve’s Distributional Financial Accounts, which scale survey data to match the national balance sheet. Unlike Figs. 1–2 it is measured, not a what-if, and it is per household. Group by wealth to see the very top (the top 0.1%), or by income to compare with the income groups above.">?</span></h2><p id="wealthSubtitle"></p></div>
+          <div><div class="fig">Fig. 3</div><h2><a class="fig-anchor" href="#f=fig3" data-fig="fig3" title="Link to this figure"><span id="fig3Title">Where the wealth is</span></a><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Real household net worth (assets such as homes, businesses, stocks and pensions, minus debts) from the Federal Reserve’s Distributional Financial Accounts, which scale survey data to match the national balance sheet. Unlike Figs. 1–2 it is measured, not a what-if, and it is per household. Group by wealth to see the very top (the top 0.1%), or by income to compare with the income groups above.">?</span></h2><p id="wealthSubtitle"></p></div>
           <div class="metric-strip"><span class="pill">Federal Reserve data</span><span class="pill" id="f3UnitPill">Per household</span></div>
         </div>
         <div class="viewrow"><label for="f3View">Show<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Share of all household wealth: each group’s slice of total U.S. household net worth. Cumulative wealth: households lined up from least to most, with the running total of what they own; the curve is smoothed between the Fed’s official group boundaries. Average net worth: dollars per household (the top groups dwarf the rest). What-if wealth taxes are in Fig. 4.">?</span></label><select id="f3View"><option value="share">Share of all household wealth</option><option value="curve">Cumulative wealth by percentile</option><option value="avg">Average net worth per household</option></select><label for="f3Group">Group by<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Wealth: households ranked by net worth, down to the top 0.1% (about 136,000 households). Income: households ranked by income, as in Figs. 1–2, down to the top 1%. They are different households: many high earners aren’t among the wealthiest, and many wealthy households have modest income.">?</span></label><select id="f3Group"><option value="wealth">Wealth · top 0.1% to bottom 50%</option><option value="income">Income · top 1% to lowest 20%</option></select></div>
@@ -721,7 +725,7 @@
     <div class="fig4-main" role="region" aria-labelledby="fig4Title">
       <section class="card" id="fig4">
         <div class="card-head">
-          <div><div class="fig">Fig. 4</div><h2><span id="fig4Title">What if we taxed wealth?</span><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A what-if yearly tax on household net worth, using the Federal Reserve wealth data from Fig. 3. Choose the design, rate and threshold in the panel beside this chart (above it on phones). It applies the tax to each group’s average net worth, so it is a rough order of magnitude, not a revenue forecast.">?</span></h2><p id="taxSubtitle"></p></div>
+          <div><div class="fig">Fig. 4</div><h2><a class="fig-anchor" href="#f=fig4" data-fig="fig4" title="Link to this figure"><span id="fig4Title">What if we taxed wealth?</span></a><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A what-if yearly tax on household net worth, using the Federal Reserve wealth data from Fig. 3. Choose the design, rate and threshold in the panel beside this chart (above it on phones). It applies the tax to each group’s average net worth, so it is a rough order of magnitude, not a revenue forecast.">?</span></h2><p id="taxSubtitle"></p></div>
           <div class="metric-strip"><span class="pill pill-est">What-if</span><span class="pill" id="f4UnitPill">Totals, all households</span></div>
         </div>
         <div class="tax-stats" id="wealthStats" aria-live="polite"></div>
@@ -1716,9 +1720,12 @@ function applyStateToUI(){
   if(state.inflationMode!=="nominal") $("inflationPanel").open=true;
   if(state.investPct!==10||state.returnMode!=="sp500") $("investPanel").open=true;
 }
+// Figure linked from its heading (#…&f=fig3). Kept in the hash alongside the scenario settings.
+let figAnchor=null;
 function updateHash(){
   const payload={s:state.segmentation,c:state.customTop,u:state.unit,t:state.afterTax?1:0,tm:state.taxMethod,b:state.includeTransfers?1:0,ts:state.transferScale,k:state.kids,cc:state.childcareCost,
     im:state.inflationMode,by:state.baseYear,ir:state.inflationRate,mt:state.minTaxMode,v3:state.f3View,g3:state.f3Group,v4:state.f4View,g4:state.f4Group,wm:state.wealthMode,wr:state.wealthRate,wt:Math.round(state.wealthThreshold),wp:state.wealthPaid,ar:state.amtRate,at:Math.round(state.amtThreshold),ip:state.investPct,rm:state.returnMode,rr:state.returnRate,pv:state.portfolioView,p:state.showProjection?1:0,iv:state.incomeView,hp:state.showHappiness?1:0,e:state.essentials.join(".")};
+  if(figAnchor) payload.f=figAnchor;
   if(expensesEdited()) payload.x=JSON.stringify({s:state.expenseScale,e:state.expenseEdits,n:state.customName,a:state.customAmount});
   history.replaceState(null,"","#"+new URLSearchParams(payload).toString());
 }
@@ -1726,6 +1733,7 @@ function loadHash(){
   if(!location.hash.slice(1)) return;
   const q=new URLSearchParams(location.hash.slice(1));
   const g=(k,d)=>q.has(k)?q.get(k):d;
+  figAnchor=["fig1","fig2","fig3","fig4"].includes(g("f",""))?g("f",""):null;
   // Only accept values the controls can hold, so an old or hand-edited link can't break the page.
   const pick=(k,id,d)=>{ const val=g(k,d); return [...$(id).options].some(o=>o.value===val)?val:d; };
   const num=(k,d,lo,hi)=>{ const val=Number(g(k,d)); return Number.isFinite(val)?clamp(val,lo,hi):d; };
@@ -2077,6 +2085,15 @@ $("themeBtn").addEventListener("click",()=>{
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{ if(themePref()==="system") applyTheme(); });
 applyTheme();
 update();
+// Clicking a figure heading puts that figure in the URL (keeping the scenario settings) and scrolls to it.
+document.querySelectorAll(".fig-anchor").forEach(a=>a.addEventListener("click",e=>{
+  e.preventDefault();
+  figAnchor=a.dataset.fig; updateHash();
+  $(figAnchor).scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+  announceStatus("Link to this figure is in the address bar.");
+}));
+// Opening a link to a figure scrolls to it once fonts and charts have laid out.
+if(figAnchor) document.fonts.ready.then(()=>setTimeout(()=>$(figAnchor)?.scrollIntoView({block:"start"}),50));
 </script>
 </body>
 </html>
