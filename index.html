@@ -279,6 +279,8 @@
   details.adv[open]>summary::after{content:"−"}
   .adv-hint{flex-basis:100%;order:3;font:400 12px/1.4 var(--sans);color:var(--muted);margin-top:4px;padding-left:22px}
   .presets{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 22px}
+  .presets-section .presets{margin:0}
+  .presets-section .presets-label{flex-basis:100%;margin:0 0 6px}
   .presets-label{font:500 10px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text);margin-right:6px}
   .preset{border:1px solid var(--control);background:transparent;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:500;color:var(--ink-2);cursor:pointer}
   .preset:hover{border-color:var(--ink)}
@@ -308,7 +310,7 @@
   .side-kicker{font:500 10px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text);margin:0 0 8px}
   #wealthAffects{margin:4px 0 0}
   .fig4-main{min-width:0}
-  .fig4-main .bridge{margin-top:0}
+  #fig4 .tax-stats{border-top:0}
   @media(min-width:1051px){.after-grid{margin-left:calc(340px + 44px)}}
   @media(max-width:1050px){
     /* .grid.fig4-grid outranks the later .grid{display:block} phone rule. */
@@ -498,6 +500,9 @@
     <aside class="controls" id="controls" aria-label="Settings">
       <div class="drawer-head"><strong id="drawerTitle">Settings</strong><button type="button" class="btn primary" id="closeControls">Show results</button></div>
       <div class="panel">
+        <div class="section presets-section">
+          <div class="presets" role="group" aria-label="Scenario presets"><span class="presets-label">Try a scenario</span><button type="button" class="preset" data-preset="default" aria-pressed="true">Default</button><button type="button" class="preset" data-preset="realistic" aria-pressed="false">After tax &amp; benefits</button><button type="button" class="preset" data-preset="top1" aria-pressed="false">Top 1% vs everyone (estimated)</button><button type="button" class="preset" data-preset="family" aria-pressed="false">Family, 2 kids in childcare</button><button type="button" class="preset" data-preset="today" aria-pressed="false">In 2024 dollars</button><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="One-click starting points. “After tax &amp; benefits” is the most realistic picture of spendable income. Every preset can be changed further in the settings, and the scenario link keeps your changes.">?</span></div>
+        </div>
         <div class="section">
           <h2 class="section-title" data-n="01">Population groups<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Households are ranked by income before taxes. Each line shows the average household in that slice of the distribution.">?</span></h2>
           <div class="control">
@@ -646,7 +651,6 @@
     </aside>
 
     <main class="main" id="results" tabindex="-1">
-      <div class="presets" role="group" aria-label="Scenario presets"><span class="presets-label">Try a scenario</span><button type="button" class="preset" data-preset="default" aria-pressed="true">Default</button><button type="button" class="preset" data-preset="realistic" aria-pressed="false">After tax &amp; benefits</button><button type="button" class="preset" data-preset="top1" aria-pressed="false">Top 1% vs everyone (estimated)</button><button type="button" class="preset" data-preset="family" aria-pressed="false">Family, 2 kids in childcare</button><button type="button" class="preset" data-preset="today" aria-pressed="false">In 2024 dollars</button><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="One-click starting points. “After tax &amp; benefits” is the most realistic picture of spendable income. Every preset can be changed further in the settings, and the scenario link keeps your changes.">?</span></div>
       <div class="kpis">
         <div class="kpi"><div class="label">Lowest group · left in 2024<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="What the lowest-income group had left in 2024, the latest year of BLS data, after essentials, per household or per person (see Show amounts). Negative means a shortfall.">?</span></div><div class="value" id="kpiBottom">—</div><div class="small" id="kpiBottomName">—</div></div>
         <div class="kpi"><div class="label">Highest group · left in 2024<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="What the highest-income group had left in 2024 after essentials, per household or per person (see Show amounts).">?</span></div><div class="value" id="kpiTop">—</div><div class="small" id="kpiTopName">—</div></div>
@@ -715,7 +719,6 @@
       </div>
     </aside>
     <div class="fig4-main" role="region" aria-labelledby="fig4Title">
-      <p class="bridge">Fig. 4 asks a what-if: what a yearly tax on that wealth would raise.</p>
       <section class="card" id="fig4">
         <div class="card-head">
           <div><div class="fig">Fig. 4</div><h2><span id="fig4Title">What if we taxed wealth?</span><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A what-if yearly tax on household net worth, using the Federal Reserve wealth data from Fig. 3. Choose the design, rate and threshold in the panel beside this chart (above it on phones). It applies the tax to each group’s average net worth, so it is a rough order of magnitude, not a revenue forecast.">?</span></h2><p id="taxSubtitle"></p></div>
