@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Methodology · Household Surplus Lab</title>
+<meta name="description" content="How the Household Surplus Lab works: data sources, income percentiles, taxes and benefits, projections, investing, Federal Reserve wealth data and what-if wealth taxes, with known limitations.">
+<link rel="canonical" href="https://whats-left-over.pages.dev/methodology">
+<meta name="author" content="Patrick Glenn by way of Claude and ChatGPT">
+<meta name="theme-color" content="#f4f1ea">
+<meta name="color-scheme" content="light dark">
+<script>
+// Apply the saved or system color theme before first paint so the page never flashes the wrong theme.
+(function(){var p;try{p=localStorage.getItem("hsl-theme");}catch(e){}var dark=p==="dark"||(p!=="light"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.setAttribute("data-theme",dark?"dark":"light");var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",dark?"#151412":"#f4f1ea");})();
+</script>
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Household Surplus Lab">
+<meta property="og:url" content="https://whats-left-over.pages.dev/methodology">
+<meta property="og:title" content="Methodology · Household Surplus Lab">
+<meta property="og:description" content="Data sources, formulas, assumptions and limitations behind the Household Surplus Lab simulator.">
+<meta property="og:image" content="https://whats-left-over.pages.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f1ea; --sheet:#fbfaf6; --ink:#1a1916; --ink-2:#4a4740; --muted:#6b665b;
+    --rule:#d9d3c5; --rule-soft:#e8e3d8; --accent:#c8472d; --accent-soft:#f3dfd6;
+    --accent-text:#b23e26; --control:#8f897c;
+    color-scheme:light;
+    --serif:"Newsreader", Georgia, "Times New Roman", serif;
+    --sans:"Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  }
+  :root[data-theme="dark"]{--paper:#151412; --sheet:#1e1d1a; --ink:#ece7dd; --ink-2:#c7c0b3; --muted:#a39c8f; --rule:#3b3832; --rule-soft:#2a2824; --accent:#e0664a; --accent-soft:#3d2219; --accent-text:#f08e74; --control:#7d776c; color-scheme:dark;}
+  *{box-sizing:border-box}
+  html{background:var(--paper)}
+  body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+  a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--control);text-underline-offset:3px}
+  a:hover{text-decoration-color:var(--accent)}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  ::selection{background:var(--accent-soft)}
+  .shell{max-width:1440px;margin:0 auto;padding:0 40px}
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid var(--ink);font:500 11px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2)}
+  .topbar .mark{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none}
+  .topbar .mark i{width:9px;height:9px;background:var(--accent);display:inline-block}
+  .topbar .back{color:var(--ink);text-decoration:none;border:1px solid var(--rule);border-radius:999px;padding:7px 12px}
+  .topbar .back:hover{border-color:var(--ink)}
+  .skip{position:absolute;left:16px;top:-80px;z-index:100;background:var(--ink);color:var(--sheet);padding:10px 14px;border-radius:6px;text-decoration:none;font-weight:500}
+  .skip:focus{top:12px}
+  article{max-width:72ch;margin:0 auto;padding:44px 0 24px}
+  .kicker{font:500 10px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text);margin:0 0 14px}
+  h1{font:400 clamp(40px,5.6vw,68px)/1 var(--serif);letter-spacing:-.025em;margin:0 0 20px}
+  h1 em{font-style:italic;color:var(--accent-text)}
+  .dek{font:400 20px/1.5 var(--serif);color:var(--ink-2);margin:0 0 28px}
+  h2{display:flex;align-items:baseline;gap:12px;font:400 30px/1.15 var(--serif);letter-spacing:-.01em;margin:52px 0 14px;padding-top:18px;border-top:1px solid var(--ink)}
+  h2 .n{font:500 11px/1 var(--mono);color:var(--accent-text);letter-spacing:.04em;flex:none}
+  h3{font:500 20px/1.25 var(--serif);margin:28px 0 8px}
+  p,li{color:var(--ink-2)}
+  strong{color:var(--ink);font-weight:600}
+  ul,ol{padding-left:22px}
+  li{margin:6px 0}
+  code{font:13.5px/1.5 var(--mono);color:var(--ink);background:var(--sheet);border:1px solid var(--rule-soft);border-radius:4px;padding:1px 5px}
+  .formula{display:block;overflow-x:auto;white-space:pre;padding:10px 14px;margin:10px 0 16px;border-left:2px solid var(--accent);border-radius:0 4px 4px 0}
+  nav.toc{border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);padding:16px 0 12px;margin:0 0 8px}
+  nav.toc h2{border:0;margin:0 0 8px;padding:0;font:500 10px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text)}
+  nav.toc ol{list-style:none;padding:0;margin:0;columns:2;column-gap:32px}
+  nav.toc li{margin:0 0 6px;break-inside:avoid;font-size:14px}
+  nav.toc li span{font:500 10px/1 var(--mono);color:var(--accent-text);margin-right:8px}
+  .table-wrap{overflow-x:auto;border-top:1px solid var(--ink);margin:12px 0 20px}
+  table{border-collapse:collapse;width:100%;font-size:14px}
+  caption{text-align:left;font-size:13px;color:var(--muted);padding:8px 0;caption-side:bottom}
+  th,td{padding:8px 10px 8px 0;border-bottom:1px solid var(--rule-soft);text-align:left;vertical-align:top;color:var(--ink-2)}
+  thead th{font:500 10px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);white-space:nowrap}
+  tbody th{color:var(--ink);font-weight:500}
+  td.num,th.num{text-align:right;font-family:var(--mono);font-size:13px;white-space:nowrap}
+  .notice{border-left:2px solid var(--accent);padding:4px 0 4px 16px;margin:18px 0;font:italic 400 17px/1.5 var(--serif);color:var(--ink)}
+  .notice strong{font:500 10px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text);display:block;margin-bottom:6px}
+  footer{font-size:13px;color:var(--muted);padding:22px 0 40px;border-top:1px solid var(--rule);margin:32px auto 0;max-width:72ch}
+  footer p{margin:0 0 8px;color:var(--muted)}
+  footer .disclaimer{color:var(--ink-2);border-left:2px solid var(--accent);padding-left:10px;margin:12px 0}
+  @media(max-width:650px){
+    .shell{padding:0 16px}
+    article{padding-top:28px}
+    h1{font-size:42px}
+    .dek{font-size:18px}
+    h2{font-size:25px}
+    nav.toc ol{columns:1}
+    .topbar .tag{display:none}
+  }
+  @media print{
+    :root[data-theme]{--paper:#fff; --sheet:#fbfaf6; --ink:#1a1916; --ink-2:#4a4740; --muted:#6b665b; --rule:#d9d3c5; --rule-soft:#e8e3d8; --accent:#c8472d; --accent-text:#b23e26; color-scheme:light}
+    .skip,.topbar .back{display:none}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="shell">
+  <header>
+    <div class="topbar">
+      <a class="mark" href="./"><i></i>Household Surplus Lab</a>
+      <span class="tag">Methodology · Version 1.0</span>
+      <a class="back" href="./">← Back to the simulator</a>
+    </div>
+  </header>
+
+  <main id="main">
+  <article>
+    <p class="kicker">Methodology</p>
+    <h1>How the numbers are <em>made</em>.</h1>
+    <p class="dek">The Household Surplus Lab combines published U.S. government data with a handful of modeling steps. This page explains each step: what is measured, what is estimated, the formulas, and where the model is weakest.</p>
+
+    <nav class="toc" aria-labelledby="tocTitle">
+      <h2 id="tocTitle">Contents</h2>
+      <ol>
+        <li><span>01</span><a href="#what">What the site does</a></li>
+        <li><span>02</span><a href="#sources">Data sources</a></li>
+        <li><span>03</span><a href="#percentiles">Income groups and percentiles</a></li>
+        <li><span>04</span><a href="#taxes">Income, benefits and taxes</a></li>
+        <li><span>05</span><a href="#expenses">Essentials, childcare and projections</a></li>
+        <li><span>06</span><a href="#units">Per person and inflation</a></li>
+        <li><span>07</span><a href="#investing">Investing</a></li>
+        <li><span>08</span><a href="#wealth">Fig. 3: wealth and wealth taxes</a></li>
+        <li><span>09</span><a href="#fit">Where do you fit?</a></li>
+        <li><span>10</span><a href="#checks">Outside checks</a></li>
+        <li><span>11</span><a href="#limits">Known limitations</a></li>
+        <li><span>12</span><a href="#changelog">Changelog</a></li>
+      </ol>
+    </nav>
+
+    <section aria-labelledby="what">
+      <h2 id="what"><span class="n">01</span>What the site does</h2>
+      <p>The simulator asks how much U.S. households have left each year after paying for essentials, by income group, from 2000 to 2024, with 2025–2026 projected. It has three figures and a personal comparison:</p>
+      <ul>
+        <li><strong>Fig. 1, Money left after essentials.</strong> Income under your settings (before or after tax, with or without benefits) minus the essential costs you select, averaged across each group. It can also show income alone, with an optional happiness plateau reference line.</li>
+        <li><strong>Fig. 2, What investing it adds up to.</strong> A what-if portfolio built by investing a share of each year’s positive surplus since 2000.</li>
+        <li><strong>Fig. 3, Where the wealth is.</strong> Measured household net worth from the Federal Reserve, by wealth or income group, plus what-if wealth taxes.</li>
+        <li><strong>Where do you fit?</strong> Places a household income you type among 2024 percentile incomes.</li>
+      </ul>
+      <p>One-click <strong>presets</strong> are share-link settings applied on top of the defaults: <em>Default</em>; <em>After tax &amp; benefits</em>; <em>Top 1% vs everyone</em> (bottom 99% vs top 1%, after tax and benefits, per household); <em>Family, 2 kids in childcare</em> (after tax and benefits, per household); and <em>In 2024 dollars</em> (after tax and benefits, real 2024 dollars). All settings live in the URL hash.</p>
+    </section>
+
+    <section aria-labelledby="sources">
+      <h2 id="sources"><span class="n">02</span>Data sources</h2>
+      <div class="table-wrap" role="region" aria-label="Data sources table" tabindex="0">
+        <table>
+          <thead><tr><th scope="col">Source</th><th scope="col">What is used</th><th scope="col">Years</th><th scope="col">License</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><a href="https://www.bls.gov/cex/tables.htm">BLS Consumer Expenditure Survey</a>, quintiles of income before taxes</th><td>Income before and after taxes, quintile income limits, household size, food at home, housing, transportation, healthcare, personal insurance and pensions, education, benefit income</td><td>2000–2024</td><td>Public domain</td></tr>
+            <tr><th scope="row"><a href="https://www.cbo.gov/publication/61911">CBO, The Distribution of Household Income, 2022</a> (January 2026)</th><td>Supplemental table 9: average federal individual income tax rates by quintile and for the 81st–90th, 91st–95th, 96th–99th percentiles and top 1%</td><td>2000–2022 (later years reuse 2022)</td><td>Public domain</td></tr>
+            <tr><th scope="row"><a href="https://data.bls.gov/timeseries/CUUR0000SA0">BLS CPI-U</a> and <a href="https://data.bls.gov/timeseries/CUUR0000SEEB03">CPI for day care and preschool</a></th><td>Annual averages for inflation adjustment, projections and childcare prices</td><td>2000–2026</td><td>Public domain</td></tr>
+            <tr><th scope="row"><a href="https://www.federalreserve.gov/releases/z1/dataviz/dfa/">Federal Reserve Distributional Financial Accounts</a></th><td>Q4 net worth and household counts by wealth percentile and by income percentile</td><td>2000–2025</td><td>Public domain (U.S. government)</td></tr>
+            <tr><th scope="row"><a href="https://www.irs.gov/forms-pubs/about-form-6251">IRS Form 6251</a> instructions and revenue procedures</th><td>AMT exemption, phase-out start and rate, 28% bracket start (married filing jointly)</td><td>2000–2026</td><td>Public domain</td></tr>
+            <tr><th scope="row">S&amp;P 500 total returns (S&amp;P Dow Jones Indices)</th><td>Annual total return including dividends; 2026 is year to date through September 14, 2026</td><td>2000–2026</td><td>Owner’s figures</td></tr>
+            <tr><th scope="row"><a href="https://www.childcareaware.org/thechildcarestandstill/">Child Care Aware of America</a></th><td>2023 national average price of child care, $11,582 per child</td><td>2023</td><td>Used with attribution</td></tr>
+            <tr><th scope="row"><a href="https://doi.org/10.1073/pnas.1011492107">Kahneman &amp; Deaton (2010)</a>; <a href="https://doi.org/10.1073/pnas.2208661120">Killingsworth, Kahneman &amp; Mellers (2023)</a></th><td>Happiness plateau reference line</td><td>2008–09 baseline</td><td>Cited research</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="percentiles">
+      <h2 id="percentiles"><span class="n">03</span>Income groups and percentiles</h2>
+      <p>BLS publishes each year’s table only for five income quintiles, ranked by household income before taxes. Every finer grouping (quartiles, deciles, 90/10, 95/5, 99/1, 50/40/10, or a custom top share) is built from 100 modeled percentile “bins” for each year, and a group’s value is the simple average of the bins inside it.</p>
+      <h3>Incomes inside quintiles 1–4</h3>
+      <p>Within each of the lower four quintiles, income follows a power curve running between BLS’s published lower and upper income limits. The curve’s exponent is chosen so the curve’s mean equals the published quintile mean (clamped between 0.18 and 4.5). Each bin gets the exact mean of the curve over its slice, not a midpoint value.</p>
+      <code class="formula">k = clamp( width ÷ (mean − lower limit) − 1, 0.18, 4.5 )
+income(x) = lower limit + width × x^k,   x from 0 to 1 within the quintile</code>
+      <h3>The top quintile: a Pareto tail</h3>
+      <p>The top 20% has no upper limit, so it uses a Pareto distribution starting at the top quintile’s lower limit, with the shape parameter set so the tail’s mean equals BLS’s top-quintile mean:</p>
+      <code class="formula">alpha = mean ÷ (mean − lower limit)</code>
+      <p>Using exact bin means keeps narrow groups such as the top 1% from being understated.</p>
+      <h3>Other quintile series</h3>
+      <p>Spending, benefits, household size and tax rates are smoothed across percentiles by interpolating between quintile midpoints, then each quintile’s 20 bins are rescaled so their average matches BLS exactly. Benefits are also capped at each bin’s income, with any excess moved to other bins in the same quintile so the quintile average is unchanged. The result: for the five quintiles, the model reproduces BLS’s averages exactly.</p>
+      <div class="notice"><strong>What “top 1%” means here</strong>It is the top percentile bin of the modeled Pareto tail inside BLS’s top quintile, not a separately surveyed group. BLS’s survey is not designed to capture very high incomes, so the top 1% here is an extrapolation whose shape depends on the Pareto assumption. Its spending is interpolated from quintile data too.</div>
+    </section>
+
+    <section aria-labelledby="taxes">
+      <h2 id="taxes"><span class="n">04</span>Income, benefits and taxes</h2>
+      <h3>Benefits and transfers</h3>
+      <p>Benefits are BLS’s reported income from: Social Security and private and government retirement; public assistance, SSI and SNAP; unemployment, workers’ compensation and veterans’ benefits; and regular contributions for support such as child support. BLS combines support payments with unemployment from 2013, so they are added to 2000–2012 for consistency. Pensions include private retirement income, not only government programs. With benefits off, this income is removed. A what-if slider scales benefits from 0% to 200%.</p>
+      <code class="formula">income before benefits = max(0, income − benefits)
+gross income = income before benefits + benefits × scale   (benefits on)</code>
+      <h3>CBO federal rates (default)</h3>
+      <p>CBO’s average federal individual income tax rate for each quintile is measured consistently from 2000 to 2022; 2023 onward reuses 2022. The site applies CBO rates to <strong>income before benefits</strong>. CBO’s own denominator, “income before transfers and taxes,” equals market income plus social insurance benefits such as Social Security and Medicare, so applying it this way is approximate. Refundable credits make lower groups’ rates negative, especially in 2020–21. State and local taxes are excluded.</p>
+      <p>Inside the top 20%, the rates for CBO’s 81st–90th, 91st–95th, 96th–99th percentiles and top 1% set the shape: bins 81–90, 91–95, 96–99 and 100 take those rates. All bins in each quintile are then rescaled so the quintile’s average tax in dollars, divided by its average income before benefits, equals CBO’s published quintile rate.</p>
+      <h3>BLS-based methods and the 2013 break</h3>
+      <p>BLS’s tax rate for a quintile is <code>(income before taxes − income after taxes) ÷ income before taxes</code>, covering federal, state and local taxes. From 2013 BLS estimates taxes with a tax model instead of asking households, so its taxes jump that year. Three options handle this:</p>
+      <ul>
+        <li><strong>BLS, pre-2013 adjusted:</strong> each group’s rate before 2013 is shifted by its own 2012→2013 jump.</li>
+        <li><strong>BLS 2013–15 rate, all years:</strong> each group’s 2013–2015 average rate in every year, which ignores real tax law changes.</li>
+        <li><strong>BLS as published:</strong> raw figures, with the 2013 break marked on the charts.</li>
+      </ul>
+      <p>BLS published no after-tax income for 2024, so 2024 after-tax income applies each quintile’s 2023 tax share. BLS-based rates apply to the income shown (gross income).</p>
+      <h3>Minimum taxes on income</h3>
+      <p>Both options use the same income base as the chosen tax method, and a household pays the greater of its modeled tax or the minimum.</p>
+      <code class="formula">Simple:  tax = max(normal tax, rate × max(0, income − exemption))</code>
+      <p>The simple exemption is entered in 2024 dollars and indexed to other years with CPI-U (defaults: 20% above $200,000).</p>
+      <p>The <strong>U.S.-style AMT</strong> uses each year’s married-filing-jointly parameters from IRS Form 6251 instructions and revenue procedures, with no deductions or filing status:</p>
+      <code class="formula">exemption = max(0, E − phase-out rate × max(0, income − phase-out start))
+taxable   = max(0, income − exemption)
+AMT       = 26% × min(taxable, B) + 28% × max(0, taxable − B)</code>
+      <div class="table-wrap" role="region" aria-label="Selected AMT parameters" tabindex="0">
+        <table>
+          <caption>Selected AMT parameters, married filing jointly (IRS).</caption>
+          <thead><tr><th scope="col">Tax year</th><th scope="col" class="num">Exemption E</th><th scope="col" class="num">Phase-out start</th><th scope="col" class="num">Phase-out rate</th><th scope="col" class="num">28% bracket B</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">2000</th><td class="num">$45,000</td><td class="num">$150,000</td><td class="num">25%</td><td class="num">$175,000</td></tr>
+            <tr><th scope="row">2018</th><td class="num">$109,400</td><td class="num">$1,000,000</td><td class="num">25%</td><td class="num">$191,100</td></tr>
+            <tr><th scope="row">2024</th><td class="num">$133,300</td><td class="num">$1,218,700</td><td class="num">25%</td><td class="num">$232,600</td></tr>
+            <tr><th scope="row">2025</th><td class="num">$137,000</td><td class="num">$1,252,700</td><td class="num">25%</td><td class="num">$239,100</td></tr>
+            <tr><th scope="row">2026</th><td class="num">$140,200</td><td class="num">$1,000,000</td><td class="num">50%</td><td class="num">$244,500</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Because it compares against a group-level modeled tax, treat the result as a rough estimate.</p>
+    </section>
+
+    <section aria-labelledby="expenses">
+      <h2 id="expenses"><span class="n">05</span>Essentials, childcare, custom expenses and projections</h2>
+      <p><strong>Essentials</strong> are BLS spending categories: food at home, housing, transportation (including vehicle purchases), healthcare, and personal insurance and pensions (which includes Social Security payroll tax and retirement savings, as BLS counts them). <strong>Education</strong> (tuition, fees, textbooks, supplies and equipment; not student-loan payments) is optional and off by default, because it averages across all households, including those with none, and is volatile. The top quintile’s 2023 public assistance figure is suppressed by BLS, so 2022’s is used. For 2005 and 2007, the top quintile’s lower income limit is truncated in BLS spreadsheets, so values from BLS’s PDF tables are used.</p>
+      <p>The <strong>expense editor</strong> can scale a category for all years (0–200%), edit any single year and quintile, and add one flat custom expense entered in 2024 dollars and indexed by CPI-U.</p>
+      <p><strong>Childcare</strong> is a what-if added on top of BLS spending. The default price is Child Care Aware of America’s 2023 national average ($11,582) moved to 2024 dollars with the day care CPI, giving $12,201; other years use the same index. Each child also adds one person to household size.</p>
+      <code class="formula">childcare(y) = children × price (2024 $) × daycareCPI(y) ÷ daycareCPI(2024)</code>
+      <h3>Projections, 2025–2026</h3>
+      <p>BLS has not published household data for these years. Projections start from the 2024 table (including any edits to 2024) and grow every dollar amount by CPI-U; household size is held constant.</p>
+      <code class="formula">amount(y) = amount(2024) × CPI(y) ÷ CPI(2024)</code>
+      <p>The 2025 CPI-U average covers 11 months, because BLS published no October 2025 index; 2026 averages January–August. Projected years are shaded and dashed. They show only what happens if everything kept pace with inflation.</p>
+    </section>
+
+    <section aria-labelledby="units">
+      <h2 id="units"><span class="n">06</span>Per person vs per household; inflation modes</h2>
+      <p><strong>Per household</strong> amounts are group averages. <strong>Per person</strong> divides by the group’s average household size (BLS: about 1.6 in the lowest 20% to 3.2 in the highest), plus any children added under childcare. It is a simple headcount, not an equivalence scale that adjusts for shared costs.</p>
+      <code class="formula">shown = nominal amount × inflation factor ÷ (per person ? max(1, household size) : 1)</code>
+      <ul>
+        <li><strong>Nominal:</strong> factor = 1.</li>
+        <li><strong>Real 2000 dollars:</strong> <code>CPI(2000) ÷ CPI(y)</code>.</li>
+        <li><strong>Real, custom base year:</strong> <code>CPI(base) ÷ CPI(y)</code>.</li>
+        <li><strong>Assumed constant inflation:</strong> <code>(1 + rate)^(base − y)</code>.</li>
+      </ul>
+      <p>Dollar inputs (minimum-tax exemption, wealth-tax threshold, childcare price, custom expense) are entered in 2024 dollars.</p>
+    </section>
+
+    <section aria-labelledby="investing">
+      <h2 id="investing"><span class="n">07</span>Investing</h2>
+      <p>Each group invests a share (default 10%) of each year’s surplus, starting in 2000. Returns accrue on the prior year’s balance, and the year’s contribution is added at year-end. A year with a shortfall contributes $0, and nothing is withdrawn.</p>
+      <code class="formula">balance(y) = balance(y−1) × (1 + return(y)) + share × max(0, surplus(y))</code>
+      <p>Returns are either the historical S&amp;P 500 total return including dividends for each year (2026 is year to date through September 14, 2026) or a constant assumed rate. There are <strong>no taxes on gains, fees or withdrawals</strong>, and historical returns were not known in advance. The portfolio is built only from the modeled surplus; it is not a measure of anyone’s actual wealth (Fig. 3 is).</p>
+    </section>
+
+    <section aria-labelledby="wealth">
+      <h2 id="wealth"><span class="n">08</span>Fig. 3: where the wealth is</h2>
+      <p>Fig. 3 uses the Federal Reserve’s <strong>Distributional Financial Accounts</strong> (DFA), which scale survey data to match the national balance sheet. Net worth is assets (homes, businesses, stocks, pensions and so on) minus debts. Values are nominal, fourth-quarter levels, 2000–2025. Each group’s average is its total net worth divided by the DFA’s own household count for that group.</p>
+      <code class="formula">average net worth = group net worth ÷ group household count
+share of wealth    = (average × households) ÷ sum over all groups</code>
+      <ul>
+        <li><strong>By wealth percentile:</strong> top 0.1%, 99–99.9%, 90–99%, 50–90%, bottom 50%.</li>
+        <li><strong>By income percentile:</strong> bottom 20%, 20–40%, 40–60%, 60–80%, 80–99%, top 1%. In the CSV export’s avg_net_worth_fed column, 2026 is carried forward from 2025 with CPI-U.</li>
+      </ul>
+      <div class="table-wrap" role="region" aria-label="2025 household wealth by wealth group" tabindex="0">
+        <table>
+          <caption>Federal Reserve DFA, 2025 Q4, households ranked by net worth. Nominal dollars.</caption>
+          <thead><tr><th scope="col">Wealth group</th><th scope="col" class="num">Households</th><th scope="col" class="num">Average net worth</th><th scope="col" class="num">Share of wealth</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Top 0.1%</th><td class="num">136,325</td><td class="num">$184,963,169</td><td class="num">14.5%</td></tr>
+            <tr><th scope="row">99–99.9%</th><td class="num">1,214,246</td><td class="num">$24,823,353</td><td class="num">17.3%</td></tr>
+            <tr><th scope="row">90–99%</th><td class="num">12,161,061</td><td class="num">$5,208,947</td><td class="num">36.4%</td></tr>
+            <tr><th scope="row">50–90%</th><td class="num">54,162,871</td><td class="num">$942,189</td><td class="num">29.3%</td></tr>
+            <tr><th scope="row">Bottom 50%</th><td class="num">67,688,033</td><td class="num">$63,065</td><td class="num">2.5%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>What-if wealth taxes</h3>
+      <p>The tax is applied to each group’s <em>average</em> net worth. The threshold is entered in 2024 dollars and indexed with CPI-U (defaults: 2% above $50 million, flat design).</p>
+      <code class="formula">threshold(y) = threshold (2024 $) × CPI(y) ÷ CPI(2024)
+Flat:         tax = rate × max(0, average − threshold)
+Zucman-style: tax = average ≥ threshold ? max(0, (rate − paid%) × average) : 0
+Revenue:      tax × households in the group</code>
+      <p>The designs draw on published proposals:</p>
+      <ul>
+        <li><strong>Warren (2024):</strong> 2% annual tax on net worth from $50 million to $1 billion, plus a 1% surtax (3% overall) above $1 billion. <a href="https://www.warren.senate.gov/newsroom/press-releases/warren-jayapal-boyle-reintroduce-ultra-millionaire-tax-on-fortunes-over-50-million">Office of Sen. Elizabeth Warren, March 19, 2024</a>.</li>
+        <li><strong>Sanders (2019):</strong> 1% on $32–50 million, 2% on $50–250 million, 3% on $250–500 million, 4% on $500 million–$1 billion, 5% on $1–2.5 billion, 6% on $2.5–5 billion, 7% on $5–10 billion, and 8% above $10 billion, for married taxpayers (halved for singles), as described in <a href="https://gabriel-zucman.eu/files/saez-zucman-wealthtax-sanders.pdf">Saez &amp; Zucman’s September 22, 2019 analysis</a>.</li>
+        <li><strong>Zucman (2024), G20 report:</strong> a minimum tax on billionaires equal to 2% of their wealth, estimated to raise $200–250 billion a year from about 3,000 taxpayers; billionaires’ current effective tax rate is put at the equivalent of 0.3% of their wealth, the site’s default “already paid” value. <a href="https://gabriel-zucman.eu/files/report-g20.pdf">Zucman / EU Tax Observatory, June 25, 2024</a>.</li>
+      </ul>
+      <p>The site implements one flat rate above one threshold, so it approximates the Warren design only at its first bracket and does not reproduce Sanders’s brackets.</p>
+      <div class="notice"><strong>Big caveats</strong>Group averages treat every household as average, so a threshold can miss or overstate who is taxed. The calculation ignores avoidance, emigration, behavior and lower asset prices, and hard-to-value assets such as private businesses. The figures are not an official revenue estimate. Income-ranked and wealth-ranked groups are different households: many high earners are not among the wealthiest, and many wealthy households have modest income. CBO’s income groups rank people by size-adjusted household income, while DFA groups count households, so they don’t line up exactly either.</div>
+    </section>
+
+    <section aria-labelledby="fit">
+      <h2 id="fit"><span class="n">09</span>Where do you fit?</h2>
+      <p>You enter household income before taxes (2024 dollars) and household size. The site finds the percentile by linear interpolation between the 2024 modeled percentile incomes (each treated as sitting at its bin’s midpoint); incomes below the first bin scale toward zero, and incomes above the top bin are placed at the 99.5th percentile.</p>
+      <code class="formula">p = i + 0.5 + (x − income[i]) ÷ (income[i+1] − income[i])</code>
+      <p>It then uses that percentile’s average essential spending (your selected categories, childcare and custom expense) and, when “After tax” is on, its effective tax rate (modeled tax ÷ observed income):</p>
+      <code class="formula">left = your income × (1 − tax rate) − average essentials</code>
+      <p>Per-person output divides by the household size you entered. Nothing you type is stored, sent anywhere, or added to the scenario link.</p>
+    </section>
+
+    <section aria-labelledby="checks">
+      <h2 id="checks"><span class="n">10</span>Outside checks</h2>
+      <p>The Federal Reserve’s Survey of Household Economics and Decisionmaking found that <strong>63% of U.S. adults</strong> would cover a $400 emergency expense using cash or its equivalent in 2024, “nearly unchanged from recent years” (<a href="https://www.federalreserve.gov/newsevents/pressreleases/other20250528a.htm">Federal Reserve press release, May 28, 2025</a>); the figure was also 63% in 2023 (<a href="https://www.federalreserve.gov/newsevents/pressreleases/other20240521a.htm">May 21, 2024</a>). That is consistent with lower-income groups having little or nothing left after essentials, though the survey measures adults, not households, and reflects savings as well as income.</p>
+      <p>The MIT Living Wage Calculator was considered as a benchmark, but it <a href="https://livingwage.mit.edu/pages/faqs">does not publish national-level estimates</a>, only state, metro and county figures, so no national comparison is made.</p>
+    </section>
+
+    <section aria-labelledby="limits">
+      <h2 id="limits"><span class="n">11</span>Known limitations</h2>
+      <ul>
+        <li>The Consumer Expenditure Survey is known to under-report income compared with national accounts, and low-income households often report spending more than their income (through savings, debt, family help or unreported income).</li>
+        <li>Figures are group averages, not medians. Each income group mixes ages and household types, including retirees and students.</li>
+        <li>Everything finer than quintiles is modeled from smooth curves, not observed.</li>
+        <li>Per-person amounts use a simple headcount. CBO rates cover federal income tax only and are applied to an approximate base.</li>
+        <li><strong>Breaks in the data:</strong> before 2004, BLS income figures cover only households that fully reported income; from 2004 BLS imputes missing income. From 2013 BLS models taxes rather than asking households. The top quintile’s 2023 public assistance figure is carried from 2022, and 2024 after-tax income uses 2023 tax shares.</li>
+        <li>Projections assume everything grows with CPI-U; the 2025 and 2026 price averages are partial-year.</li>
+        <li>Investing ignores taxes, fees and withdrawals, and uses returns no one knew in advance.</li>
+        <li>Wealth taxes are rough orders of magnitude on group averages (see section 08).</li>
+      </ul>
+      <p>Treat results as rough, comparative illustrations, not tax or investment advice.</p>
+    </section>
+
+    <section aria-labelledby="changelog">
+      <h2 id="changelog"><span class="n">12</span>Changelog</h2>
+      <ul>
+        <li><strong>September 2026:</strong> Fig. 3 wealth view, presets, household comparison, CBO top-group tax rates, Fed DFA net worth.</li>
+      </ul>
+    </section>
+  </article>
+  </main>
+
+  <footer>
+    <p class="disclaimer"><strong>Disclaimer:</strong> This site is for illustration purposes only. It was 100% AI-generated from the sources above, and its math and figures have not been independently checked by a human.</p>
+    <p><strong>An illustrative model, not tax or investment advice.</strong> BLS, CBO, CPI and Federal Reserve data are U.S. government works in the public domain. Childcare price from Child Care Aware of America, used with attribution; S&amp;P 500 returns remain S&amp;P Dow Jones Indices’ figures.</p>
+    <p>Made by Patrick Glenn by way of Claude and ChatGPT. Code under the <a href="https://opensource.org/license/mit">MIT License</a>; text and charts under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+    <p><a href="./">← Back to the simulator</a> · Last updated <time datetime="2026-09-15">September 15, 2026</time></p>
+  </footer>
+</div>
+</body>
+</html>

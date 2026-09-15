@@ -1,0 +1,2008 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Household Surplus Lab: What’s Left After Essentials, 2000–2026</title>
+<meta name="description" content="How much U.S. households have left after essentials, by income group, from BLS Consumer Expenditure Survey data 2000–2024 (projected to 2026), and what investing it would grow to.">
+<link rel="canonical" href="https://whats-left-over.pages.dev/">
+<meta name="author" content="Patrick Glenn by way of Claude and ChatGPT">
+<meta name="theme-color" content="#f4f1ea">
+<meta name="color-scheme" content="light dark">
+<script>
+// Apply the saved or system color theme before first paint so the page never flashes the wrong theme.
+(function(){var p;try{p=localStorage.getItem("hsl-theme");}catch(e){}var dark=p==="dark"||(p!=="light"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.setAttribute("data-theme",dark?"dark":"light");})();
+</script>
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Household Surplus Lab">
+<meta property="og:url" content="https://whats-left-over.pages.dev/">
+<meta property="og:title" content="What’s left, and what it becomes">
+<meta property="og:description" content="How much U.S. households have left after essentials, by income group, 2000–2026, and what investing it would add up to. Built on BLS survey data.">
+<meta property="og:image" content="https://whats-left-over.pages.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="In 2024 the average person in the bottom 50% of U.S. households was $7,204 short after essentials; the average person in the top 10% had $66,610 left. Gap $73,814 per person; the top 10% investing 10% since 2000 grew $110k to $453k per person.">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="What’s left, and what it becomes">
+<meta name="twitter:description" content="How much U.S. households have left after essentials, by income group, and what investing it would add up to.">
+<meta name="twitter:image" content="https://whats-left-over.pages.dev/og-image.png">
+<meta name="twitter:image:alt" content="In 2024 the average person in the bottom 50% of U.S. households was $7,204 short after essentials; the average person in the top 10% had $66,610 left. Gap $73,814 per person; the top 10% investing 10% since 2000 grew $110k to $453k per person.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Household Surplus Lab","url":"https://whats-left-over.pages.dev/","image":"https://whats-left-over.pages.dev/og-image.png","applicationCategory":"EducationalApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"inLanguage":"en-US","author":{"@type":"Person","name":"Patrick Glenn by way of Claude and ChatGPT"},"license":"https://creativecommons.org/licenses/by/4.0/","dateModified":"2026-09-15","description":"Interactive simulator of how much U.S. households have left after essential spending, by income group, 2000–2026, with hypothetical S&P 500 investing. Based on BLS Consumer Expenditure Survey, CBO and BLS CPI data.","isBasedOn":["https://www.bls.gov/cex/tables.htm","https://www.cbo.gov/publication/61911","https://data.bls.gov/timeseries/CUUR0000SEEB03"]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f1ea; --sheet:#fbfaf6; --ink:#1a1916; --ink-2:#4a4740; --muted:#6b665b;
+    --rule:#d9d3c5; --rule-soft:#e8e3d8; --accent:#c8472d; --accent-soft:#f3dfd6;
+    /* Darker accent for small text, and a control outline color that meets 3:1 non-text contrast. */
+    --accent-text:#b23e26; --control:#8f897c;
+    --slider-off:#7d776b; --tip-rule:rgba(251,250,246,.18);
+    color-scheme:light;
+    --serif:"Newsreader", Georgia, "Times New Roman", serif;
+    --sans:"Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  }
+  /* Dark theme. Add another theme with a matching block plus an entry in THEMES in the script. */
+  :root[data-theme="dark"]{--paper:#151412; --sheet:#1e1d1a; --ink:#ece7dd; --ink-2:#c7c0b3; --muted:#a39c8f; --rule:#3b3832; --rule-soft:#2a2824; --accent:#e0664a; --accent-soft:#3d2219; --accent-text:#f08e74; --control:#7d776c; --slider-off:#9a9487; --tip-rule:rgba(21,20,18,.22); color-scheme:dark;}
+  *{box-sizing:border-box}
+  html{background:var(--paper)}
+  body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+  button,input,select{font:inherit;color:inherit}
+  a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px}
+  a:hover{text-decoration-color:var(--accent)}
+  ::selection{background:var(--accent-soft)}
+  .shell{max-width:1440px;margin:0 auto;padding:0 40px}
+
+  /* Masthead */
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--ink);font:500 11px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2)}
+  .topbar .mark{display:flex;align-items:center;gap:10px;color:var(--ink)}
+  .topbar .mark i{width:9px;height:9px;background:var(--accent);display:inline-block}
+  .hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:40px;align-items:end;padding:44px 0 34px;border-bottom:1px solid var(--rule)}
+  h1{font:400 clamp(40px,5.6vw,80px)/.95 var(--serif);letter-spacing:-.025em;margin:0 0 20px;max-width:14ch}
+  h1 em{font-style:italic;color:var(--accent)}
+  .dek{font:400 19px/1.45 var(--serif);color:var(--ink-2);max-width:60ch;margin:0}
+  .header-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .btn{border:1px solid var(--rule);background:transparent;border-radius:999px;padding:9px 16px;font-weight:500;font-size:13px;cursor:pointer;transition:border-color .15s,background .15s}
+  .btn:hover{border-color:var(--ink)}
+  .btn.primary{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+  .btn.primary:hover{background:var(--accent);border-color:var(--accent)}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* Layout */
+  .grid{display:grid;grid-template-columns:340px minmax(0,1fr);gap:44px;align-items:start;padding-top:32px}
+  .controls{padding:0 0 32px}
+  .section{padding:20px 0 18px;border-top:1px solid var(--rule)}
+  .section:first-child{border-top:1px solid var(--ink)}
+  .section-title{display:flex;align-items:baseline;gap:10px;font:500 17px/1.2 var(--serif);margin:0 0 12px}
+  .section-title::before{content:attr(data-n);font:500 10px/1 var(--mono);color:var(--accent);letter-spacing:.04em}
+  label{display:block;font-size:12px;font-weight:500;color:var(--ink-2);margin-bottom:6px}
+  select,input[type="number"]{width:100%;border:1px solid var(--rule);border-radius:6px;background:var(--sheet);padding:9px 11px;outline:none;transition:border-color .15s}
+  select{appearance:none;cursor:pointer;padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%231a1916' stroke-width='1.3'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center}
+  input[type="number"]{font-family:var(--mono);font-size:13px}
+  select:hover,input[type="number"]:hover{border-color:var(--ink)}
+  select:focus,input[type="number"]:focus{border-color:var(--ink)}
+  .control{margin:14px 0}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+
+  /* Range */
+  input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:18px;background:transparent;cursor:pointer;margin:2px 0 0}
+  input[type="range"]::-webkit-slider-runnable-track{height:2px;background:var(--rule)}
+  input[type="range"]::-moz-range-track{height:2px;background:var(--rule)}
+  input[type="range"]::-moz-range-progress{height:2px;background:var(--ink)}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;margin-top:-6px;border-radius:50%;background:var(--sheet);border:2px solid var(--ink);transition:transform .12s,border-color .12s}
+  input[type="range"]::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:var(--sheet);border:2px solid var(--ink)}
+  input[type="range"]:hover::-webkit-slider-thumb,input[type="range"]:focus-visible::-webkit-slider-thumb{transform:scale(1.15);border-color:var(--accent)}
+  input[type="range"]:focus{outline:none}
+  .rangehead{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+  .rangehead label{margin:0}
+  .rangeval{font:500 12px/1 var(--mono);color:var(--ink)}
+
+  /* Switch */
+  .switchrow{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:8px 0}
+  .switchrow strong{font-size:13px;font-weight:600}
+  .subnote{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+  .switch{position:relative;width:34px;height:20px;flex:0 0 auto;margin:1px 0 0}
+  .switch input{opacity:0;width:0;height:0;position:absolute}
+  .slider{position:absolute;inset:0;background:transparent;border:1px solid var(--slider-off);border-radius:999px;cursor:pointer;transition:.18s}
+  .slider:before{content:"";position:absolute;width:12px;height:12px;left:3px;top:3px;background:var(--slider-off);border-radius:50%;transition:.18s}
+  .switch input:checked + .slider{background:var(--ink);border-color:var(--ink)}
+  .switch input:checked + .slider:before{transform:translateX(14px);background:var(--sheet)}
+  .switch input:focus-visible + .slider{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* Chips */
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{position:relative;margin:0;border:1px solid var(--rule);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:.15s;user-select:none}
+  .chip input{position:absolute;opacity:0;pointer-events:none}
+  .chip:hover{border-color:var(--ink)}
+  .chip:has(input:checked){background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+  .chip:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+
+  .main{min-width:0;padding-bottom:24px}
+
+  /* KPIs */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);margin-bottom:40px}
+  .kpi{padding:18px 14px 20px 16px;border-left:1px solid var(--rule)}
+  .kpi:first-child{border-left:0;padding-left:0}
+  /* Flex keeps the ? next to the label text; if the text ever wraps, the icon stays on the first line. */
+  .kpi .label{display:flex;align-items:flex-start;gap:6px;font:500 10px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .kpi .label .tip{flex:none;margin-left:0;margin-top:-2px}
+  /* On laptop widths the four KPI columns are too narrow for their labels, so use a 2×2 grid. */
+  @media(min-width:1051px) and (max-width:1360px){
+    .kpis{grid-template-columns:1fr 1fr}
+    .kpi:nth-child(3){border-left:0;padding-left:0}
+    .kpi:nth-child(n+3){border-top:1px solid var(--rule)}
+  }
+  .kpi .value{font:400 clamp(28px,2.8vw,40px)/1.05 var(--serif);letter-spacing:-.02em;margin:12px 0 6px;font-variant-numeric:tabular-nums lining-nums}
+  .kpi:nth-child(3) .value{color:var(--accent)}
+  .kpi .small{font-size:12px;color:var(--ink-2)}
+
+  /* Figures */
+  .card{margin-bottom:48px}
+  .card-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;padding-bottom:14px;border-bottom:1px solid var(--rule)}
+  .fig{font:500 10px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+  .card h2{font:400 36px/1.1 var(--serif);letter-spacing:-.015em;margin:0}
+  .card p{color:var(--ink-2);margin:6px 0 0;font-size:14px}
+  .metric-strip{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+  .pill{font:500 11px/1 var(--mono);border:1px solid var(--rule);border-radius:4px;padding:6px 8px;color:var(--ink-2);background:var(--sheet);white-space:nowrap}
+  .legend{display:flex;gap:6px 18px;flex-wrap:wrap;margin:16px 0 6px;min-height:22px}
+  .legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-2)}
+  .swatch{width:14px;height:2px}
+  .chart-wrap{position:relative;width:100%}
+  svg.chart{width:100%;height:auto;display:block;overflow:visible;font-family:var(--mono)}
+  .tooltip{position:absolute;pointer-events:none;z-index:5;background:var(--ink);color:var(--sheet);border-radius:6px;padding:10px 12px;font-size:12px;min-width:180px;opacity:0;transition:opacity .1s;box-shadow:0 12px 30px -10px rgba(26,25,22,.45)}
+  .tooltip .tt-year{font:500 18px/1 var(--serif);margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid var(--tip-rule)}
+  .tooltip-row{display:flex;justify-content:space-between;gap:16px;padding:2px 0}
+  .tooltip-row span:first-child{opacity:.75;white-space:nowrap}
+  .tooltip-row strong{white-space:nowrap}
+  .tooltip-row strong{font:500 11px/1.6 var(--mono)}
+
+  /* Method */
+  .method{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;padding-top:28px;border-top:1px solid var(--ink)}
+  .method h3{font:400 22px/1.2 var(--serif);margin:0 0 10px}
+  .method p,.method li{font-size:13px;color:var(--ink-2);line-height:1.6}
+  .method ul{margin:0;padding:0;list-style:none}
+  .method li{padding:10px 0;border-top:1px solid var(--rule-soft)}
+  .method li:first-child{border-top:0;padding-top:0}
+  .method li strong{color:var(--ink);font-weight:600}
+  .notice{border-left:2px solid var(--accent);padding:4px 0 4px 16px;margin-top:18px;font:italic 400 16px/1.5 var(--serif);color:var(--ink)}
+  .notice strong{font-style:normal;font:500 10px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:6px}
+  /* 1px top padding nudges the top-heavy "?" down half a pixel so it looks centered. */
+  .tip{display:inline-grid;place-items:center;box-sizing:border-box;padding:1px 0 0 0;width:14px;height:14px;margin-left:6px;border:1px solid var(--rule);border-radius:50%;font:500 9px/1 var(--mono);color:var(--muted);cursor:help;vertical-align:2px;letter-spacing:0;text-transform:none}
+  .tip:hover,.tip:focus-visible{border-color:var(--accent);color:var(--accent);outline:none}
+  .control,.switchrow,.section-title,.kpi,.card-head>div:first-child,.notice-wrap{position:relative}
+  .tip::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 6px);width:min(320px,100%);min-width:200px;z-index:20;background:var(--ink);color:var(--sheet);font:400 12px/1.5 var(--sans);letter-spacing:0;text-transform:none;padding:10px 12px;border-radius:6px;opacity:0;visibility:hidden;transition:opacity .12s;pointer-events:none;text-align:left;box-shadow:0 12px 30px -10px rgba(26,25,22,.45)}
+  .tip:hover::after,.tip:focus-visible::after{opacity:1;visibility:visible}
+  input:disabled{opacity:.35;cursor:not-allowed}
+  .switch input:disabled + .slider{opacity:.35;cursor:not-allowed}
+  .howto{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-bottom:1px solid var(--rule)}
+  .howto div{padding:16px 20px 18px;border-left:1px solid var(--rule);font-size:13px;color:var(--ink-2)}
+  .howto div:first-child{border-left:0;padding-left:0}
+  .howto b{display:block;font:500 10px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  @media(max-width:650px){.howto{grid-template-columns:1fr}.howto div{border-left:0;padding-left:0;border-top:1px solid var(--rule-soft)}.howto div:first-child{border-top:0}}
+  .summary{font:400 21px/1.5 var(--serif);color:var(--ink-2);margin:-12px 0 8px;max-width:68ch}
+  .summary-note{font-size:12px;color:var(--muted);margin:0 0 40px}
+  .summary strong{font-weight:500;color:var(--ink)}
+  .viewrow{position:relative;display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .viewrow label{margin:0}
+  .viewrow select{width:auto;min-width:230px;padding:7px 30px 7px 10px}
+  .tt-gain{font:400 10px/1 var(--mono);opacity:.6;margin-left:6px}
+  .tt-note{margin-top:7px;padding-top:6px;border-top:1px solid var(--tip-rule);font-size:11px;opacity:.6}
+  input[type="text"]{width:100%;border:1px solid var(--rule);border-radius:6px;background:var(--sheet);padding:9px 11px;outline:none}
+  input[type="text"]:focus{border-color:var(--ink)}
+  .linkbtn{margin-top:12px;border:1px solid var(--rule);background:transparent;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer}
+  .linkbtn:hover{border-color:var(--ink)}
+  .linkbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .edited-badge{font:500 10px/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--accent);margin-left:10px}
+  dialog.modal{border:0;padding:0;border-radius:10px;background:var(--sheet);color:var(--ink);width:min(880px,calc(100vw - 32px));max-height:calc(100vh - 40px);box-shadow:0 30px 80px -20px rgba(26,25,22,.5)}
+  dialog.modal[open]{display:flex;flex-direction:column}
+  dialog.modal::backdrop{background:rgba(26,25,22,.45)}
+  .modal-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding:22px 24px 16px;border-bottom:1px solid var(--rule)}
+  .modal-head h2{font:400 30px/1.1 var(--serif);margin:0}
+  .modal-head p{margin:8px 0 0;color:var(--ink-2);font-size:13px;max-width:62ch}
+  .closex{border:0;background:transparent;font-size:26px;line-height:1;cursor:pointer;color:var(--ink-2);padding:2px 6px}
+  .closex:hover{color:var(--accent)}
+  .modal-body{padding:4px 24px 20px;overflow:auto;flex:1}
+  .modal-body h3{display:flex;align-items:baseline;gap:10px;font:500 18px/1.2 var(--serif);margin:22px 0 4px}
+  .modal-body h3::before{content:attr(data-n);font:500 10px/1 var(--mono);color:var(--accent)}
+  .modal-body .hint{font-size:12px;color:var(--muted);margin:0 0 10px;max-width:70ch}
+  .scale-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0 28px}
+  .year-pick{display:flex;align-items:center;gap:10px;margin:6px 0 10px}
+  .year-pick label{margin:0}
+  .year-pick select{width:auto;padding:7px 30px 7px 10px}
+  .etable-wrap{overflow-x:auto;border-top:1px solid var(--ink)}
+  table.etable{border-collapse:collapse;width:100%;font-size:12px}
+  .etable th,.etable td{padding:7px 6px;border-bottom:1px solid var(--rule-soft);text-align:right;white-space:nowrap;vertical-align:top}
+  .etable th:first-child,.etable td:first-child{text-align:left;padding-left:0}
+  .etable thead th{font:500 10px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .etable td:first-child{font-weight:500;padding-top:12px}
+  .etable input{width:96px;border:1px solid var(--rule);border-radius:4px;background:var(--paper);padding:5px 7px;font:12px var(--mono);text-align:right}
+  .etable input:focus{outline:none;border-color:var(--ink)}
+  .etable input.changed{border-color:var(--accent);background:var(--accent-soft)}
+  .etable .src{display:block;font:10px/1.2 var(--mono);color:var(--muted);margin-top:3px}
+  .etable tfoot td{font:500 12px var(--mono);border-bottom:0;border-top:1px solid var(--rule);padding-top:9px}
+  .etable tfoot td:first-child{font-family:var(--sans)}
+  .modal-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:14px 24px;border-top:1px solid var(--rule)}
+  .modal-foot .note{font-size:12px;color:var(--muted)}
+  .checkrow{display:flex;align-items:center;gap:8px;margin:0;font-size:13px;color:var(--ink-2);cursor:pointer}
+  .checkrow input{accent-color:var(--ink);width:15px;height:15px;margin:0}
+  .tt-proj{font:500 9px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;opacity:.6;margin-left:8px;vertical-align:3px}
+  .notice+.notice{margin-top:14px}
+  .report{position:absolute;left:-10000px;top:0;width:1200px;padding:40px 64px 44px;background:var(--paper);color:var(--ink);font:14px/1.5 var(--sans)}
+  .report .r-top{display:flex;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--ink);font:500 11px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2)}
+  .report .r-top .mark{display:flex;align-items:center;gap:10px;color:var(--ink)}
+  .report .r-top .mark i{width:9px;height:9px;background:var(--accent);display:inline-block}
+  .report h1{font:400 64px/1 var(--serif);letter-spacing:-.025em;margin:34px 0 18px}
+  .report h1 em{font-style:italic;color:var(--accent)}
+  .report .r-summary{font:400 20px/1.5 var(--serif);color:var(--ink-2);margin:0 0 30px}
+  .report .r-summary strong{font-weight:500;color:var(--ink)}
+  .report .kpis{margin-bottom:30px}
+  .report .r-fig{margin-bottom:26px}
+  .report .r-fig-head{padding-bottom:10px;border-bottom:1px solid var(--rule)}
+  .report .r-fig-head .fig{margin-bottom:8px}
+  .report .r-fig-head h2{font:400 28px/1.1 var(--serif);margin:0}
+  .report .r-fig-head p{margin:5px 0 0;color:var(--ink-2);font-size:13px}
+  .report .legend{margin:12px 0 4px}
+  .report svg{display:block;width:1072px;height:469px;overflow:visible}
+  .report .r-settings{border-top:1px solid var(--ink);padding-top:18px;margin-top:8px}
+  .report .r-settings h3{font:400 24px/1.2 var(--serif);margin:0 0 14px}
+  .report dl{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 32px;margin:0}
+  .report dt{font:500 10px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
+  .report dd{margin:0;font-size:13px;color:var(--ink)}
+  .report .r-link{margin-top:18px;font:10px/1.5 var(--mono);color:var(--muted);word-break:break-all}
+  .report .r-foot{margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);font-size:11px;color:var(--muted)}
+  .subnote.equiv{color:var(--ink-2);margin-top:4px}
+  .subnote.equiv:empty{display:none}
+  .inline-group{display:inline-flex;align-items:center;gap:10px}
+  :root[data-theme="dark"] select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23ece7dd' stroke-width='1.3'/%3E%3C/svg%3E")}
+  /* Theme toggle in the top bar */
+  .topbar-right{display:flex;align-items:center;gap:14px}
+  .theme-btn{font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--ink);background:transparent;border:1px solid var(--rule);border-radius:999px;padding:5px 11px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{border-color:var(--ink)}
+  .theme-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  /* Saved images always use the light theme. */
+  .report{--paper:#f4f1ea; --sheet:#fbfaf6; --ink:#1a1916; --ink-2:#4a4740; --muted:#6b665b; --rule:#d9d3c5; --rule-soft:#e8e3d8; --accent:#c8472d; --accent-soft:#f3dfd6; --accent-text:#b23e26; --control:#8f897c; --slider-off:#7d776b; --tip-rule:rgba(251,250,246,.18); color-scheme:light}
+  .advanced{display:none}
+  details.adv>summary{cursor:pointer;list-style:none;margin:0;flex-wrap:wrap}
+  details.adv>summary::-webkit-details-marker{display:none}
+  details.adv>summary::after{content:"+";margin-left:auto;font:400 20px/1 var(--sans);color:var(--muted)}
+  details.adv[open]>summary::after{content:"−"}
+  .adv-hint{flex-basis:100%;order:3;font:400 12px/1.4 var(--sans);color:var(--muted);margin-top:4px;padding-left:22px}
+  .presets{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 22px}
+  .presets-label{font:500 10px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text);margin-right:6px}
+  .preset{border:1px solid var(--control);background:transparent;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:500;color:var(--ink-2);cursor:pointer}
+  .preset:hover{border-color:var(--ink)}
+  .preset[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+  .preset:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .f3-note{grid-column:1/-1;margin:6px 0;padding-left:10px;border-left:2px solid var(--accent);color:var(--ink-2);max-width:75ch}
+  .split{display:grid;gap:8px;margin:18px 0 6px}
+  .split-row{display:grid;grid-template-columns:150px minmax(0,1fr);align-items:center;gap:12px}
+  .split-label{font:500 10px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .split-bar{display:flex;height:32px;border-radius:4px;overflow:hidden;background:var(--rule-soft)}
+  .split-bar span{display:flex;align-items:center;justify-content:center;min-width:0;overflow:hidden;white-space:nowrap;font:500 11px/1 var(--mono);box-shadow:inset -1px 0 0 var(--paper)}
+  .split:empty{display:none}
+  @media(max-width:650px){.split-row{grid-template-columns:1fr;gap:4px}.split-bar span{font-size:10px}}
+  .takeaway{font:400 18px/1.5 var(--serif);color:var(--ink-2);margin:14px 0 4px;max-width:70ch}
+  .takeaway strong{font-weight:500;color:var(--ink)}
+  .takeaway:empty{display:none}
+  .compare-out{font-size:13px;line-height:1.55;color:var(--ink-2);margin:4px 0 0}
+  .compare-out strong{color:var(--ink);font-weight:600}
+  /* ID selector so it beats .advanced.show{display:block}; fixed-width columns keep inputs a sensible size. */
+  #wealthControls.show{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,260px));gap:0 28px;margin-top:10px;padding:4px 0 8px;border-bottom:1px solid var(--rule-soft)}
+  #wealthControls .control{margin:12px 0}
+  @media(max-width:650px){#wealthControls.show{grid-template-columns:1fr}}
+  #wealthControls #wealthAffects{grid-column:1/-1;margin:0 0 10px;max-width:75ch}
+  .tax-stats{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--ink);margin:4px 0 6px}
+  .tax-stats:empty{display:none}
+  .tax-stat{padding:12px 14px 4px;border-left:1px solid var(--rule)}
+  .tax-stat:first-child{border-left:0;padding-left:0}
+  .tax-stat b{display:block;font:500 10px/1.3 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .tax-stat span{display:block;font:400 30px/1.1 var(--serif);letter-spacing:-.01em;margin-top:6px;font-variant-numeric:tabular-nums}
+  .tax-stat:first-child span{color:var(--accent-text)}
+  .tax-stat small{display:block;font-size:12px;color:var(--ink-2);margin-top:2px}
+  @media(max-width:650px){.tax-stats{grid-template-columns:1fr}.tax-stat{border-left:0;padding-left:0;border-top:1px solid var(--rule-soft)}.tax-stat:first-child{border-top:0}.tax-stat span{font-size:26px}}
+  @media(max-width:650px){.takeaway{font-size:16px}.presets .tip::after{left:auto;right:0}}
+  .advanced.show{display:block}
+  /* On desktop, line the footer up with the results column rather than the sidebar. */
+  @media(min-width:1051px){footer{margin-left:calc(340px + 44px)}}
+  footer{font-size:12px;color:var(--muted);padding:22px 0 40px;border-top:1px solid var(--rule);margin-top:8px;max-width:90ch}
+
+  @media(max-width:1050px){
+    .grid{grid-template-columns:1fr;gap:24px}
+    .controls{position:static;max-height:none;padding:0}
+    .kpis{grid-template-columns:1fr 1fr}
+    .kpi:nth-child(3){border-left:0;padding-left:0}
+    .kpi:nth-child(n+3){border-top:1px solid var(--rule)}
+    .hero{grid-template-columns:1fr}
+    .header-actions{justify-content:flex-start}
+  }
+  @media(max-width:650px){
+    .shell{padding:0 16px}
+    .hero{padding:28px 0 24px}
+    .topbar .topbar-meta{display:none}
+    .kpis{grid-template-columns:1fr}
+    .kpi{border-left:0;padding-left:0}
+    .kpi+.kpi{border-top:1px solid var(--rule)}
+    .row,.method{grid-template-columns:1fr}
+    .card-head{flex-direction:column;align-items:flex-start}
+    .metric-strip{justify-content:flex-start}
+  }
+  /* ---- Mobile & tablet: settings live in a bottom sheet so results come first */
+  .drawer-head,.settings-fab,.drawer-backdrop{display:none}
+  @media(max-width:1050px){
+    .grid{display:block;padding-top:24px}
+    .controls{position:fixed;left:0;right:0;bottom:0;z-index:60;max-height:88vh;max-height:88dvh;overflow-y:auto;overscroll-behavior:contain;background:var(--paper);border-radius:16px 16px 0 0;padding:0 20px calc(28px + env(safe-area-inset-bottom));box-shadow:0 -20px 60px -20px rgba(26,25,22,.45);transform:translateY(105%);visibility:hidden;transition:transform .28s ease,visibility 0s linear .28s}
+    .controls.open{transform:none;visibility:visible;transition:transform .28s ease}
+    .drawer-head{display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:0;z-index:3;background:var(--paper);padding:20px 0 12px;border-bottom:1px solid var(--ink)}
+    .drawer-head strong{font:400 24px/1 var(--serif)}
+    .drawer-head::before{content:"";position:absolute;left:50%;top:7px;width:40px;height:4px;border-radius:2px;background:var(--rule);transform:translateX(-50%)}
+    .controls .section:first-child{border-top:0}
+    .drawer-backdrop{display:block;position:fixed;inset:0;z-index:55;background:rgba(26,25,22,.4)}
+    .drawer-backdrop[hidden]{display:none}
+    .settings-fab{display:inline-flex;align-items:center;gap:10px;position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:50;border:0;border-radius:999px;background:var(--ink);color:var(--sheet);padding:14px 24px;font:500 15px/1 var(--sans);box-shadow:0 12px 30px -8px rgba(26,25,22,.55);cursor:pointer;white-space:nowrap}
+    .settings-fab::before{content:"";width:8px;height:8px;background:var(--accent)}
+    .settings-fab:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+    body.drawer-open{overflow:hidden}
+    body.drawer-open .settings-fab{display:none}
+    .main{padding-bottom:40px}
+    footer{padding-bottom:110px}
+  }
+  @media(max-width:650px){
+    h1{font-size:44px;margin-bottom:16px}
+    .dek{font-size:17px}
+    .header-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
+    .header-actions .btn{padding:12px 10px}
+    .howto div{padding:12px 0}
+    .kpis{grid-template-columns:1fr 1fr;margin-bottom:32px}
+    .kpi+.kpi{border-top:0}
+    .kpi{padding:14px 12px 16px 0;border-left:0}
+    .kpi:nth-child(2n){padding-left:14px;border-left:1px solid var(--rule)}
+    .kpi:nth-child(n+3){border-top:1px solid var(--rule)}
+    .kpi .value{font-size:26px;margin:8px 0 4px}
+    .kpi .label{min-height:26px}
+    .kpi:nth-child(2n) .tip::after{left:auto;right:0}
+    .summary{font-size:18px;margin:-16px 0 8px}
+    .summary-note{margin-bottom:30px}
+    .card{margin-bottom:36px}
+    .card h2{font-size:28px}
+    .card p{font-size:13px}
+    .viewrow select{min-width:0;width:100%}
+    select,input[type="number"],input[type="text"]{font-size:16px}
+    .tooltip{min-width:0;max-width:calc(100vw - 40px)}
+    .tip::after{min-width:0;width:calc(100vw - 72px);max-width:320px}
+    dialog.modal{width:100vw;max-width:100vw;height:100vh;height:100dvh;max-height:100dvh;border-radius:0}
+    .modal-head,.modal-body,.modal-foot{padding-left:16px;padding-right:16px}
+    .modal-head h2{font-size:26px}
+    .modal-foot .note{order:3;width:100%}
+    .method{gap:28px}
+  }
+  @media(pointer:coarse){
+    .tip{width:20px;height:20px;font-size:10px;vertical-align:0}
+    .switch{width:44px;height:26px}
+    .slider:before{width:18px;height:18px}
+    .switch input:checked + .slider:before{transform:translateX(18px)}
+    input[type="range"]{height:34px}
+    input[type="range"]::-webkit-slider-thumb{width:22px;height:22px;margin-top:-10px}
+    input[type="range"]::-moz-range-thumb{width:18px;height:18px}
+    .chip{padding:9px 14px;font-size:13px}
+    .linkbtn{padding:10px 14px;font-size:13px}
+    .checkrow input{width:20px;height:20px}
+  }
+  /* ---- Release polish: contrast, focus, a11y helpers, print */
+  .section-title::before,.fig,.notice strong,.howto b,.edited-badge,.modal-body h3::before{color:var(--accent-text)}
+  select,input[type="number"],input[type="text"],.chip,.etable input,.tip{border-color:var(--control)}
+  select:hover,input[type="number"]:hover,input[type="text"]:hover{border-color:var(--ink)}
+  input[type="range"]::-webkit-slider-runnable-track{background:var(--control)}
+  input[type="range"]::-moz-range-track{background:var(--control)}
+  .slider{border-color:var(--slider-off)}
+  .slider:before{background:var(--slider-off)}
+  select:disabled{opacity:.45;cursor:not-allowed}
+  select:focus-visible,input:focus-visible,a:focus-visible,summary:focus-visible,.tip:focus-visible,.closex:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  input[type="range"]:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+  .tip.open::after{opacity:1;visibility:visible}
+  .tip.dismissed::after{opacity:0!important;visibility:hidden!important}
+  .closex{min-width:44px;min-height:44px}
+  .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .skip{position:absolute;left:16px;top:-80px;z-index:100;background:var(--ink);color:var(--sheet);padding:10px 14px;border-radius:6px;text-decoration:none;font-weight:500}
+  .skip:focus{top:12px}
+  .main:focus{outline:none}
+  .chips-note{margin-top:10px}
+  .datatable{margin-top:10px;font-size:13px}
+  .datatable summary{cursor:pointer;color:var(--ink-2);padding:6px 0;width:max-content}
+  .datatable summary:hover{color:var(--ink)}
+  .datatable .etable{margin-top:6px}
+  .datatable .etable td,.datatable .etable th{padding:5px 8px;font-family:var(--mono);font-size:12px}
+  .datatable .etable tbody th{font-weight:500;text-align:left}
+  footer p{margin:0 0 8px}
+  footer .disclaimer{color:var(--ink-2);border-left:2px solid var(--accent);padding-left:10px;margin:12px 0}
+  noscript p{margin:16px;padding:12px 16px;border-left:2px solid #c8472d;font:16px/1.5 Georgia,serif;background:#fbfaf6}
+  @media(pointer:fine){
+    .tip{width:16px;height:16px;font-size:9px}
+    .switch{width:38px;height:22px}
+    .slider:before{width:14px;height:14px}
+    .switch input:checked + .slider:before{transform:translateX(16px)}
+    input[type="range"]::-moz-range-thumb{width:14px;height:14px}
+  }
+  @media print{
+    @page{margin:14mm}
+    :root[data-theme]{--paper:#f4f1ea; --sheet:#fbfaf6; --ink:#1a1916; --ink-2:#4a4740; --muted:#6b665b; --rule:#d9d3c5; --rule-soft:#e8e3d8; --accent:#c8472d; --accent-soft:#f3dfd6; --accent-text:#b23e26; --control:#8f897c; --slider-off:#7d776b; --tip-rule:rgba(251,250,246,.18); color-scheme:light}
+    html,body{background:#fff}
+    .header-actions,.settings-fab,.drawer-backdrop,.drawer-head,.tip,.tooltip,.linkbtn,.skip,.controls,.viewrow,.howto,.datatable,.presets,.compare,.wealth-controls{display:none!important}
+    .grid{display:block;padding-top:0}
+    .card,.kpis,.method{break-inside:avoid}
+    footer{margin-left:0}
+    footer a::after{content:" (" attr(href) ")";font-size:10px;word-break:break-all}
+  }
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}input[type="range"]:hover::-webkit-slider-thumb,input[type="range"]:focus-visible::-webkit-slider-thumb{transform:none}}
+</style>
+</head>
+<body>
+<noscript><p>This simulator needs JavaScript to calculate and draw the charts. The methodology and sources further down are readable without it.</p></noscript>
+<a class="skip" href="#results">Skip to results</a>
+<div class="shell">
+  <header class="masthead">
+  <div class="topbar">
+    <div class="mark"><i></i>Household Surplus Lab</div>
+    <div class="topbar-right"><span class="topbar-meta">BLS data 2000–2024 · projected to 2026</span><button type="button" class="theme-btn" id="themeBtn" aria-label="Color theme: system. Click to change.">◐ System</button></div>
+  </div>
+  <div class="hero">
+    <div>
+      <h1>What’s left, and what it <em>becomes</em>.</h1>
+      <p class="dek">How much do households have left after paying for the essentials, and what would it grow into if they invested it? Built on 25 years of U.S. government survey data (2000–2024). Change the assumptions and watch the answer move.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn" id="resetBtn">Reset</button>
+      <button class="btn" id="saveBtn">Save as image</button>
+      <button class="btn" id="csvBtn">Export CSV</button>
+      <button class="btn primary" id="shareBtn">Copy scenario link</button>
+    </div>
+  </div>
+  <div class="howto">
+    <div><b>1 · Set the rules</b>Use the numbered controls to choose the income groups, what counts as income, which costs are essential, and whether to add childcare.</div>
+    <div><b>2 · Read Fig. 1</b>What each group has left each year after essentials. Below the dark $0 line, essentials cost more than the income coming in.</div>
+    <div><b>3 · Read Figs. 2–3</b>What that surplus grows to if a share is invested, and where U.S. wealth actually sits. Hover or tap <span class="tip" aria-hidden="true" style="pointer-events:none">?</span> for definitions.</div>
+  </div>
+  </header>
+  <button type="button" class="settings-fab" id="openControls" aria-controls="controls" aria-expanded="false">Adjust settings</button>
+
+  <div class="grid">
+    <aside class="controls" id="controls" aria-label="Settings">
+      <div class="drawer-head"><strong id="drawerTitle">Settings</strong><button type="button" class="btn primary" id="closeControls">Show results</button></div>
+      <div class="panel">
+        <div class="section">
+          <h2 class="section-title" data-n="01">Population groups<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Households are ranked by income before taxes. Each line shows the average household in that slice of the distribution.">?</span></h2>
+          <div class="control">
+            <label for="segmentation">Split the distribution into</label>
+            <select id="segmentation">
+              <option value="quintiles">Quintiles · 20% each</option>
+              <option value="quartiles">Quartiles · 25% each</option>
+              <option value="deciles">Deciles · 10% each</option>
+              <option value="90_10">Bottom 90% vs top 10%</option>
+              <option value="95_5">Bottom 95% vs top 5%</option>
+              <option value="99_1">Bottom 99% vs top 1%</option>
+              <option value="50_40_10">Bottom 50% · middle 40% · top 10%</option>
+              <option value="customTop">Custom top share vs rest</option>
+            </select>
+          </div>
+          <div class="control advanced" id="customTopWrap">
+            <div class="rangehead"><label for="customTop">Top share<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="The top X% of households by income, compared with everyone else.">?</span></label><span class="rangeval" id="customTopVal">1%</span></div>
+            <input id="customTop" type="range" min="1" max="50" step="1" value="1">
+          </div>
+          <div class="control">
+            <label for="unit">Show amounts<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Per household: totals for the whole household. Per person: divided by the average number of people in households in that group (BLS: about 1.6 in the lowest 20% to 3.2 in the highest), plus any children you add under Childcare. This is a simple headcount; it doesn&#x27;t adjust for shared household costs the way economists&#x27; equivalence scales do.">?</span></label>
+            <select id="unit"><option value="household">Per household</option><option value="person" selected>Per person</option></select>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title" data-n="02">Income concept</h2>
+          <div class="switchrow"><div><strong id="afterTaxLbl">After tax</strong><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Subtracts income taxes using the method chosen below. Social Security payroll contributions are never counted here; they&#x27;re under Insurance &amp; pensions spending.">?</span><div class="subnote" id="afterTaxNote">Subtract estimated personal taxes.</div></div><label class="switch"><input id="afterTax" type="checkbox" role="switch" aria-labelledby="afterTaxLbl" aria-describedby="afterTaxNote"><span class="slider"></span></label></div>
+          <div class="switchrow"><div><strong id="includeTransfersLbl">Include benefits &amp; transfers</strong><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Measured by BLS for every income group in every year: Social Security and pensions (private and government); public assistance, SSI and SNAP (food stamps); unemployment, workers&#x27; compensation and veterans&#x27; benefits; and regular support payments such as child support. Pensions include private retirement income, not only government programs. When off, this income is removed.">?</span><div class="subnote" id="includeTransfersNote">Social Security, pensions, SNAP, SSI, unemployment, veterans’ benefits and support payments, as reported to BLS.</div></div><label class="switch"><input id="includeTransfers" type="checkbox" role="switch" aria-labelledby="includeTransfersLbl" aria-describedby="includeTransfersNote"><span class="slider"></span></label></div>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title" data-n="03">Essential spending<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Spending subtracted from income to find what's left. Click a category to include or exclude it. Amounts are what households in each income group actually spent that year, per BLS. Education is an average across all households, including the many with no tuition that year, so it jumps around from year to year. “Insurance &amp; pensions” includes Social Security payroll tax and retirement savings, as BLS counts them; untick it to treat saving as optional. Transportation includes vehicle purchases. “Education” is tuition, fees and school supplies, not student-loan payments; it’s off by default.">?</span></h2>
+          <div class="chips">
+            <label class="chip"><input class="essential" value="food" type="checkbox" checked>Food at home</label>
+            <label class="chip"><input class="essential" value="housing" type="checkbox" checked>Housing</label>
+            <label class="chip"><input class="essential" value="transport" type="checkbox" checked>Transportation</label>
+            <label class="chip"><input class="essential" value="health" type="checkbox" checked>Healthcare</label>
+            <label class="chip"><input class="essential" value="insurance" type="checkbox" checked>Insurance &amp; pensions</label>
+            <label class="chip"><input class="essential" value="education" type="checkbox">Education</label>
+          </div>
+          <button type="button" class="linkbtn" id="openExpenses" aria-haspopup="dialog">Edit expense amounts…</button><span class="edited-badge" id="expenseBadge" hidden>Edited</span>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title" data-n="04">Children &amp; childcare<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A what-if that adds paid childcare on top of BLS spending. The average BLS household has 0.3 to 0.8 children, and BLS housing spending already includes a small amount for childcare, so this describes a household that pays for care.">?</span></h2>
+          <div class="control">
+            <div class="rangehead"><label for="kids">Children in paid childcare<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Each child adds the yearly childcare price below to essential costs, and adds one person to household size for per-person amounts. 0 leaves childcare out.">?</span></label><span class="rangeval" id="kidsVal">0</span></div>
+            <input id="kids" type="range" min="0" max="5" step="1" value="0">
+          </div>
+          <div class="control">
+            <label for="childcareCost">Price per child per year · 2024 dollars<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="The default, $12,201 in 2024 dollars, is Child Care Aware of America&#x27;s 2023 U.S. national average price per child ($11,582), adjusted with the BLS price index for day care and preschool. Other years use the same index, which has risen faster than overall prices.">?</span></label>
+            <input id="childcareCost" type="number" min="0" step="500" value="12201">
+            <div class="subnote">Prices vary a lot: infant care at a center costs far more, after-school care far less.</div>
+            <div class="subnote equiv" id="childcareEquiv" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title" data-n="05">Inflation<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Controls whether dollars are shown as reported each year or adjusted so different years are comparable.">?</span></h2>
+          <div class="control">
+            <label for="inflationMode">Show dollars as<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Nominal: dollars as reported each year. Real 2000: adjusted to 2000 prices with CPI-U. Custom base year: adjusted to prices in the year you pick. Assumed: a constant inflation rate you set, relative to the base year.">?</span></label>
+            <select id="inflationMode">
+              <option value="nominal">Nominal dollars</option>
+              <option value="real2000">Real 2000 dollars · CPI-U</option>
+              <option value="realBase">Real dollars · custom base year</option>
+              <option value="assumed">Assumed constant inflation</option>
+            </select>
+          </div>
+          <div class="control advanced" id="baseYearWrap">
+            <label for="baseYear">Base year<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="All dollars are expressed in this year's prices.">?</span></label>
+            <select id="baseYear"></select>
+          </div>
+          <div class="control advanced" id="inflationRateWrap">
+            <div class="rangehead"><label for="inflationRate">Assumed annual inflation<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Prices are assumed to rise at this rate every year, instead of using actual CPI-U.">?</span></label><span class="rangeval" id="inflationRateVal">2.5%</span></div>
+            <input id="inflationRate" type="range" min="0" max="8" step=".1" value="2.5">
+          </div>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title" data-n="06">Investing<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A hypothetical: each group invests part of its surplus every year starting in 2000. It ignores taxes on gains, fees and withdrawals, and uses actual past S&amp;P 500 returns, which no one knew in advance.">?</span></h2>
+          <div class="control">
+            <div class="rangehead"><label for="investPct">Share of each year’s surplus invested<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="This share of each year's surplus is added to the portfolio at year-end. A year with a negative surplus adds nothing, and nothing is withdrawn.">?</span></label><span class="rangeval" id="investPctVal">10%</span></div>
+            <input id="investPct" type="range" min="0" max="40" step="1" value="10">
+          </div>
+          <div class="control">
+            <label for="returnMode">Portfolio return<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Historical: the actual S&amp;P 500 total return, dividends included, for each year. Assumed: the same return every year.">?</span></label>
+            <select id="returnMode">
+              <option value="sp500">Historical S&amp;P 500 total return</option>
+              <option value="assumed">Assumed annual return</option>
+            </select>
+          </div>
+          <div class="control advanced" id="returnRateWrap">
+            <div class="rangehead"><label for="returnRate">Assumed return<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Annual return applied to the portfolio balance every year.">?</span></label><span class="rangeval" id="returnRateVal">8.0%</span></div>
+            <input id="returnRate" type="range" min="-5" max="20" step=".5" value="8">
+          </div>
+        </div>
+        <details class="section adv" id="advancedPanel">
+          <summary class="section-title" data-n="07">Advanced<span class="adv-hint">Tax method · what-if benefits · minimum tax</span></summary>
+          <div class="control">
+            <label for="taxMethod">How taxes are estimated<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="CBO (default): the Congressional Budget Office&#x27;s average federal income tax rate for each income group, measured the same way every year from 2000 to 2022. Here it is applied to income before benefits (CBO’s own measure also counts Social Security and Medicare, so this is approximate). Refundable credits make lower groups&#x27; rates negative, especially in 2020–21. Excludes state and local taxes. BLS adjusted: BLS&#x27;s own taxes, with pre-2013 years raised to match its 2013 method. BLS 2013–15 rate: one fixed rate per group for every year. BLS as published: the raw figures, which jump in 2013 when BLS switched from asking households to estimating taxes.">?</span></label>
+            <select id="taxMethod">
+              <option value="cbo">CBO federal rates (consistent)</option>
+              <option value="splice">BLS, pre-2013 adjusted</option>
+              <option value="fixed">BLS 2013–15 rate, all years</option>
+              <option value="bls">BLS as published</option>
+            </select>
+            <div class="subnote" id="taxMethodNote"></div>
+          </div>
+          <div class="control">
+            <div class="rangehead"><label for="transferScale">Benefit amount (what-if)<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="What-if: scales the benefits above. 100% is what households actually reported, 0% removes them and 200% doubles them. Turn on Include benefits &amp; transfers to use it.">?</span></label><span class="rangeval" id="transferScaleVal">100%</span></div>
+            <input id="transferScale" type="range" min="0" max="200" step="5" value="100">
+          </div>
+          <div class="control">
+            <label for="minTaxMode">Minimum tax<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Off: normal tax only. Simple minimum income tax: each household pays the greater of its normal tax or the rate below on income above the exemption. U.S.-style AMT: the greater of its normal tax or that year&#x27;s Alternative Minimum Tax under married-filing-jointly rules (26% and 28% rates, exemption and phase-out). The site has no deductions or filing status and compares against the modeled tax, so treat it as a rough group-level estimate. Both use the same income as the chosen tax method.">?</span></label>
+            <select id="minTaxMode">
+              <option value="off">Off</option>
+              <option value="simple">Simple minimum income tax (what-if)</option>
+              <option value="amt">U.S.-style AMT (income-based)</option>
+            </select>
+            <div class="subnote" id="minTaxNote"></div>
+          </div>
+          <div class="advanced" id="amtControls">
+            <div class="control">
+              <div class="rangehead"><label for="amtRate">Minimum rate<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Minimum tax = this rate × income above the exemption. A household pays whichever is higher: this or its normal estimated tax.">?</span></label><span class="rangeval" id="amtRateVal">20%</span></div>
+              <input id="amtRate" type="range" min="5" max="45" step="1" value="20">
+            </div>
+            <div class="control">
+              <label for="amtThreshold">Exemption · 2024 dollars<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Income below this amount, in 2024 dollars, is exempt. Other years use the CPI-U-adjusted equivalent. When the charts show a single year&#x27;s dollars, the line under the box gives the amount in those dollars.">?</span></label>
+              <input id="amtThreshold" type="number" min="0" step="10000" value="200000">
+              <div class="subnote">Adjusted to other years with CPI-U.</div>
+              <div class="subnote equiv" id="amtEquiv" aria-live="polite"></div>
+            </div>
+          </div>
+        </details>
+        <div class="section compare">
+          <h2 class="section-title" data-n="08" id="compareTitle">Where do you fit?</h2>
+          <div class="subnote">Enter your household’s yearly income before taxes to see roughly where it sits in 2024. Nothing you type leaves this page or goes into the scenario link.</div>
+          <div class="control"><label for="myIncome">Household income before taxes · 2024 dollars<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="All income for everyone in the household before taxes, including wages, business income, interest, Social Security and other benefits, which is how BLS ranks households.">?</span></label><input id="myIncome" type="number" min="0" step="1000" inputmode="numeric" placeholder="e.g. 85000"></div>
+          <div class="control"><label for="mySize">People in household</label><select id="mySize"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6 or more</option></select></div>
+          <p class="compare-out" id="compareOut" aria-live="polite"></p>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main" id="results" tabindex="-1">
+      <div class="presets" role="group" aria-label="Scenario presets"><span class="presets-label">Try a scenario</span><button type="button" class="preset" data-preset="default" aria-pressed="true">Default</button><button type="button" class="preset" data-preset="realistic" aria-pressed="false">After tax &amp; benefits</button><button type="button" class="preset" data-preset="top1" aria-pressed="false">Top 1% vs everyone</button><button type="button" class="preset" data-preset="family" aria-pressed="false">Family, 2 kids in childcare</button><button type="button" class="preset" data-preset="today" aria-pressed="false">In 2024 dollars</button><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="One-click starting points. “After tax &amp; benefits” is the most realistic picture of spendable income. Every preset can be changed further in the settings, and the scenario link keeps your changes.">?</span></div>
+      <div class="kpis">
+        <div class="kpi"><div class="label">Lowest group · left in 2024<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="What the lowest-income group had left in 2024, the latest year of BLS data, after essentials, per household or per person (see Show amounts). Negative means a shortfall.">?</span></div><div class="value" id="kpiBottom">—</div><div class="small" id="kpiBottomName">—</div></div>
+        <div class="kpi"><div class="label">Highest group · left in 2024<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="What the highest-income group had left in 2024 after essentials, per household or per person (see Show amounts).">?</span></div><div class="value" id="kpiTop">—</div><div class="small" id="kpiTopName">—</div></div>
+        <div class="kpi"><div class="label">Top portfolio · 2024<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="The 2024 balance of the highest-income group&#x27;s hypothetical portfolio, per household or per person.">?</span></div><div class="value" id="kpiPortfolio">—</div><div class="small" id="kpiInvestNote">10% of positive surplus</div></div>
+        <div class="kpi"><div class="label">Portfolio gap<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="The largest group portfolio in 2024 divided by the smallest. Portfolios under $1,000 are left out, since groups that rarely had a surplus would make the ratio meaningless.">?</span></div><div class="value" id="kpiGap">—</div><div class="small">Largest ÷ smallest portfolio</div></div>
+      </div>
+      <p class="summary" id="summary"></p>
+      <p class="summary-note" id="summaryNote">An illustrative model, not tax or investment advice.</p>
+      <p class="sr-only" id="summaryLive" aria-live="polite" aria-atomic="true"></p>
+      <p class="sr-only" id="statusLive" aria-live="polite"></p>
+
+      <section class="card">
+        <div class="card-head">
+          <div><div class="fig">Fig. 1</div><h2><span id="fig1Title">Money left after essentials</span><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Income under your settings minus the essential costs you selected, averaged across the group. The dark horizontal line marks $0.">?</span></h2><p id="incomeSubtitle">Yearly pre-tax income excluding benefits, minus essential costs. Per person.</p></div>
+          <div class="metric-strip"><span class="pill" id="dollarModePill">Nominal $</span><span class="pill" id="groupPill">Quintiles</span><span class="pill" id="unitPill">Per person</span></div>
+        </div>
+        <div class="viewrow"><label for="incomeView">Show<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Money left after essentials: income minus the costs you selected. Income: income alone, before any essential costs (before or after tax, with or without benefits, per your settings). Well-being research compares happiness with income, so the happiness plateau line appears on the income view.">?</span></label><select id="incomeView"><option value="left">Money left after essentials</option><option value="income">Income</option></select><span class="inline-group" id="happinessWrap" hidden><label class="checkrow"><input type="checkbox" id="showHappiness" checked>Happiness plateau line</label><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A dotted reference line on income views, at about $110,000 of yearly household income in 2024. Kahneman &amp; Deaton (2010), using 450,000+ Gallup responses from 2008–09, found day-to-day emotional well-being stopped improving above roughly $75,000 of household income, while overall life satisfaction kept rising. A 2023 reanalysis by Killingsworth, Kahneman &amp; Mellers (33,391 employed U.S. adults) found that plateau only for the least happy 15–20% of people, at about $100,000; for most people happiness keeps rising with income. The line is $75,000 in 2008–09 dollars adjusted with CPI-U for each year. Shown only for per-household amounts, since the research uses household income.">?</span></span></div>
+        <div class="viewrow"><label class="checkrow"><input type="checkbox" id="showProjection" checked>Show 2025–2026 projection</label><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="BLS hasn&#x27;t published household data for 2025 or 2026 yet. Projected years start from 2024 and grow every income and cost with inflation (CPI-U). They&#x27;re shaded and drawn with dashed lines.">?</span></div>
+        <div class="legend" id="incomeLegend"></div>
+        <div class="chart-wrap" id="incomeChartWrap"><svg class="chart" id="incomeChart" viewBox="0 0 960 420" role="img" aria-label="Line chart: money left after essentials for each income group by year. The numbers are in the data table below." aria-describedby="incomeSubtitle"></svg><div class="tooltip" id="incomeTooltip" aria-hidden="true"></div></div>
+        <p class="takeaway" id="fig1Takeaway"></p>
+        <details class="datatable"><summary>Show the numbers</summary><div class="etable-wrap"><table class="etable" id="incomeTable"></table></div></details>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <div><div class="fig">Fig. 2</div><h2><span id="fig2Title">What investing it adds up to</span><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A what-if: each group invests part of whatever it has left every year from 2000. Use “Show as” to see the portfolio balance, that year's investment return stacked on top of surplus or income. Fig. 3 shows what households actually own.">?</span></h2><p id="portfolioSubtitle">Portfolio balance from investing part of each year’s surplus since 2000.</p></div>
+          <div class="metric-strip"><span class="pill" id="returnPill">S&amp;P 500</span><span class="pill" id="investPill">10% invested</span></div>
+        </div>
+        <div class="viewrow"><label for="portfolioView">Show as<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Portfolio value: the balance built up since 2000. Contributions vs. growth: the dashed line is the total put in so far and the solid line is what it&#x27;s worth, so the gap is compounding. Stacked views show one year at a time: the dashed line is that year&#x27;s surplus (or income) and the solid line adds that year&#x27;s investment return. Returns can be negative, as in 2008.">?</span></label><select id="portfolioView"><option value="portfolio">Portfolio value</option><option value="growth">Contributions vs. growth</option><option value="surplus">Return stacked on yearly surplus</option><option value="income">Return stacked on yearly income</option></select></div>
+        <div class="legend" id="portfolioLegend"></div>
+        <div class="chart-wrap" id="portfolioChartWrap"><svg class="chart" id="portfolioChart" viewBox="0 0 960 420" role="img" aria-label="Line chart: what investing the surplus adds up to for each income group by year. The numbers are in the data table below." aria-describedby="portfolioSubtitle"></svg><div class="tooltip" id="portfolioTooltip" aria-hidden="true"></div></div>
+        <p class="takeaway" id="fig2Takeaway"></p>
+        <details class="datatable"><summary>Show the numbers</summary><div class="etable-wrap"><table class="etable" id="portfolioTable"></table></div></details>
+      </section>
+
+      <section class="card" id="fig3">
+        <div class="card-head">
+          <div><div class="fig">Fig. 3</div><h2><span id="fig3Title">Where the wealth is</span><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Real household net worth (assets such as homes, businesses, stocks and pensions, minus debts) from the Federal Reserve’s Distributional Financial Accounts, which scale survey data to match the national balance sheet. Unlike Figs. 1–2 it is measured, not a what-if, and it is per household. Group by wealth to see the very top (the top 0.1%), or by income to compare with the income groups above.">?</span></h2><p id="wealthSubtitle"></p></div>
+          <div class="metric-strip"><span class="pill">Federal Reserve data</span><span class="pill" id="f3UnitPill">Per household</span></div>
+        </div>
+        <div class="viewrow"><label for="f3View">Show<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Share of all household wealth: each group’s slice of total U.S. household net worth. Cumulative wealth: households lined up from least to most, with the running total of what they own; the curve is smoothed between the Fed’s official group boundaries. Average net worth: dollars per household (the top groups dwarf the rest). Wealth tax views: a what-if yearly tax on net worth, per household or summed over all households in the group.">?</span></label><select id="f3View"><option value="share">Share of all household wealth</option><option value="curve">Cumulative wealth by percentile</option><option value="avg">Average net worth per household</option><option value="tax">What-if wealth tax per household</option><option value="revenue">What-if wealth tax revenue, all households</option></select><label for="f3Group">Group by<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Wealth: households ranked by net worth, down to the top 0.1% (about 136,000 households). Income: households ranked by income, as in Figs. 1–2, down to the top 1%. They are different households: many high earners aren’t among the wealthiest, and many wealthy households have modest income.">?</span></label><select id="f3Group"><option value="wealth">Wealth · top 0.1% to bottom 50%</option><option value="income">Income · top 1% to lowest 20%</option></select></div>
+        <div class="wealth-controls advanced" id="wealthControls">
+          <div class="control"><label for="wealthMode">Wealth tax design<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Flat (Warren/Sanders-style): the rate on net worth above the threshold, every year. Zucman-style minimum: households above the threshold must pay at least the rate × their total net worth in tax each year; taxes they already pay count toward it, so only the gap is added.">?</span></label><select id="wealthMode"><option value="flat">Flat (Warren/Sanders-style)</option><option value="zucman">Minimum (Zucman-style)</option></select></div>
+          <div class="control"><div class="rangehead"><label for="wealthRate">Rate on net worth<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Yearly rate. U.S. proposals have ranged from 1% to 3% (8% at the very top in one 2019 plan); Zucman’s 2024 G20 proposal is a 2% minimum for billionaires.">?</span></label><span class="rangeval" id="wealthRateVal">2.0%</span></div><input id="wealthRate" type="range" min="0.5" max="5" step="0.5" value="2"></div>
+          <div class="control"><label for="wealthThreshold">Applies above · 2024 dollars<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Net worth below this is exempt (flat design), or households below it are not covered (Zucman-style). $50 million matches Warren’s proposals (2% from $50 million, 3% above $1 billion in the 2024 version); Zucman’s G20 proposal starts at $1 billion. Other years use the CPI-U-adjusted amount.">?</span></label><input id="wealthThreshold" type="number" min="0" step="1000000" value="50000000"><div class="subnote equiv" id="wealthEquiv" aria-live="polite"></div></div>
+          <div class="control advanced" id="wealthPaidWrap"><div class="rangehead"><label for="wealthPaid">Tax already paid, % of wealth<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Zucman-style only: the taxes covered households already pay each year, as a share of their net worth; they count toward the minimum. The default, 0.3%, is Zucman’s 2024 G20 report estimate of U.S. and global billionaires’ effective tax rate relative to wealth; less wealthy households usually pay more relative to their wealth.">?</span></label><span class="rangeval" id="wealthPaidVal">0.3%</span></div><input id="wealthPaid" type="range" min="0" max="3" step="0.1" value="0.3"></div>
+          <div class="subnote" id="wealthAffects" aria-live="polite"></div>
+          <div class="tax-stats" id="wealthStats" aria-live="polite"></div>
+        </div>
+        <div class="split" id="wealthSplit" role="img"></div>
+        <div class="legend" id="wealthLegend"></div>
+        <div class="chart-wrap" id="wealthChartWrap"><svg class="chart" id="wealthChart" viewBox="0 0 960 420" role="img" aria-label="Line chart: household wealth by group and year, from Federal Reserve data. The numbers are in the data table below." aria-describedby="wealthSubtitle"></svg><div class="tooltip" id="wealthTooltip" aria-hidden="true"></div></div>
+        <p class="takeaway" id="fig3Takeaway"></p>
+        <details class="datatable"><summary>Show the numbers</summary><div class="etable-wrap"><table class="etable" id="wealthTable"></table></div></details>
+      </section>
+
+      <section class="method" aria-labelledby="methodTitle">
+        <h2 class="sr-only" id="methodTitle">Method and definitions</h2>
+        <div>
+          <h3>What is real data, and what is a what-if</h3>
+          <p><strong>Real data.</strong> Every year from 2000 to 2024 uses that year’s published BLS Consumer Expenditure Survey table, which ranks U.S. households into five income groups (quintiles). From it come income before and after taxes, the income cut-offs between groups, household size, spending on six categories (including education), and benefit income. For the five quintiles, the model reproduces BLS’s averages exactly.</p>
+          <p><strong>What-ifs.</strong> Anything finer than quintiles (deciles, the top 1%, custom splits) is estimated from a smooth income curve inside each quintile. Childcare, benefit amounts other than 100%, expense edits, the minimum tax, investing and the wealth taxes in Fig. 3 are scenarios you control. Fig. 3’s net worth itself is measured data from the Federal Reserve.</p>
+          <div class="notice"><strong>Breaks in the data</strong>Before 2004, BLS income figures cover only households that fully reported their income; from 2004 BLS fills in missing income. From 2013, BLS estimates taxes with a tax model instead of asking households, which is why BLS after-tax income for the top group dips that year. By default this site uses CBO’s consistent federal income tax rates instead, so the dip disappears. To compare, turn on “After tax” and choose a method under Advanced. BLS doesn’t publish the top group’s 2023 public assistance figure, so 2022’s is used. BLS also published no after-tax income for 2024, because it didn’t update its tax model that year; the BLS-based tax methods use each group’s 2023 tax rate for 2024.</div>
+          <div class="notice"><strong>Projections · 2025–2026</strong>BLS hasn’t published household data for these years yet. They start from 2024 and grow every income and cost with consumer prices (CPI-U), so they show what happens if everything simply kept pace with inflation. The 2025 price average covers 11 months because BLS published no October 2025 index; 2026 covers January–August. The 2026 S&amp;P 500 return is year to date through September 14. Projected years are shaded and dashed.</div>
+          <div class="notice"><strong>Known limitations</strong>BLS’s Consumer Expenditure Survey is known to under-report income compared with national accounts, and low-income households often report spending more than their income (through savings, debt, family help or unreported income). Figures are group averages, not medians, and each income group mixes ages and household types, including retirees and students. Per-person amounts use a simple headcount, and CBO rates cover federal income tax only. Treat the results as rough, comparative illustrations.</div>
+          <div class="notice"><strong>An outside check</strong>The Federal Reserve’s survey of household economic well-being found that 63% of U.S. adults would cover a $400 emergency expense with cash or its equivalent in 2024 (the same as in 2023), leaving more than a third who couldn’t. That fits this site’s finding that lower-income groups have little or nothing left after essentials, though the survey measures adults, not households, and savings as well as income.</div>
+        </div>
+        <div>
+          <h3>Definitions</h3>
+          <ul>
+            <li><strong>Left after essentials</strong> (the “surplus”). Income under your settings minus the essential costs you selected, including childcare and any custom expense. Use “Edit expense amounts” to change the BLS figures.</li>
+            <li><strong>Benefits &amp; transfers.</strong> Social Security and pensions; public assistance, SSI and SNAP; unemployment, workers’ compensation and veterans’ benefits; regular support payments such as child support.</li>
+            <li><strong>Education.</strong> BLS’s education spending: tuition, fees, textbooks, supplies and equipment for schools and colleges. It excludes student-loan payments and doesn’t count tax-funded public schooling. Off by default.</li>
+            <li><strong>Happiness plateau line.</strong> $75,000 of yearly household income in 2008–09 dollars (Kahneman &amp; Deaton, 2010), adjusted with CPI-U for each year: about $110,000 in 2024. A 2023 reanalysis found this plateau only for the least happy 15–20% of people, at about $100,000; for most people happiness keeps rising with income. It is a rough reference, not a threshold for any individual.</li>
+            <li><strong>Childcare.</strong> Children × price per child, adjusted to each year with the day care and preschool price index.</li>
+            <li><strong>Per person.</strong> The group’s average amount divided by its average household size, plus any children added.</li>
+            <li><strong>Minimum tax.</strong> A tax on income, not wealth (under Advanced). “Simple” is a what-if rate above an exemption. “U.S.-style AMT” uses each year’s married-filing-jointly AMT exemption, phase-out and 26%/28% rates, with no deductions or filing status, so it is a rough group-level estimate.</li>
+            <li><strong>Where the wealth is (Fig. 3).</strong> Household net worth from the Federal Reserve’s Distributional Financial Accounts, by wealth or by income group, 2000–2025. Wealth taxes there are what-ifs: <em>flat</em> charges the rate on net worth above a threshold; the <em>Zucman-style minimum</em> requires covered households to pay at least the rate × total net worth, counting taxes already paid. They are applied to each group’s average, ignore avoidance, and use no official revenue score, so treat them as rough orders of magnitude.</li>
+            <li><strong>Investing.</strong> Returns accrue on the prior balance; the year’s contribution is added at year-end. A shortfall contributes $0. No taxes, fees or withdrawals: it’s a portfolio built only from this surplus, not a measure of anyone’s actual wealth.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+  <footer>
+    <p><strong><a href="methodology">Read the full methodology</a></strong>: every source, formula and limitation in one place.</p>
+    <p>Sources: <a href="https://www.bls.gov/cex/tables.htm" target="_blank" rel="noopener noreferrer">BLS Consumer Expenditure Survey quintile tables, 2000–2024</a> ·
+    <a href="https://www.cbo.gov/publication/61911" target="_blank" rel="noopener noreferrer">CBO, The Distribution of Household Income, 2022</a> ·
+    <a href="https://doi.org/10.1073/pnas.1011492107" target="_blank" rel="noopener noreferrer">Kahneman &amp; Deaton (2010), PNAS</a> ·
+    <a href="https://doi.org/10.1073/pnas.2208661120" target="_blank" rel="noopener noreferrer">Killingsworth, Kahneman &amp; Mellers (2023), PNAS</a> ·
+    <a href="https://www.federalreserve.gov/releases/z1/dataviz/dfa/" target="_blank" rel="noopener noreferrer">Federal Reserve Distributional Financial Accounts</a> ·
+    <a href="https://www.federalreserve.gov/publications/report-economic-well-being-us-households.htm" target="_blank" rel="noopener noreferrer">Federal Reserve SHED 2024</a> ·
+    <a href="https://gabriel-zucman.eu/files/report-g20.pdf" target="_blank" rel="noopener noreferrer">Zucman (2024), G20 report on minimum taxation of the super-rich</a> ·
+    <a href="https://www.warren.senate.gov/newsroom/press-releases/warren-jayapal-boyle-reintroduce-ultra-millionaire-tax-on-fortunes-over-50-million" target="_blank" rel="noopener noreferrer">Sen. Warren, Ultra-Millionaire Tax Act (2024)</a> ·
+    <a href="https://www.irs.gov/forms-pubs/about-form-6251" target="_blank" rel="noopener noreferrer">IRS Form 6251 (AMT)</a> ·
+    <a href="https://data.bls.gov/timeseries/CUUR0000SA0" target="_blank" rel="noopener noreferrer">BLS CPI-U</a> ·
+    <a href="https://data.bls.gov/timeseries/CUUR0000SEEB03" target="_blank" rel="noopener noreferrer">BLS CPI: day care and preschool</a> ·
+    <a href="https://www.childcareaware.org/thechildcarestandstill/" target="_blank" rel="noopener noreferrer">Child Care Aware of America, 2023 price of care</a> ·
+    S&amp;P 500 total returns (S&amp;P Dow Jones Indices).</p>
+    <p class="disclaimer"><strong>Disclaimer:</strong> This site is for illustration purposes only. It was 100% AI-generated from the sources above, and its math and figures have not been independently checked by a human.</p>
+    <p><strong>An illustrative model, not tax or investment advice.</strong> BLS, CBO and CPI data are U.S. government works in the public domain. Childcare price from Child Care Aware of America, used with attribution.</p>
+    <p>Version 1.0 · Data through BLS CE 2024, CPI August 2026 and S&amp;P 500 to September 14, 2026 · Last updated <time datetime="2026-09-15">September 15, 2026</time> · No cookies. Anonymous, privacy-friendly visit counts via Cloudflare Web Analytics; fonts load from Google Fonts.</p>
+    <p>Made by Patrick Glenn by way of Claude and ChatGPT. Code under the <a href="https://opensource.org/license/mit" target="_blank" rel="noopener noreferrer">MIT License</a>; text and charts under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>.</p>
+  </footer>
+</div>
+
+<div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+
+<dialog class="modal" id="expenseModal" aria-labelledby="expenseTitle">
+  <div class="modal-head">
+    <div><h2 id="expenseTitle">Expense amounts</h2><p>Every amount starts as what households in that income group actually spent, according to BLS. Change anything to test your own assumptions. The charts update as you type, and edits are saved in the scenario link.</p></div>
+    <button type="button" class="closex" id="closeExpenses" aria-label="Close">×</button>
+  </div>
+  <div class="modal-body">
+    <h3 data-n="A">Scale a whole category</h3>
+    <p class="hint">Raises or lowers a category for every group and every year. 100% is BLS as published. Scaling applies on top of any single-year edits below.</p>
+    <div class="scale-grid" id="scaleGrid"></div>
+
+    <h3 data-n="B">Edit a single year</h3>
+    <p class="hint">Average yearly spending per household, in that year’s dollars. The small grey figure is the original amount (BLS, or the projection from 2024); highlighted boxes have been changed. Clear a box to restore it. Changes to 2024 carry into the 2025–2026 projections.</p>
+    <div class="year-pick"><label for="expenseYear">Year</label><select id="expenseYear"></select></div>
+    <div class="etable-wrap"><table class="etable" id="expenseTable"></table></div>
+
+    <h3 data-n="C">Add your own expense</h3>
+    <p class="hint">A flat yearly cost for every household, such as phone and internet or student loans. Enter it in 2024 dollars; other years are adjusted with CPI-U.</p>
+    <div class="row">
+      <div class="control"><label for="customName">Name</label><input id="customName" type="text" maxlength="40" placeholder="e.g. Phone &amp; internet"></div>
+      <div class="control"><label for="customAmount">Per household per year · 2024 $</label><input id="customAmount" type="number" min="0" step="100" value="0"><div class="subnote equiv" id="customEquiv" aria-live="polite"></div></div>
+    </div>
+  </div>
+  <div class="modal-foot">
+    <button type="button" class="btn" id="resetExpenses">Reset all to BLS</button>
+    <span class="note">Childcare is set in the sidebar, under 04.</span>
+    <button type="button" class="btn primary" id="doneExpenses">Done</button>
+  </div>
+</dialog>
+
+<script>
+const YEARS = Array.from({length:27},(_,i)=>2000+i);
+// Last year with a published BLS table; later years are projections.
+const LAST_ACTUAL = 2024;
+const isProjected=y=>y>LAST_ACTUAL;
+// Chart colors per theme. To add a theme, add an entry here and a matching :root[data-theme="…"] CSS block.
+const THEMES={
+  light:{series:["#c8472d","#d99a2b","#5b8a5a","#2f6f8f","#1a1916","#8c5a8a","#a0522d","#7a8b3c","#4f7fb8","#9a8f7c"],ink:"#1a1916",paper:"#f4f1ea",axis:"#6b665b",grid:"#e3ddd0",projection:"#e9e3d5",accent:"#c8472d",accentText:"#b23e26",marketLine:"#8f897c",marketText:"#4a4740",happy:"#5b8a5a",happyText:"#3f6b40"},
+  dark:{series:["#f08e74","#e8b04a","#86b884","#6aa9cf","#ece7dd","#c69cc4","#d8946a","#b0bf70","#94b8ec","#b8af9d"],ink:"#ece7dd",paper:"#151412",axis:"#a39c8f",grid:"#2c2a26",projection:"#221f1b",accent:"#e0664a",accentText:"#f08e74",marketLine:"#7d776c",marketText:"#c7c0b3",happy:"#86b884",happyText:"#a3d0a1"},
+};
+const themeName=()=>document.documentElement.getAttribute("data-theme")==="dark"?"dark":"light";
+const palette=()=>THEMES[themeName()]||THEMES.light;
+// CPI-U annual averages. 2025 averages 11 months (BLS published no October 2025 index); 2026 averages January–August.
+const CPI = {2000:172.2,2001:177.067,2002:179.875,2003:183.958,2004:188.883,2005:195.292,2006:201.592,2007:207.342,2008:215.303,2009:214.537,2010:218.056,2011:224.939,2012:229.594,2013:232.957,2014:236.736,2015:237.017,2016:240.007,2017:245.120,2018:251.107,2019:255.657,2020:258.811,2021:270.970,2022:292.655,2023:304.702,2024:313.689,2025:321.943,2026:331.655};
+// CPI for day care and preschool (BLS series CUUR0000SEEB03), annual averages.
+const DAYCARE_CPI = {2000:156.25,2001:164.125,2002:172.517,2003:180.325,2004:187.125,2005:195.35,2006:206.0,2007:214.877,2008:224.635,2009:232.828,2010:240.432,2011:247.064,2012:253.141,2013:259.406,2014:264.874,2015:275.381,2016:283.099,2017:290.379,2018:295.048,2019:303.268,2020:311.887,2021:317.746,2022:330.305,2023:348.926,2024:367.585,2025:386.417,2026:397.623};
+// S&P 500 total return including dividends (S&P Dow Jones Indices annual figures). 2026 is year to date through September 14, 2026.
+const SP500 = {2000:-.091,2001:-.1189,2002:-.221,2003:.2868,2004:.1088,2005:.0491,2006:.1579,2007:.0549,2008:-.37,2009:.2646,2010:.1506,2011:.0211,2012:.16,2013:.3239,2014:.1369,2015:.0138,2016:.1196,2017:.2183,2018:-.0438,2019:.3149,2020:.184,2021:.2871,2022:-.1811,2023:.2629,2024:.2502,2025:.1788,2026:.1217};
+// Child Care Aware of America: national average price of child care per child, 2023.
+const CHILDCARE_2023 = 11582;
+// Default childcare input: the 2023 price in 2024 dollars, adjusted with the day care CPI.
+const CHILDCARE_DEFAULT = Math.round(CHILDCARE_2023*DAYCARE_CPI[2024]/DAYCARE_CPI[2023]);
+// CBO, The Distribution of Household Income, 2022 (Jan 2026), supplemental table 9: average federal individual
+// income tax rate (%) by quintile, as a share of income before transfers and taxes. Later years reuse 2022.
+const CBO_RATES = {2000:[-5.2,1.5,5,8.2,17.6],2001:[-6.5,0.4,3.9,7.1,16.5],2002:[-7,-0.1,3.6,6.7,15.7],2003:[-7.1,-0.9,2.8,5.9,13.9],2004:[-7.2,-0.8,2.9,5.9,14],2005:[-7.6,-0.8,2.9,6,14.2],2006:[-7.6,-0.7,3,6,14.3],2007:[-7.6,-0.3,3.3,6.2,14.5],2008:[-11.7,-2.8,1.3,4.8,14.1],2009:[-12.9,-3,1.4,4.7,13.5],2010:[-13,-2.7,1.6,5.1,13.8],2011:[-11.2,-1.6,2.6,6,14.3],2012:[-10.9,-1.7,2.7,6.1,14.7],2013:[-11,-1.5,2.8,6.2,15.5],2014:[-11.5,-1.8,2.8,6.4,16],2015:[-11.5,-1.5,2.9,6.6,16.2],2016:[-11,-1.3,3,6.7,16.1],2017:[-11,-1.2,3.2,6.9,16.6],2018:[-12.1,-2.3,2.1,5.9,15.4],2019:[-11.1,-1.6,2.4,6,15.3],2020:[-27.4,-8.9,-2.3,2.9,15.2],2021:[-33.3,-9.7,-2.4,3.4,16.7],2022:[-10.1,-0.9,3.1,6.8,16.6]};
+const CBO_LAST = 2022;
+// CBO individual income tax rates inside the top 20%: 81st–90th, 91st–95th, 96th–99th percentiles and top 1% (same table).
+const CBO_TOP_RATES = {2000:[11.3,13.7,18.1,24.6],2001:[10.3,13.0,17.1,24.6],2002:[9.8,12.3,16.3,24.2],2003:[8.6,10.9,14.6,20.9],2004:[8.7,10.9,15.0,20.2],2005:[8.6,10.9,15.3,19.8],2006:[8.8,11.1,15.3,19.4],2007:[8.9,11.2,15.6,19.5],2008:[8.0,10.8,15.4,20.5],2009:[7.8,10.4,14.7,21.1],2010:[8.2,10.8,15.2,20.2],2011:[8.9,11.4,15.7,20.3],2012:[9.1,11.6,16.1,19.9],2013:[9.3,11.7,16.1,23.7],2014:[9.5,12.0,16.5,23.9],2015:[9.7,12.3,16.9,24.0],2016:[9.8,12.3,16.9,23.7],2017:[10.1,12.6,17.3,24.4],2018:[9.1,11.4,15.5,23.5],2019:[9.1,11.6,15.7,23.3],2020:[7.3,10.9,15.7,24.0],2021:[8.3,11.8,17.0,24.2],2022:[9.9,12.5,17.1,23.9]};
+// Approximate U.S. AMT, married filing jointly, by tax year: [exemption, phase-out start, phase-out rate, 28% bracket start].
+// Sources: IRS Form 6251 instructions and inflation-adjustment revenue procedures (see README).
+const AMT_MFJ = {2000:[45000,150000,0.25,175000],2001:[49000,150000,0.25,175000],2002:[49000,150000,0.25,175000],2003:[58000,150000,0.25,175000],2004:[58000,150000,0.25,175000],2005:[58000,150000,0.25,175000],2006:[62550,150000,0.25,175000],2007:[66250,150000,0.25,175000],2008:[69950,150000,0.25,175000],2009:[70950,150000,0.25,175000],2010:[72450,150000,0.25,175000],2011:[74450,150000,0.25,175000],2012:[78750,150000,0.25,175000],2013:[80800,153900,0.25,179500],2014:[82100,156500,0.25,182500],2015:[83400,158900,0.25,185400],2016:[83800,159700,0.25,186300],2017:[84500,160900,0.25,187800],2018:[109400,1000000,0.25,191100],2019:[111700,1020600,0.25,194800],2020:[113400,1036800,0.25,197900],2021:[114600,1047200,0.25,199900],2022:[118100,1079800,0.25,206100],2023:[126500,1156300,0.25,220700],2024:[133300,1218700,0.25,232600],2025:[137000,1252700,0.25,239100],2026:[140200,1000000,0.5,244500]};
+// Federal Reserve Distributional Financial Accounts: average household net worth by household income percentile,
+// nominal dollars at Q4 of each year (total net worth ÷ household count). Groups: <20, 20–40, 40–60, 60–80, 80–99, top 1%.
+const DFA_NETWORTH = {2000:[58765,131364,194104,336196,946896,7511491],2001:[59432,134958,200161,350895,971962,7430323],2002:[60325,131857,204451,366721,921178,7174074],2003:[64159,131678,218244,407440,972569,8567042],2004:[74171,136595,239266,451131,1059276,10341386],2005:[86141,147130,252564,455396,1166540,11380940],2006:[93044,153404,254667,447985,1258872,12663660],2007:[95387,152891,248115,431062,1306017,13119161],2008:[91770,144999,232408,372786,1165468,10285596],2009:[91713,141602,233202,364178,1213601,10167349],2010:[93733,138683,240782,381566,1312461,10870686],2011:[86136,136308,231556,395597,1314388,11053532],2012:[81604,135696,229781,427647,1387575,12198255],2013:[80418,140749,241130,474342,1534434,14084070],2014:[79340,141543,249466,486708,1646807,15538318],2015:[78047,144577,257668,490190,1694968,16053125],2016:[82463,149276,269465,506985,1775262,17114576],2017:[98682,158714,288483,549739,1899961,19000831],2018:[112575,162901,293497,557592,1859354,18582350],2019:[126320,174186,319850,608529,2048423,21038915],2020:[134686,199912,372870,665167,2335869,23065590],2021:[153370,230657,440170,745782,2719847,26555978],2022:[157455,237956,443039,701042,2563440,23411102],2023:[170114,248288,463716,760441,2793688,26013112],2024:[178627,259496,484766,813818,3016678,28906669],2025:[184443,266348,500421,853693,3199052,31641761]};
+// Federal Reserve Distributional Financial Accounts, groups by WEALTH percentile, Q4 of each year: average net worth
+// per household (nominal $) and household counts. Order: bottom 50%, 50–90%, 90–99%, 99–99.9%, top 0.1%.
+const WEALTH_DFA = {2000:{avg:[25338,341307,1591138,7313258,40071106],hh:[52677968,42157025,9466796,944306,108654]},2001:{avg:[24262,359830,1631472,7350478,38702111],hh:[53459186,42782073,9605618,959395,108977]},2002:{avg:[23450,359422,1602017,7148107,35509870],hh:[54377097,43509666,9774378,976863,109826]},2003:{avg:[22508,378818,1770863,7995373,41014674],hh:[55349948,44278974,9955344,995060,111084]},2004:{avg:[23783,411272,1975469,9079564,49578463],hh:[56285142,45021093,10128370,1012145,112569]},2005:{avg:[26474,436071,2150746,9740686,55373552],hh:[57100788,45672857,10276875,1026670,114086]},2006:{avg:[25278,445204,2312367,10472063,62994272],hh:[57735782,46182240,10391189,1037950,115399]},2007:{avg:[19025,441208,2401318,10691183,66704557],hh:[58132167,46499124,10462564,1045395,116273]},2008:{avg:[9698,400847,2123812,9353591,52226961],hh:[58323315,46649332,10497467,1049575,116694]},2009:{avg:[5666,396173,2191894,9739307,52231367],hh:[58519982,46806179,10531923,1053308,117078]},2010:{avg:[4177,406767,2356183,10473641,58220714],hh:[58952152,47158964,10605163,1059661,117890]},2011:{avg:[4401,408608,2344779,10510638,59673005],hh:[59710725,47780832,10733662,1070195,119326]},2012:{avg:[7854,425170,2456576,11151129,66325778],hh:[60616477,48519336,10889694,1083548,121064]},2013:{avg:[10749,464146,2714418,12227477,75720702],hh:[61459876,49196750,11040560,1098025,122722]},2014:{avg:[13342,479372,2887367,13261193,83103292],hh:[62119786,49712839,11165879,1112185,124075]},2015:{avg:[15890,489511,2956571,13618191,84714978],hh:[62646741,50117859,11269203,1125081,125201]},2016:{avg:[18136,511451,3096458,14339634,88759851],hh:[63110819,50479170,11356825,1135831,126209]},2017:{avg:[21913,547459,3367152,15651917,96393474],hh:[63560316,50841150,11434365,1144148,127185]},2018:{avg:[23893,550362,3368779,15413062,90869285],hh:[64001229,51203542,11506128,1150906,128157]},2019:{avg:[28962,596126,3713093,17152594,104766719],hh:[64434729,51560999,11576272,1157112,129149]},2020:{avg:[41637,688864,4041081,18581965,122804521],hh:[64866344,51912772,11649087,1163653,130188]},2021:{avg:[53522,807245,4538677,21029025,149871430],hh:[65310061,52267035,11729129,1171185,131314]},2022:{avg:[52870,798880,4183789,18899474,136768478],hh:[65813070,52662556,11824199,1180611,132549]},2023:{avg:[55813,857497,4551705,20835086,151718955],hh:[66096885,52889661,11875190,1185702,133121]},2024:{avg:[59802,909192,4904423,22937789,168525275],hh:[66645233,53328439,11973708,1195539,134225]},2025:{avg:[63065,942189,5208947,24823353,184963169],hh:[67688033,54162871,12161061,1214246,136325]}};
+// Household counts for the DFA income groups above (bottom 20% … top 1%), Q4 of each year.
+const DFA_INCOME_HH = {2000:[21063379,21074035,21075225,21068435,20020845,1052829],2001:[21377276,21384519,21386753,21381266,20316033,1069403],2002:[21745614,21749033,21752992,21748643,20661637,1089913],2003:[22135112,22136530,22141115,22137883,21028244,1111523],2004:[22508157,22511742,22513903,22511981,21382489,1131047],2005:[22832145,22842029,22838649,22838256,21693883,1146313],2006:[23084201,23099860,23091414,23092427,21937535,1157125],2007:[23242859,23258612,23249563,23251478,22089488,1163524],2008:[23321984,23330608,23326596,23328736,22161619,1166839],2009:[23404064,23403810,23406184,23408117,22235397,1170897],2010:[23579016,23574389,23579608,23581191,22399839,1179787],2011:[23882226,23880419,23882869,23884164,22690068,1194996],2012:[24243167,24247141,24244609,24245721,23036536,1212944],2013:[24579434,24587139,24581430,24582486,23357958,1229487],2014:[24843327,24850152,24845107,24846290,23607593,1242295],2015:[25054561,25058073,25055738,25057347,23805800,1252567],2016:[25240524,25241008,25241196,25243651,23980572,1261903],2017:[25420196,25419479,25420787,25424366,24151009,1271328],2018:[25596218,25595397,25597166,25601499,24318931,1280752],2019:[25769369,25768549,25771091,25775103,24484190,1289959],2020:[25942112,25940640,25945035,25946993,24648417,1298847],2021:[26120175,26117098,26124798,26122420,24816696,1307536],2022:[26322191,26317122,26328480,26321007,25007106,1317078],2023:[26435704,26430613,26442020,26434515,25114948,1322758],2024:[26655018,26649884,26661386,26653819,25323305,1333732],2025:[27072090,27066876,27078558,27070872,25719539,1354601]};
+const TAX_METHODS = ["cbo","splice","fixed","bls"];
+
+// BLS Consumer Expenditure Survey, "Quintiles of income before taxes" — the published table for each year.
+// Row order matches FIELDS. Transfers = Social Security & private/government retirement
+// + public assistance, SSI & SNAP + unemployment, workers' compensation & veterans' benefits + regular contributions
+// for support. BLS combines support payments with unemployment from 2013; they are added to 2000–2012 for consistency.
+// BLS suppresses the highest quintile's 2023 public assistance figure; the 2022 value is carried forward.
+// Education = BLS "Education" (tuition, fees, textbooks, supplies and equipment; excludes student-loan payments).
+// BLS published no after-tax income for 2024 (its tax model wasn't updated), so 2024 after-tax income
+// applies each quintile's 2023 tax share to 2024 income before taxes.
+const CE={
+  2000:[[7683,19071,32910,53295,110118],[7457,18637,31349,49695,100369],[0,13061,25219,41493,67517],[1.8,2.3,2.5,2.8,3.2],[0.4,0.6,0.7,0.8,0.9],[1826,2765,3081,3590,4507],[6509,8482,10857,14152,22611],[3212,5043,7028,9223,13315],[1470,1988,1964,2312,2864],[413,1251,2878,5425,11557],[4975,7981,6194,4732,4450],[430,290,393,600,1462]],
+  2001:[[7946,20319,35536,56891,116666],[7911,19999,34112,53724,107027],[0,13909,27177,44462,71898],[1.7,2.2,2.5,2.9,3.1],[0.4,0.6,0.7,0.8,0.9],[2124,2731,3113,3709,4584],[6834,8833,11162,14790,23953],[3178,5056,7538,9773,14032],[1422,2074,2199,2494,2921],[466,1454,3075,5576,11878],[4987,7694,6185,5488,4811],[492,317,290,726,1366]],
+  2002:[[8316,21162,36989,59177,121367],[8323,20859,35817,56497,113044],[0,14599,28344,46507,74392],[1.7,2.2,2.5,2.8,3.2],[0.4,0.5,0.6,0.8,0.9],[2144,2677,3073,3660,4528],[6640,9117,11743,15340,24541],[3285,5013,7472,10369,13769],[1402,2183,2506,2692,3262],[512,1484,3213,5776,11967],[5161,8055,6999,5839,5106],[663,364,437,662,1729]],
+  2003:[[8201,21478,37542,61132,127146],[8260,20543,36363,58593,119091],[0,14762,28595,47802,77671],[1.8,2.3,2.5,2.8,3.1],[0.4,0.6,0.7,0.7,0.8],[2119,2713,3114,3726,4503],[6858,9285,11709,15357,25033],[2859,4920,7210,10677,14525],[1439,2132,2553,2745,3606],[433,1373,3123,5990,12615],[5218,7861,7008,6152,6397],[576,287,351,623,2121]],
+  2004:[[9168,24102,41614,65100,132158],[9220,23751,40802,62847,124698],[0,16403,32477,51774,81058],[1.7,2.2,2.6,2.9,3.2],[0.4,0.5,0.7,0.8,0.8],[2044,2659,3209,3836,4984],[6760,9505,12144,15741,25424],[2629,5005,6827,9954,14580],[1421,2139,2529,2969,3810],[429,1568,3379,6095,12632],[5627,8064,7499,6113,6723],[641,314,396,811,2363]],
+  2005:[[9676,25546,42622,67813,147737],[9688,25200,41557,65275,139644],[0,17579,33381,53358,85147],[1.7,2.2,2.5,2.9,3.2],[0.4,0.5,0.7,0.8,0.8],[1980,2527,3017,3952,5007],[7529,10192,13234,16850,28006],[2742,5330,7437,10504,15691],[1448,2329,2567,3012,3962],[481,1632,3555,6473,13862],[5964,8643,7453,6489,6830],[530,314,439,911,2504]],
+  2006:[[9974,26657,44933,70975,149963],[9969,26346,43799,68497,141738],[0,18370,35095,56222,88774],[1.7,2.2,2.5,2.8,3.1],[0.4,0.5,0.6,0.7,0.8],[2138,2647,3210,3903,5186],[8128,10973,14204,18428,30071],[3038,5277,7662,10120,16426],[1485,2456,2647,3154,4086],[517,1728,3712,6577,13800],[6078,8678,7479,6401,6839],[505,295,477,879,2281]],
+  2007:[[10531,27674,46213,72460,158388],[10534,27419,45179,70050,150927],[0,19301,36070,57944,91297],[1.7,2.2,2.5,2.9,3.2],[0.4,0.5,0.6,0.7,0.9],[2005,2741,3333,3980,5265],[8285,11390,14388,19017,31492],[3242,5717,7926,11058,15831],[1474,2448,2826,3268,4244],[547,1942,3641,6483,14050],[6306,8877,7644,7108,7016],[614,346,532,692,2541]],
+  2008:[[10263,27442,47196,74090,158652],[10608,27843,46936,72628,150692],[0,19065,36271,59087,93358],[1.7,2.2,2.6,2.8,3.2],[0.4,0.5,0.7,0.7,0.8],[2369,2929,3436,4340,5645],[8900,11583,14917,19327,30791],[3430,5657,7834,10469,15614],[1624,2457,2886,3518,4391],[532,1778,3748,6825,15126],[6406,9072,8308,7278,7031],[625,361,498,843,2899]],
+  2009:[[9846,27227,46012,73417,157631],[9956,27275,45199,71241,149951],[0,19175,35598,57295,93784],[1.7,2.3,2.5,2.9,3.1],[0.4,0.6,0.6,0.7,0.8],[2463,2999,3355,4316,5629],[8961,11829,14805,18862,29998],[2855,5078,6717,9525,14105],[1628,2491,3069,3762,4677],[534,1694,3512,6664,14937],[6470,9685,9509,7868,7064],[573,369,548,881,2966]],
+  2010:[[9906,26777,45552,72794,157369],[10034,26966,45189,71220,150144],[0,18439,35209,57340,91931],[1.7,2.3,2.6,2.9,3.2],[0.4,0.6,0.6,0.7,0.8],[2270,2816,3433,3917,5683],[8667,11369,14508,18625,29615],[2868,5002,7160,9432,13924],[1524,2649,3068,3715,4827],[446,1560,3473,6523,14861],[6511,10121,10030,8812,8121],[635,408,510,813,3005]],
+  2011:[[9805,27117,46190,74019,161292],[10074,27230,45563,72169,153326],[0,18559,35645,58272,93837],[1.7,2.2,2.6,2.8,3.2],[0.4,0.5,0.7,0.7,0.8],[2448,3051,3496,4364,5828],[8771,12136,14944,18840,29321],[3256,5142,7592,10205,15264],[1489,2611,3319,3994,5149],[422,1693,3505,6431,15068],[6730,10169,10193,9359,9107],[807,474,562,827,2585]],
+  2012:[[9988,27585,47265,75952,167010],[10171,27743,46777,73970,158024],[0,19112,36134,59514,96228],[1.7,2.2,2.5,2.8,3.1],[0.4,0.5,0.6,0.7,0.8],[2416,2991,3633,4593,5968],[8836,12258,14755,18863,29705],[3447,5462,8181,11549,16344],[1677,2787,3363,4169,5785],[489,1612,3623,6678,15534],[6801,10464,10162,9679,9714],[628,431,526,1046,3399]],
+  2013:[[9658,26275,45826,74546,162720],[10092,26764,43592,67344,134044],[0,17883,34958,57968,95336],[1.7,2.2,2.5,2.8,3.2],[0.4,0.5,0.6,0.7,0.8],[2514,3221,3606,4482,6058],[8963,11994,14808,19084,30901],[3327,5856,8071,10908,16860],[1790,2850,3375,4386,5755],[463,1653,3496,6594,15443],[6322,10705,9351,8444,8468],[830,452,552,925,2932]],
+  2014:[[10308,27028,47056,76988,172952],[10750,27597,44686,69084,139658],[0,18362,35681,59549,99620],[1.7,2.2,2.5,2.8,3.2],[0.4,0.5,0.6,0.7,0.8],[2506,3138,3670,4501,6039],[9643,12508,15448,19568,31812],[3555,5696,8475,10844,16788],[1868,3252,4026,5082,7219],[501,1594,3553,6746,16232],[6251,11088,9915,9000,7676],[922,416,592,1022,3227]],
+  2015:[[10916,28343,49606,80813,177851],[11416,28727,46807,72375,142446],[0,19572,37638,62587,103057],[1.7,2.2,2.5,2.9,3.1],[0.3,0.5,0.6,0.7,0.8],[2499,3271,3445,4545,6310],[9890,12832,15809,20408,33027],[3559,5923,8820,11330,17834],[1930,3423,3965,5327,7048],[592,1740,3980,7667,17699],[6909,11632,9885,8284,7312],[689,494,614,986,3779]],
+  2016:[[11389,28976,50563,84173,198674],[11832,29423,47681,75065,157215],[0,19868,38163,64418,108040],[1.6,2.2,2.5,2.9,3.1],[0.3,0.5,0.6,0.7,0.8],[2502,3112,3697,4738,6193],[10267,13552,16315,20687,33653],[3767,5992,8464,10931,16114],[2156,3528,4266,5442,7677],[645,1766,4227,8262,19302],[7174,12176,9961,8038,7449],[681,759,618,988,3605]],
+  2017:[[11394,29821,52431,86363,188103],[11933,30315,49339,77103,149504],[0,20739,39609,66898,109743],[1.6,2.2,2.5,2.9,3.1],[0.3,0.5,0.6,0.7,0.8],[2582,3622,4038,4893,6677],[10413,14095,17462,22244,35234],[3497,6572,8532,11099,18190],[2492,3889,4642,5764,7857],[655,2421,4336,8215,18253],[7136,12180,10626,8477,7664],[784,426,584,1179,4492]],
+  2018:[[11285,31237,54900,90478,204975],[11695,31199,51211,79944,161954],[0,21293,41490,70367,116625],[1.7,2.1,2.5,2.9,3.2],[0.3,0.5,0.6,0.7,0.8],[2709,3620,4081,5081,6827],[10553,14293,17860,22217,35501],[3718,6761,8636,11288,18387],[2475,3997,4637,5866,7865],[716,2054,4947,8618,20112],[7076,12863,11112,8944,7971],[766,411,730,1194,3926]],
+  2019:[[12029,32768,56773,93390,218670],[12236,32945,53123,83864,174777],[0,22488,43432,72234,120729],[1.6,2.2,2.5,2.8,3.2],[0.3,0.5,0.6,0.7,0.8],[2790,3672,4422,5198,7129],[11531,14805,18075,22611,36302],[4581,7160,9850,12910,19166],[2855,3950,4694,6036,8415],[619,2006,4633,8647,19861],[7753,13002,11127,8789,8775],[767,491,687,1189,4072]],
+  2020:[[13219,34550,59422,97221,218191],[15140,36397,58001,89766,176094],[0,24010,45265,75890,124432],[1.7,2.1,2.5,2.9,3.2],[0.3,0.5,0.6,0.7,0.8],[3099,3820,4230,5736,7817],[12317,15770,18509,23889,36645],[4363,6218,9189,12610,16796],[2775,4146,4964,6087,7931],[610,2113,4615,9020,19952],[8782,13794,12605,9697,9382],[637,364,682,1134,3553]],
+  2021:[[13165,34767,61214,100527,226386],[15909,37504,60957,93674,184804],[0,24128,46506,78259,129534],[1.7,2.1,2.5,2.8,3.2],[0.3,0.4,0.6,0.7,0.8],[3524,4015,4754,5868,8127],[12854,16672,19947,24997,38526],[4273,7988,10285,12984,19204],[3078,4252,4802,6359,8738],[539,2161,5021,9436,22096],[8979,13995,12341,10911,10396],[510,427,534,1044,3600]],
+  2022:[[14191,37441,65659,108730,244025],[16337,39300,63676,99891,196794],[0,25807,50092,83696,140363],[1.6,2.1,2.4,2.9,3.2],[0.3,0.4,0.6,0.7,0.8],[3624,4310,5525,6529,8523],[13376,17927,21550,26215,42429],[4928,8156,10749,14719,22926],[3355,4441,5951,6694,8814],[636,2338,5423,10771,24543],[9239,14441,13035,11540,10263],[652,507,660,1180,3678]],
+  2023:[[15596,40751,71057,116717,264518],[16171,40621,66606,104559,211042],[0,28262,54553,90239,148682],[1.6,2.1,2.5,2.9,3.2],[0.3,0.4,0.6,0.7,0.8],[3707,4680,5756,6917,9198],[13943,18656,22674,27951,43897],[4917,7809,11909,15914,25279],[3539,4844,5753,7010,9633],[713,2608,5942,11878,26604],[9969,15769,13859,10807,10535],[727,531,1079,1176,4766]],
+  2024:[[16658,42925,74474,121548,264510],[17272,42788,69809,108887,211036],[0,29932,57452,94511,155925],[1.6,2.1,2.5,2.9,3.2],[0.3,0.4,0.5,0.7,0.8],[3843,4952,5820,7162,9336],[14563,19174,24093,29374,44033],[5105,8430,11657,15952,25378],[3445,4826,5676,7247,9771],[711,2712,6248,11934,27279],[10563,16884,14176,12510,10389],[828,407,749,1353,4492]]
+};
+const FIELDS = ["pretax","aftertax","bounds","persons","children","food","housing","transport","health","insurance","transfers","education"];
+// Projected years: the 2024 BLS table with every dollar amount grown by CPI-U. Household size is held constant.
+const DOLLAR_FIELDS=[0,1,2,5,6,7,8,9,10,11];
+YEARS.filter(isProjected).forEach(y=>{
+  const f=CPI[y]/CPI[LAST_ACTUAL];
+  CE[y]=CE[LAST_ACTUAL].map((row,i)=>DOLLAR_FIELDS.includes(i)?row.map(v=>Math.round(v*f)):row.slice());
+});
+const ESSENTIALS = ["food","housing","transport","health","insurance","education"];
+// Education is optional: many households have no tuition costs in a given year, so it starts unticked.
+const DEFAULT_ESSENTIALS = ["food","housing","transport","health","insurance"];
+const ESSENTIAL_NAMES = {food:"food at home",housing:"housing",transport:"transportation",health:"healthcare",insurance:"insurance & pensions",education:"education"};
+
+const DEFAULTS = {
+  segmentation:"quintiles", customTop:1, unit:"person", afterTax:false, taxMethod:"cbo", includeTransfers:false, transferScale:100,
+  kids:0, childcareCost:CHILDCARE_DEFAULT,
+  inflationMode:"nominal", baseYear:2000, inflationRate:2.5, minTaxMode:"off", amtRate:20, amtThreshold:200000, f3View:"share", f3Group:"wealth", wealthMode:"flat", wealthRate:2, wealthThreshold:50000000, wealthPaid:0.3,
+  investPct:10, returnMode:"sp500", returnRate:8, portfolioView:"portfolio", showProjection:true, incomeView:"left", showHappiness:true, essentials:[...DEFAULT_ESSENTIALS],
+  // Expense editor: per-category scaling (%), per-year per-quintile overrides, and one custom flat expense.
+  expenseScale:Object.fromEntries(ESSENTIALS.map(k=>[k,100])), expenseEdits:{}, customName:"", customAmount:0
+};
+const cloneDefaults=()=>JSON.parse(JSON.stringify(DEFAULTS));
+let state = cloneDefaults();
+
+const $ = id => document.getElementById(id);
+const fmtMoney = v => {
+  const sign=v<0?"-":"";
+  const a=Math.abs(v);
+  if(a>=1e12) return sign+"$"+(a/1e12).toFixed(a>=1e13?1:2)+"T";
+  if(a>=1e9) return sign+"$"+(a/1e9).toFixed(a>=1e10?1:2)+"B";
+  if(a>=1e6) return sign+"$"+(a/1e6).toFixed(a>=1e7?1:2)+"M";
+  if(a>=1e3) return sign+"$"+Math.round(a/1000).toLocaleString()+"k";
+  return sign+"$"+Math.round(a).toLocaleString();
+};
+const fmtFull = v => (v<0?"-$":"$")+Math.abs(Math.round(v)).toLocaleString();
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+
+function interpMidpoint(arr,p){
+  const mids=[10,30,50,70,90];
+  if(p<=10) return arr[0] + (p-10)*(arr[1]-arr[0])/20*.35;
+  if(p>=90) return arr[4] + (p-90)*(arr[4]-arr[3])/20*.55;
+  for(let i=0;i<4;i++){
+    if(p>=mids[i] && p<=mids[i+1]) return lerp(arr[i],arr[i+1],(p-mids[i])/(mids[i+1]-mids[i]));
+  }
+  return arr[4];
+}
+
+// Exact mean income of the households in percentile bin [i, i+1).
+// Quintiles 1–4: power curve between the published bounds whose mean equals the published quintile mean.
+// Top quintile: Pareto tail above its lower bound, with alpha set so the tail mean equals the published mean.
+// Using exact bin means (not midpoints) keeps narrow top groups like the top 1% from being understated.
+function incomeBinMean(a,i){
+  const means=a.pretax, b=a.bounds;
+  if(i<80){
+    const qi=Math.floor(i/20), lo=b[qi], w=b[qi+1]-lo;
+    const k=clamp(w/Math.max(1,means[qi]-lo)-1,.18,4.5);
+    const x0=(i-qi*20)/20, x1=(i+1-qi*20)/20;
+    return lo+w*(Math.pow(x1,k+1)-Math.pow(x0,k+1))/((k+1)*(x1-x0));
+  }
+  const xmin=b[4], alpha=means[4]/Math.max(1,means[4]-xmin), e=1-1/alpha;
+  const u0=(i-80)/20, u1=(i+1-80)/20;
+  return xmin/e*(Math.pow(1-u0,e)-Math.pow(1-u1,e))/(u1-u0);
+}
+// Smooth a published quintile series across percentiles, then rescale each quintile so its average matches BLS exactly.
+function calibrate(arr){
+  const raw=Array.from({length:100},(_,i)=>Math.max(0,interpMidpoint(arr,i+.5)));
+  for(let q=0;q<5;q++){
+    const s=q*20, m=raw.slice(s,s+20).reduce((t,v)=>t+v,0)/20;
+    for(let i=s;i<s+20;i++) raw[i]=m>0?raw[i]*arr[q]/m:arr[q];
+  }
+  return raw;
+}
+// Tax rates per percentile, rescaled so each quintile's average tax in dollars matches BLS (before − after tax).
+function calibrateTaxRate(a,income){
+  const rate=Array.from({length:100},(_,i)=>interpMidpoint(a.taxRate,i+.5));
+  // Within the top 20%, use CBO's finer groups for the shape; the quintile total is still matched below.
+  if(a.topRates) for(let i=80;i<100;i++) rate[i]=a.topRates[i<90?0:i<95?1:i<99?2:3];
+  for(let q=0;q<5;q++){
+    const s=q*20, m=rate.slice(s,s+20).reduce((t,r,j)=>t+r*income[s+j],0)/20, target=a.tax[q];
+    for(let i=s;i<s+20;i++) rate[i]=m*target>0?rate[i]*target/m:target/a.pretax[q];
+  }
+  return rate;
+}
+// Keep each percentile's benefits at or below its income, so income minus benefits is never negative. Any excess
+// moves to other percentiles in the same quintile, in proportion to their headroom, so the quintile average is unchanged.
+function capToIncome(t,income){
+  for(let q=0;q<5;q++){
+    const s=q*20; let excess=0, room=0;
+    for(let i=s;i<s+20;i++) if(t[i]>income[i]){ excess+=t[i]-income[i]; t[i]=income[i]; }
+    for(let i=s;i<s+20;i++) room+=income[i]-t[i];
+    if(excess>0&&room>0){ const f=Math.min(1,excess/room); for(let i=s;i<s+20;i++) t[i]+=(income[i]-t[i])*f; }
+  }
+  return t;
+}
+// Percentile curves for every year, built from that year's BLS table.
+const CURVES={};
+YEARS.forEach(y=>{
+  const a={};
+  FIELDS.forEach((k,i)=>a[k]=CE[y][i]);
+  a.tax=a.pretax.map((v,i)=>v-a.aftertax[i]);
+  a.taxRate=a.tax.map((v,i)=>v/a.pretax[i]);
+  const income=Array.from({length:100},(_,i)=>incomeBinMean(a,i)), essentials={};
+  ESSENTIALS.forEach(k=>essentials[k]=calibrate(a[k]));
+  CURVES[y]={income,essentials,transfers:capToIncome(calibrate(a.transfers),income),persons:calibrate(a.persons),taxRate:calibrateTaxRate(a,income)};
+});
+const pIdx=p=>clamp(Math.floor(p),0,99);
+
+// Quintile amounts before this year's edits: BLS for published years; for projections, the (possibly edited) 2024
+// amounts grown by CPI-U, so changes to 2024 carry forward.
+function baseExpense(y,k){
+  if(!isProjected(y)) return CE[y][FIELDS.indexOf(k)];
+  const f=CPI[y]/CPI[LAST_ACTUAL];
+  return editedExpense(LAST_ACTUAL,k).map(v=>Math.round(v*f));
+}
+function editedExpense(y,k){
+  const edits=state.expenseEdits[y]?.[k];
+  return baseExpense(y,k).map((v,q)=>edits&&edits[q]!=null?edits[q]:v);
+}
+// Quintile amounts with single-year edits and category scaling applied.
+function expenseValues(y,k){ return editedExpense(y,k).map(v=>v*state.expenseScale[k]/100); }
+function rebuildEssentials(){
+  YEARS.forEach(y=>ESSENTIALS.forEach(k=>{CURVES[y].essentials[k]=calibrate(expenseValues(y,k));}));
+}
+// BLS personal tax rate by quintile: (income before taxes − income after taxes) ÷ income before taxes.
+const blsTaxRate=y=>CE[y][0].map((pre,q)=>(pre-CE[y][1][q])/pre);
+// Quintile tax rates for the BLS-based methods. 'splice' shifts pre-2013 rates by each group's 2012→2013 jump;
+// 'fixed' uses each group's 2013–2015 average in every year.
+function blsRatesFor(y){
+  if(state.taxMethod==="fixed"){
+    const avg=[2013,2014,2015].map(blsTaxRate);
+    return [0,1,2,3,4].map(q=>avg.reduce((t,r)=>t+r[q],0)/avg.length);
+  }
+  const rate=blsTaxRate(y);
+  if(state.taxMethod==="splice"&&y<2013){
+    const after=blsTaxRate(2013), before=blsTaxRate(2012);
+    return rate.map((r,q)=>r+after[q]-before[q]);
+  }
+  return rate;
+}
+function rebuildTaxes(){
+  YEARS.forEach(y=>{
+    const rates=blsRatesFor(y), a={pretax:CE[y][0],taxRate:rates,tax:rates.map((r,q)=>r*CE[y][0][q])};
+    CURVES[y].taxRate=calibrateTaxRate(a,CURVES[y].income);
+    // Rescale so each quintile's average tax ÷ average income before benefits equals CBO's published rate.
+    const cbo=CBO_RATES[Math.min(y,CBO_LAST)].map(v=>v/100);
+    const market=CURVES[y].income.map((v,i)=>Math.max(0,v-CURVES[y].transfers[i]));
+    const marketMean=[0,1,2,3,4].map(q=>market.slice(q*20,q*20+20).reduce((t,v)=>t+v,0)/20);
+    CURVES[y].cboRate=calibrateTaxRate({pretax:marketMean,taxRate:cbo,tax:cbo.map((r,q)=>r*marketMean[q]),topRates:CBO_TOP_RATES[Math.min(y,CBO_LAST)].map(v=>v/100)},market);
+  });
+}
+const expensesEdited=()=>ESSENTIALS.some(k=>state.expenseScale[k]!==100)||Object.keys(state.expenseEdits).length>0||state.customAmount>0;
+
+function inflationFactor(y){
+  if(state.inflationMode==="nominal") return 1;
+  if(state.inflationMode==="real2000") return CPI[2000]/CPI[y];
+  if(state.inflationMode==="realBase") return CPI[state.baseYear]/CPI[y];
+  const base=state.baseYear;
+  return Math.pow(1+state.inflationRate/100,base-y);
+}
+// Childcare price is set in 2024 dollars and scaled to each year with the day care CPI.
+// Happiness plateau reference. Kahneman & Deaton (2010): emotional well-being stopped improving above ~$75,000 of
+// household income (Gallup, 2008–09). Killingsworth, Kahneman & Mellers (2023): that plateau holds only for the least
+// happy ~15–20%, at about $100,000. The line is $75,000 in 2008–09 dollars adjusted by CPI-U (≈$110k in 2024).
+// Dollar inputs (AMT exemption, childcare price, custom expense) are entered in fixed 2024 dollars.
+const INPUT_DOLLAR_YEAR=2024;
+// Year whose dollars the charts show, or null in nominal mode (each year's own dollars).
+const dollarBasisYear=()=>state.inflationMode==="real2000"?2000:(state.inflationMode==="realBase"||state.inflationMode==="assumed")?state.baseYear:null;
+// Approximate U.S. AMT on income x in year y (married filing jointly, no deductions).
+function amtFor(x,y){
+  const [ex,start,rate,b28]=AMT_MFJ[Math.min(Math.max(y,2000),2026)];
+  const exemption=Math.max(0,ex-rate*Math.max(0,x-start));
+  const taxable=Math.max(0,x-exemption);
+  return .26*Math.min(taxable,b28)+.28*Math.max(0,taxable-b28);
+}
+// Average net worth (nominal dollars) for income percentile bin i in year y, from the Fed DFA group average.
+// Years after the latest data are carried forward with CPI-U.
+const DFA_YEARS=Object.keys(DFA_NETWORTH).map(Number).sort((a,b)=>a-b);
+function netWorthFor(y,i){
+  const dy=Math.min(Math.max(y,DFA_YEARS[0]),DFA_YEARS.at(-1));
+  const g=i<20?0:i<40?1:i<60?2:i<80?3:i<99?4:5;
+  return DFA_NETWORTH[dy][g]*(y>dy?CPI[y]/CPI[dy]:1);
+}
+// Average net worth across the percentile bins of an income group.
+function groupNetWorth(y,g){
+  let total=0, n=0;
+  for(let i=Math.floor(g.lo);i<Math.ceil(g.hi);i++){ total+=netWorthFor(y,Math.min(99,i)); n++; }
+  return n?total/n:0;
+}
+// ---- Fig. 3: where the wealth is (Fed DFA), with what-if wealth taxes on each group's average net worth.
+const WEALTH_YEARS=Object.keys(WEALTH_DFA).map(Number).sort((a,b)=>a-b), WEALTH_LAST=WEALTH_YEARS.at(-1);
+const WEALTH_GROUP_LABELS=["Bottom 50%","50–90%","90–99%","99–99.9%","Top 0.1%"];
+const INCOME_GROUP_LABELS=["Lowest 20%","20–40%","40–60%","60–80%","80–99%","Top 1%"];
+function wealthGroupData(y){
+  return state.f3Group==="wealth"
+    ?{labels:WEALTH_GROUP_LABELS,avg:WEALTH_DFA[y].avg,hh:WEALTH_DFA[y].hh}
+    :{labels:INCOME_GROUP_LABELS,avg:DFA_NETWORTH[y],hh:DFA_INCOME_HH[y]};
+}
+// Yearly wealth tax (nominal $) on a household with net worth w in year y.
+function wealthTaxFor(w,y){
+  const cutoff=state.wealthThreshold*CPI[y]/CPI[INPUT_DOLLAR_YEAR], r=state.wealthRate/100;
+  if(state.wealthMode==="flat") return r*Math.max(0,w-cutoff);
+  return w>=cutoff?Math.max(0,(r-state.wealthPaid/100)*w):0;
+}
+function wealthSeries(){
+  const view=state.f3View, labels=wealthGroupData(WEALTH_LAST).labels;
+  const series=labels.map((label,gi)=>({label,data:WEALTH_YEARS.map(y=>{
+    const d=wealthGroupData(y), total=d.avg.reduce((t,a,j)=>t+a*d.hh[j],0), f=inflationFactor(y);
+    const value=view==="share"?100*d.avg[gi]*d.hh[gi]/total
+      :view==="avg"?d.avg[gi]*f
+      :view==="tax"?wealthTaxFor(d.avg[gi],y)*f
+      :wealthTaxFor(d.avg[gi],y)*d.hh[gi]*f;
+    return {year:y,value};
+  })}));
+  const pct=v=>`${Math.round(v)}%`;
+  return {labels,series,opts:{zeroFloor:true,lastActual:WEALTH_LAST,fmt:view==="share"?pct:fmtMoney,fmtTip:view==="share"?v=>`${v.toFixed(1)}%`:view==="revenue"?fmtMoney:fmtFull}};
+}
+// Cumulative net worth at the official group boundaries for the latest year (for the percentile curve).
+function wealthCurve(){
+  const y=WEALTH_LAST, d=wealthGroupData(y), f=inflationFactor(y);
+  const bounds=state.f3Group==="wealth"?[50,90,99,99.9,100]:[20,40,60,80,99,100];
+  const pts=[{p:0,v:0,label:"None"}]; let total=0;
+  d.hh.forEach((h,j)=>{
+    total+=d.avg[j]*h*f; const b=bounds[j], n=bounds.length;
+    pts.push({p:b,v:total,label:j===n-1?"All households":j===0?`Bottom ${b}%`:`Up to ${b}th`});
+  });
+  return {points:pts,year:y,rank:state.f3Group==="wealth"?"net worth":"income"};
+}
+const ordinal=n=>{ const t=["th","st","nd","rd"], v=n%100; return n+(t[(v-20)%10]||t[v]||t[0]); };
+const householdsText=n=>n>=1e6?`${(n/1e6).toFixed(1)} million households`:`about ${(Math.round(n/1000)*1000).toLocaleString()} households`;
+const happinessThreshold=y=>75000*CPI[y]/((CPI[2008]+CPI[2009])/2);
+const childcareFor=y=>state.kids*state.childcareCost*DAYCARE_CPI[y]/DAYCARE_CPI[INPUT_DOLLAR_YEAR];
+
+function calcPercentile(y,p){
+  const i=pIdx(p), C=CURVES[y];
+  const observedPretax=C.income[i];
+  // Remove the baseline transfers to get market income, then add back the scaled amount.
+  const baseTransfers=C.transfers[i];
+  const market=Math.max(0,observedPretax-baseTransfers);
+  const scaled=baseTransfers*(state.transferScale/100);
+  // With transfers included, start from observed income so the $0 floor on market income can't add money that isn't in the data.
+  const gross=state.includeTransfers?Math.max(0,observedPretax-baseTransfers+scaled):market;
+  let tax=0;
+  if(state.afterTax){
+    // CBO rates apply to income before benefits; BLS-based rates apply to the income shown.
+    tax=state.taxMethod==="cbo"?C.cboRate[i]*market:C.taxRate[i]*gross;
+    // Minimum taxes use the same income as the chosen tax method (income before benefits for CBO rates).
+    const taxBase=state.taxMethod==="cbo"?market:gross;
+    if(state.minTaxMode==="simple"){
+      const indexedThreshold=state.amtThreshold*(CPI[y]/CPI[INPUT_DOLLAR_YEAR]);
+      tax=Math.max(tax,(state.amtRate/100)*Math.max(0,taxBase-indexedThreshold));
+    }else if(state.minTaxMode==="amt"){
+      tax=Math.max(tax,amtFor(taxBase,y));
+    }
+  }
+  const childcare=childcareFor(y);
+  const custom=state.customAmount*CPI[y]/CPI[INPUT_DOLLAR_YEAR];
+  let essentials=childcare+custom;
+  state.essentials.forEach(key=>essentials+=C.essentials[key][i]);
+  const income=gross-tax;
+  return {observedPretax,market,transfers:state.includeTransfers?scaled:0,gross,tax,income,childcare,custom,essentials,residual:income-essentials,size:C.persons[i]+state.kids};
+}
+
+function getGroups(){
+  const s=state.segmentation;
+  if(s==="quintiles") return Array.from({length:5},(_,i)=>({lo:i*20,hi:(i+1)*20,label:`${["Lowest","Second","Middle","Fourth","Highest"][i]} 20%`}));
+  if(s==="quartiles") return ["Bottom 25%","25–50%","50–75%","Top 25%"].map((label,i)=>({lo:i*25,hi:(i+1)*25,label}));
+  if(s==="deciles") return Array.from({length:10},(_,i)=>({lo:i*10,hi:(i+1)*10,label:i===0?"Bottom 10%":i===9?"Top 10%":`${i*10}–${(i+1)*10}%`}));
+  if(s==="90_10") return [{lo:0,hi:90,label:"Bottom 90%"},{lo:90,hi:100,label:"Top 10%"}];
+  if(s==="95_5") return [{lo:0,hi:95,label:"Bottom 95%"},{lo:95,hi:100,label:"Top 5%"}];
+  if(s==="99_1") return [{lo:0,hi:99,label:"Bottom 99%"},{lo:99,hi:100,label:"Top 1%"}];
+  if(s==="50_40_10") return [{lo:0,hi:50,label:"Bottom 50%"},{lo:50,hi:90,label:"Middle 40%"},{lo:90,hi:100,label:"Top 10%"}];
+  const t=state.customTop;
+  return [{lo:0,hi:100-t,label:`Bottom ${100-t}%`},{lo:100-t,hi:100,label:`Top ${t}%`}];
+}
+function avgGroup(y,g){
+  let n=0, sums={observedPretax:0,market:0,transfers:0,gross:0,tax:0,income:0,childcare:0,custom:0,essentials:0,residual:0,size:0};
+  for(let i=0;i<100;i++){
+    const p=i+.5;
+    if(p>=g.lo && p<g.hi){
+      const d=calcPercentile(y,p); n++;
+      Object.keys(sums).forEach(k=>sums[k]+=d[k]);
+    }
+  }
+  Object.keys(sums).forEach(k=>sums[k]/=Math.max(1,n));
+  return sums;
+}
+function buildData(){
+  const groups=getGroups();
+  const rows=YEARS.map(y=>({year:y,values:groups.map(g=>avgGroup(y,g))}));
+  const portfolios=groups.map(()=>[]), gains=groups.map(()=>[]), contribs=groups.map(()=>[]), balances=groups.map(()=>0), paidIn=groups.map(()=>0);
+  YEARS.forEach((y,yi)=>{
+    groups.forEach((g,gi)=>{
+      const ret=state.returnMode==="sp500"?SP500[y]:(state.returnRate/100);
+      // Returns accrue on last year's balance; this year's contribution is added at year-end.
+      const gain=balances[gi]*ret;
+      const contribution=Math.max(0,rows[yi].values[gi].residual)*(state.investPct/100);
+      balances[gi]+=gain+contribution;
+      paidIn[gi]+=contribution;
+      contribs[gi].push(paidIn[gi]);
+      gains[gi].push(gain);
+      portfolios[gi].push(balances[gi]);
+    });
+  });
+  return {groups,rows,portfolios,gains,contribs};
+}
+// Convert a nominal per-household amount to the selected display: inflation-adjusted, and per person if chosen.
+function display(v,y,size){ return v*inflationFactor(y)/(state.unit==="person"?Math.max(1,size):1); }
+
+function legendHTML(groups,P=palette()){
+  return groups.map((g,i)=>`<span class="legend-item"><span class="swatch" style="background:${P.series[i%P.series.length]}"></span>${g.label}</span>`).join("");
+}
+function renderLegend(id,groups){
+  $(id).innerHTML=legendHTML(groups);
+}
+
+function niceExtent(vals,zeroFloor=false){
+  let mn=Math.min(...vals), mx=Math.max(...vals);
+  if(zeroFloor) mn=0;
+  if(mn===mx){mx=mn+1}
+  const pad=(mx-mn)*.10;
+  mn=zeroFloor?0:mn-pad; mx+=pad;
+  if(mn>0) mn=0;
+  return [mn,mx];
+}
+function tickStep(min,max,count=5){
+  const raw=(max-min)/count;
+  const pow=Math.pow(10,Math.floor(Math.log10(Math.max(raw,1e-9))));
+  const n=raw/pow;
+  const nice=n<1.5?1:n<3?2:n<7?5:10;
+  return nice*pow;
+}
+function renderChart(svgId,tipId,series,opts){
+  if(opts.curve) return renderCurve(svgId,tipId,opts);
+  const svg=opts.target||$(svgId), tip=opts.static?null:$(tipId);
+  const P=opts.palette||palette();
+  // lastActual: last measured year (later years are shaded as projections); fmt/fmtTip: axis and tooltip number formats.
+  const LA=opts.lastActual??LAST_ACTUAL, proj=y=>y>LA, F=opts.fmt||fmtMoney, FT=opts.fmtTip||fmtFull;
+  // Draw at the container's real width so text stays legible on phones; the saved image passes a fixed width.
+  const W=Math.round(opts.width||Math.max(300,svg.parentElement?.clientWidth||960));
+  const compact=W<640;
+  const H=compact?Math.round(W*.8):420;
+  const M=compact?{l:46,r:12,t:24,b:34}:{l:64,r:150,t:18,b:46}, iw=W-M.l-M.r, ih=H-M.t-M.b;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const stacked=series.length>0 && series[0].data[0].base!==undefined;
+  const all=opts.area?[0,100]:series.flatMap(s=>s.data.flatMap(d=>stacked?[d.value,d.base]:[d.value])).concat(opts.refLine?opts.refLine.data.map(d=>d.value):[]);
+  // An all-zero series (e.g. a wealth tax nobody pays) gets a $0–$1k axis instead of repeated $0/$1 ticks.
+  if(opts.zeroFloor&&Math.max(...all)<=0) all.push(1000);
+  const [mn0,mx0]=niceExtent(all,opts.zeroFloor);
+  const step=tickStep(mn0,mx0,5);
+  // Area mode stacks shares to exactly 0–100%.
+  const mn=opts.area||opts.zeroFloor?0:Math.floor(mn0/step)*step, mx=opts.area?100:Math.ceil(mx0/step)*step;
+  const x0=series[0].data[0].year, x1=series[0].data.at(-1).year;
+  const x=y=>M.l+(y-x0)/(x1-x0)*iw;
+  const yy=v=>M.t+(mx-v)/(mx-mn)*ih;
+  const pt=(yr,v)=>`${x(yr).toFixed(2)} ${yy(v).toFixed(2)}`;
+  let parts=[];
+  if(x1>LA){
+    // Shade the projected years so they read as estimates, not data.
+    parts.push(`<rect x="${x(LA)}" y="${M.t}" width="${x(x1)-x(LA)}" height="${ih}" fill="${P.projection}" opacity=".7"/>`);
+    if(!compact) parts.push(`<text x="${(x(LA)+x(x1))/2}" y="${M.t+13}" text-anchor="middle" font-size="9" letter-spacing="1" fill="${P.axis}">PROJECTED</text>`);
+  }
+  for(let k=0; mn+k*step<=mx+step*.5; k++){
+    const v=Math.round(mn/step+k)*step, py=yy(v);
+    parts.push(`<line x1="${M.l}" y1="${py}" x2="${M.l+iw}" y2="${py}" stroke="${P.grid}"/>`);
+    parts.push(`<text x="${M.l-12}" y="${py+4}" text-anchor="end" font-size="11" fill="${P.axis}">${F===fmtMoney&&step<1000?fmtFull(v):F(v)}</text>`);
+  }
+  (compact?[2000,2008,2016,x1]:[2000,2004,2008,2012,2016,2020,LA,x1]).filter((y,i,a)=>y<=x1&&a.indexOf(y)===i).forEach(y=>{
+    const px=x(y);
+    parts.push(`<line x1="${px}" y1="${M.t+ih}" x2="${px}" y2="${M.t+ih+5}" stroke="${P.ink}"/>`);
+    parts.push(`<text x="${px}" y="${H-20}" text-anchor="middle" font-size="11" fill="${P.axis}">${y}</text>`);
+  });
+  if(opts.emptyNote&&series.every(s=>s.data.every(d=>!d.value))) parts.push(`<text x="${M.l+iw/2}" y="${M.t+ih/2}" text-anchor="middle" font-size="${compact?11:13}" fill="${P.axis}">${escapeHtml(opts.emptyNote)}</text>`);
+  if(mn<0 && mx>0) parts.push(`<line x1="${M.l}" y1="${yy(0)}" x2="${M.l+iw}" y2="${yy(0)}" stroke="${P.ink}" stroke-width="1"/>`);
+  parts.push(`<line x1="${M.l}" y1="${M.t+ih}" x2="${M.l+iw}" y2="${M.t+ih}" stroke="${P.ink}"/>`);
+  // Reference line (e.g. the happiness plateau): a subtle dotted line with a small label at its left end.
+  if(opts.refLine&&opts.refLine.data.length){
+    const rl=opts.refLine.data;
+    parts.push(`<path d="M ${rl.map(d=>pt(d.year,d.value)).join(" L ")}" fill="none" stroke="${P.happy}" stroke-width="1.6" stroke-dasharray="2 5" stroke-linecap="round"/>`);
+    const refText=compact?opts.refLine.short:opts.refLine.label, refX=M.l+8;
+    // Sit the label above the highest point of the line across the label's width so the line never runs through it.
+    const refWidth=refText.length*(compact?5.8:6.4)+12;
+    const under=rl.filter(d=>x(d.year)<=refX+refWidth);
+    const refY=Math.min(...(under.length?under:[rl[0]]).map(d=>yy(d.value)))-8;
+    parts.push(`<text x="${refX}" y="${Math.max(M.t+10,refY)}" font-size="${compact?9:10}" fill="${P.happyText}" stroke="${P.paper}" stroke-width="4" stroke-linejoin="round" paint-order="stroke">${escapeHtml(refText)}</text>`);
+  }
+  // Event markers: a dashed vertical line with a short label (e.g. the 2013 BLS tax-method break).
+  (opts.markers||[]).filter(mk=>mk.year>x0&&mk.year<x1).forEach(mk=>{
+    const px=x(mk.year);
+    parts.push(`<line x1="${px}" y1="${M.t}" x2="${px}" y2="${M.t+ih}" stroke="${mk.kind==="market"?P.marketLine:P.accent}" stroke-width="1" stroke-dasharray="3 3"/>`);
+    parts.push(`<text x="${px+6}" y="${M.t+12+(mk.row||0)*14}" font-size="${compact?9:10}" fill="${mk.kind==="market"?P.marketText:P.accentText}">${escapeHtml(compact&&mk.short?mk.short:mk.label)}</text>`);
+  });
+  const dense=series.length>6, labels=[];
+  if(opts.area){
+    // 100% stacked area: each band runs from the running total below it to that total plus its own share.
+    let lower=series[0].data.map(()=>0);
+    series.forEach((s,si)=>{
+      const c=P.series[si%P.series.length], upper=s.data.map((d,k)=>lower[k]+d.value);
+      const top=s.data.map((d,k)=>pt(d.year,upper[k])), bottom=s.data.map((d,k)=>pt(d.year,lower[k])).reverse();
+      parts.push(`<path d="M ${top.join(" L ")} L ${bottom.join(" L ")} Z" fill="${c}" opacity=".88" stroke="${P.paper}" stroke-width="1"/>`);
+      const k=s.data.length-1;
+      labels.push({y:yy((upper[k]+lower[k])/2),c,text:`${escapeHtml(s.label)} ${F(s.data[k].value)}`});
+      lower=upper;
+    });
+  }
+  else series.forEach((s,si)=>{
+    const c=P.series[si%P.series.length];
+    if(stacked){
+      // Shading between the base (dashed) and base + return (solid): the group's color for gains, red for losses.
+      const bottom=s.data.slice().reverse().map(d=>pt(d.year,d.base));
+      const band=(edge,fill,opacity)=>parts.push(`<path d="M ${s.data.map(d=>pt(d.year,edge(d))).join(" L ")} L ${bottom.join(" L ")} Z" fill="${fill}" opacity="${opacity}"/>`);
+      band(d=>Math.max(d.value,d.base),c,".14");
+      if(s.data.some(d=>d.value<d.base)) band(d=>Math.min(d.value,d.base),P.accent,".3");
+      parts.push(`<path d="M ${s.data.map(d=>pt(d.year,d.base)).join(" L ")}" fill="none" stroke="${c}" stroke-width="1.2" stroke-dasharray="4 3"/>`);
+    }
+    const actual=s.data.filter(d=>!proj(d.year)), projected=s.data.filter(d=>d.year>=LA);
+    parts.push(`<path d="M ${actual.map(d=>pt(d.year,d.value)).join(" L ")}" fill="none" stroke="${c}" stroke-width="${dense?1.6:2.2}" stroke-linejoin="round" stroke-linecap="round"/>`);
+    if(projected.length>1) parts.push(`<path d="M ${projected.map(d=>pt(d.year,d.value)).join(" L ")}" fill="none" stroke="${c}" stroke-width="${dense?1.6:2.2}" stroke-dasharray="5 4" stroke-linecap="round"/>`);
+    const last=s.data[s.data.length-1];
+    parts.push(`<circle cx="${x(last.year)}" cy="${yy(last.value)}" r="${dense?2.5:3.5}" fill="${c}" stroke="${P.paper}" stroke-width="1.5"/>`);
+    labels.push({y:yy(last.value),c,zero:!last.value,text:`${escapeHtml(s.label)} ${F(last.value)}`});
+  });
+  // Nudge end labels apart so they never overlap.
+  const gap=dense?11:15;
+  labels.sort((a,b)=>a.y-b.y);
+  labels.forEach((l,i)=>{l.ly=Math.max(l.y,i?labels[i-1].ly+gap:M.t+4);});
+  const overflow=labels.length?labels.at(-1).ly-(H-26):0;
+  if(overflow>0) labels.forEach(l=>l.ly-=overflow);
+  // On phones the legend names each line, so skip end labels that would crowd the plot.
+  // Tax views: skip end labels for groups at $0 so the few that pay stand out.
+  if(!compact) labels.filter(l=>!(opts.emptyNote&&l.zero)).forEach(l=>{
+    parts.push(`<rect x="${M.l+iw+10}" y="${l.ly-1}" width="8" height="3" fill="${l.c}"/>`);
+    parts.push(`<text x="${M.l+iw+22}" y="${l.ly+4}" font-size="${dense?9:11}" font-weight="500" fill="${P.ink}">${l.text}</text>`);
+  });
+  if(opts.static){ svg.innerHTML=parts.join(""); return; }
+  parts.push(`<rect id="${svgId}Overlay" x="${M.l}" y="${M.t}" width="${iw}" height="${ih}" fill="transparent" style="cursor:crosshair;touch-action:pan-y"/>`);
+  parts.push(`<line id="${svgId}Cross" x1="0" x2="0" y1="${M.t}" y2="${M.t+ih}" stroke="${P.ink}" stroke-width="1" opacity="0"/>`);
+  svg.innerHTML=parts.join("");
+  const overlay=svg.querySelector(`#${svgId}Overlay`), cross=svg.querySelector(`#${svgId}Cross`);
+  const showAt=e=>{
+    const rect=svg.getBoundingClientRect();
+    const sx=(e.clientX-rect.left)*(W/rect.width);
+    const yr=clamp(Math.round(x0+(sx-M.l)/iw*(x1-x0)),x0,x1);
+    const px=x(yr); cross.setAttribute("x1",px);cross.setAttribute("x2",px);cross.setAttribute("opacity","1");
+    tip.innerHTML=`<div class="tt-year">${yr}${proj(yr)?'<span class="tt-proj">projected</span>':""}</div>`+series.map((s,si)=>{
+      const d=s.data.find(d=>d.year===yr), g=stacked?d.value-d.base:0;
+      const extra=stacked?`<span class="tt-gain">${g<0?"−":"+"}${fmtMoney(Math.abs(g))}</span>`:"";
+      return `<div class="tooltip-row"><span><i style="display:inline-block;width:10px;height:2px;background:${P.series[si%P.series.length]};margin-right:8px;vertical-align:middle"></i>${escapeHtml(s.label)}</span><strong>${FT(d.value)}${extra}</strong></div>`;
+    }).join("")+(stacked?`<div class="tt-note">${escapeHtml(opts.gainNote||"+/− = that year's investment return")}</div>`:"")
+      +(opts.markers||[]).filter(mk=>mk.year===yr).map(mk=>`<div class="tt-note">${escapeHtml(mk.detail||mk.label)}</div>`).join("")
+      +(()=>{ const r=opts.refLine?.data.find(d=>d.year===yr); return r?`<div class="tt-note">Happiness plateau ≈ ${fmtFull(r.value)} household income</div>`:""; })();
+    const wrap=svg.parentElement.getBoundingClientRect(), mx=e.clientX-wrap.left, my=e.clientY-wrap.top;
+    const tipW=tip.offsetWidth||220;
+    tip.style.left=Math.max(0,Math.min(mx+16,wrap.width-tipW))+"px";
+    // On touch, place the tooltip above the finger so it isn't hidden under it.
+    tip.style.top=(e.pointerType==="touch"?Math.max(0,my-tip.offsetHeight-24):Math.max(8,my-20))+"px";
+    tip.style.opacity=1;
+  };
+  overlay.addEventListener("pointermove",showAt);
+  overlay.addEventListener("pointerdown",showAt);
+  overlay.addEventListener("pointerleave",e=>{ if(e.pointerType==="mouse"){cross.setAttribute("opacity","0");tip.style.opacity=0;} });
+}
+// Percentile curve: x is the share of households (poorest to richest), y the cumulative net worth they hold.
+// The line is a monotone cubic through the official boundaries, so it never overshoots the data between them.
+function renderCurve(svgId,tipId,opts){
+  const svg=opts.target||$(svgId), tip=opts.static?null:$(tipId), P=opts.palette||palette(), pts=opts.curve.points;
+  const W=Math.round(opts.width||Math.max(300,svg.parentElement?.clientWidth||960)), compact=W<640;
+  const H=compact?Math.round(W*.95):440, M=compact?{l:50,r:14,t:22,b:54}:{l:78,r:200,t:22,b:62}, iw=W-M.l-M.r, ih=H-M.t-M.b;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const vmax=pts.at(-1).v, step=tickStep(0,vmax*1.06,5), mx=Math.ceil(vmax*1.06/step)*step;
+  const x=q=>M.l+q/100*iw, yy=v=>M.t+(mx-v)/mx*ih, c=P.series[3%P.series.length], parts=[];
+  for(let k=0;k*step<=mx+step*.5;k++){
+    const v=k*step, py=yy(v);
+    parts.push(`<line x1="${M.l}" y1="${py}" x2="${M.l+iw}" y2="${py}" stroke="${P.grid}"/>`,`<text x="${M.l-12}" y="${py+4}" text-anchor="end" font-size="11" fill="${P.axis}">${fmtMoney(v).replace(/\.0(?=[kMBT])/,"")}</text>`);
+  }
+  // Vertical guides at each boundary; x labels skip any that would collide, always keeping 100%.
+  let lastX=-1e9; const xl=[];
+  pts.forEach(q=>{ parts.push(`<line x1="${x(q.p)}" y1="${M.t}" x2="${x(q.p)}" y2="${M.t+ih}" stroke="${P.grid}" stroke-dasharray="3 4"/>`,`<line x1="${x(q.p)}" y1="${M.t+ih}" x2="${x(q.p)}" y2="${M.t+ih+5}" stroke="${P.ink}"/>`); });
+  pts.forEach((q,i)=>{ const px=x(q.p); if(i===pts.length-1){ while(xl.length&&px-xl.at(-1).px<38) xl.pop(); xl.push({px,q}); } else if(px-lastX>=38){ xl.push({px,q}); lastX=px; } });
+  xl.forEach(({px,q})=>parts.push(`<text x="${px}" y="${M.t+ih+20}" text-anchor="middle" font-size="11" fill="${P.axis}">${q.p}%</text>`));
+  // Monotone cubic (Fritsch–Carlson) tangents.
+  const n=pts.length, xs=pts.map(q=>q.p), ys=pts.map(q=>q.v), dx=[], m=[];
+  for(let k=0;k<n-1;k++){ dx[k]=xs[k+1]-xs[k]; m[k]=(ys[k+1]-ys[k])/dx[k]; }
+  const t=xs.map((_,k)=>k===0?m[0]:k===n-1?m[n-2]:(m[k-1]*m[k]<=0?0:(m[k-1]+m[k])/2));
+  for(let k=0;k<n-1;k++){
+    if(m[k]===0){ t[k]=t[k+1]=0; continue; }
+    const a=t[k]/m[k], b=t[k+1]/m[k], h=a*a+b*b;
+    if(h>9){ const tau=3/Math.sqrt(h); t[k]=tau*a*m[k]; t[k+1]=tau*b*m[k]; }
+  }
+  let path=`M ${x(xs[0])} ${yy(ys[0])}`;
+  for(let k=0;k<n-1;k++) path+=` C ${x(xs[k]+dx[k]/3)} ${yy(ys[k]+t[k]*dx[k]/3)} ${x(xs[k+1]-dx[k]/3)} ${yy(ys[k+1]-t[k+1]*dx[k]/3)} ${x(xs[k+1])} ${yy(ys[k+1])}`;
+  parts.push(`<path d="${path} L ${x(100)} ${yy(0)} L ${x(0)} ${yy(0)} Z" fill="${c}" opacity=".16"/>`,`<path d="${path}" fill="none" stroke="${c}" stroke-width="2.6" stroke-linejoin="round"/>`);
+  parts.push(`<line x1="${M.l}" y1="${M.t+ih}" x2="${M.l+iw}" y2="${M.t+ih}" stroke="${P.ink}"/>`,`<line x1="${M.l}" y1="${M.t}" x2="${M.l}" y2="${M.t+ih}" stroke="${P.ink}"/>`);
+  // Point labels: low percentiles above the point; the steep top end to the right, nudged apart.
+  const right=[], placed=[];
+  pts.slice(1).forEach(q=>{
+    const px=x(q.p), py=yy(q.v), text=`${q.label}: ${fmtMoney(q.v)}`;
+    parts.push(`<circle cx="${px}" cy="${py}" r="${compact?4:5}" fill="${P.paper}" stroke="${c}" stroke-width="2"/>`);
+    if(compact&&q.p<100&&q.p!==pts[1].p) return;
+    // Above and to the left of the point: the curve is convex, so the line runs below-left of each point and never crosses the label.
+    if(q.p<=85&&!compact){
+      // Estimated text width; move a label up if it would overlap one already placed.
+      const tw=text.length*6.7, nearLeft=px-M.l<tw+14, x1=nearLeft?px+8:px-10-tw, x2=x1+tw;
+      let ly=py-14;
+      placed.forEach(b=>{ if(x1<b.x2+6&&x2>b.x1-6&&Math.abs(ly-b.y)<15) ly=b.y-15; });
+      placed.push({x1,x2,y:ly});
+      parts.push(`<text x="${nearLeft?px+8:px-10}" y="${ly}" text-anchor="${nearLeft?"start":"end"}" font-size="11" fill="${P.ink}" stroke="${P.paper}" stroke-width="5" stroke-linejoin="round" paint-order="stroke">${escapeHtml(text)}</text>`);
+    }
+    else right.push({px,py,text});
+  });
+  right.sort((a,b)=>a.py-b.py); right.forEach((l,i)=>{ l.ly=Math.max(l.py+4,i?right[i-1].ly+16:M.t+8); });
+  right.forEach(l=>parts.push(compact
+    ?`<text x="${l.px-10}" y="${l.ly}" text-anchor="end" font-size="10" fill="${P.ink}" stroke="${P.paper}" stroke-width="4" paint-order="stroke">${escapeHtml(l.text)}</text>`
+    :`<text x="${l.px+12}" y="${l.ly}" font-size="11" fill="${P.ink}" stroke="${P.paper}" stroke-width="4" paint-order="stroke">${escapeHtml(l.text)}</text>`));
+  parts.push(`<text x="${M.l+iw/2}" y="${H-10}" text-anchor="middle" font-size="11" fill="${P.axis}">Households ranked by ${opts.curve.rank}, from least to most →</text>`);
+  if(opts.static){ svg.innerHTML=parts.join(""); return; }
+  parts.push(`<rect id="${svgId}Overlay" x="${M.l}" y="${M.t}" width="${iw}" height="${ih}" fill="transparent" style="cursor:crosshair;touch-action:pan-y"/>`);
+  svg.innerHTML=parts.join("");
+  const overlay=svg.querySelector(`#${svgId}Overlay`);
+  const showAt=e=>{
+    const rect=svg.getBoundingClientRect(), pc=((e.clientX-rect.left)*(W/rect.width)-M.l)/iw*100;
+    const q=pts.slice(1).reduce((best,r)=>Math.abs(r.p-pc)<Math.abs(best.p-pc)?r:best,pts[1]);
+    tip.innerHTML=`<div class="tt-year">${escapeHtml(q.label)}</div><div class="tooltip-row"><span>Net worth held</span><strong>${fmtMoney(q.v)}</strong></div><div class="tooltip-row"><span>Share of all wealth</span><strong>${(100*q.v/vmax).toFixed(1)}%</strong></div><div class="tt-note">${opts.curve.year} Q4 · Federal Reserve DFA</div>`;
+    const wrap=svg.parentElement.getBoundingClientRect(), tipW=tip.offsetWidth||220;
+    tip.style.left=Math.max(0,Math.min(e.clientX-wrap.left+16,wrap.width-tipW))+"px";
+    tip.style.top=(e.pointerType==="touch"?Math.max(0,e.clientY-wrap.top-tip.offsetHeight-24):Math.max(8,e.clientY-wrap.top-20))+"px";
+    tip.style.opacity=1;
+  };
+  overlay.addEventListener("pointermove",showAt); overlay.addEventListener("pointerdown",showAt);
+  overlay.addEventListener("pointerleave",e=>{ if(e.pointerType==="mouse") tip.style.opacity=0; });
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+const listText=items=>items.length<2?items.join(""):items.slice(0,-1).join(", ")+" and "+items.at(-1);
+const kidsText=n=>`${n} ${n===1?"child":"children"}`;
+
+// Accessible data table mirroring a chart's series.
+function renderDataTable(tableId,series,caption,fmt=fmtFull,lastActual=LAST_ACTUAL){
+  const years=series[0].data.map(d=>d.year);
+  $(tableId).innerHTML=`<caption class="sr-only">${escapeHtml(caption)}</caption><thead><tr><th scope="col">Year</th>${series.map(s=>`<th scope="col">${escapeHtml(s.label)}</th>`).join("")}</tr></thead>`+
+    `<tbody>${years.map((y,i)=>`<tr><th scope="row">${y}${y>lastActual?" (projected)":""}</th>${series.map(s=>`<td>${fmt(s.data[i].value)}</td>`).join("")}</tr>`).join("")}</tbody>`;
+}
+// Screen readers hear the summary once the user pauses, not on every slider step.
+let liveTimer;
+function announceSummary(){ clearTimeout(liveTimer); liveTimer=setTimeout(()=>{ $("summaryLive").textContent=$("summary").textContent; },900); }
+function announceStatus(msg){ $("statusLive").textContent=""; setTimeout(()=>{ $("statusLive").textContent=msg; },60); }
+// "Where do you fit?": place a household income among 2024 percentile incomes and apply that level's average costs.
+function updateCompare(){
+  const x=+$("myIncome").value, size=+$("mySize").value, out=$("compareOut");
+  if(!(x>0)){ out.textContent="Enter an income to see roughly where your household sits among U.S. households in 2024, and what the average essential spending of similar households would leave you."; return; }
+  const y=LAST_ACTUAL, inc=CURVES[y].income;
+  let p;
+  if(x<=inc[0]) p=.5*x/Math.max(1,inc[0]);
+  else if(x>=inc[99]) p=99.5;
+  else{ let i=0; while(inc[i+1]<=x) i++; p=i+.5+(x-inc[i])/(inc[i+1]-inc[i]); }
+  const d=calcPercentile(y,Math.min(99.5,p)), groups=getGroups(), g=groups.find(g=>p>=g.lo&&p<g.hi)||groups.at(-1);
+  const taxRate=state.afterTax&&d.observedPretax>0?Math.max(0,d.tax/d.observedPretax):0;
+  const left=x*(1-taxRate)-d.essentials, perPerson=state.unit==="person"&&size>1;
+  const leftText=left<0?`<strong>${fmtFull(-left)} short</strong>`:`<strong>${fmtFull(left)} left</strong>`;
+  out.innerHTML=`An income of <strong>${fmtFull(x)}</strong> puts your household around the <strong>${ordinal(Math.max(1,Math.round(p)))} percentile</strong> of U.S. households in ${y}, in the ${escapeHtml(g.label.toLowerCase())}. `+
+    `Households at that income spent about <strong>${fmtFull(d.essentials)}</strong> a year on the essentials you selected${state.afterTax?` and paid about ${Math.round(taxRate*100)}% of income in estimated income tax`:""}. `+
+    `At those averages your household would have ${leftText} a year${perPerson?` (${fmtFull(left/size)} per person)`:""}, in ${y} dollars${state.afterTax?"":", before taxes"}. Your real costs will differ.`;
+}
+// Last chart inputs, reused to redraw on resize and to render the saved image at desktop width.
+let lastCharts=null;
+function update(){
+  syncStateFromUI();
+  const {groups,rows,portfolios,gains,contribs}=buildData();
+  renderLegend("incomeLegend",groups); renderLegend("portfolioLegend",groups);
+  const v=(gi,yi)=>rows[yi].values[gi];
+  const incomeSeries=groups.map((g,gi)=>({label:g.label,data:YEARS.map((y,yi)=>({year:y,value:display(state.incomeView==="income"?v(gi,yi).income:v(gi,yi).residual,y,v(gi,yi).size)}))}));
+  const view=state.portfolioView;
+  const portfolioSeries=groups.map((g,gi)=>({label:g.label,data:YEARS.map((y,yi)=>{
+    const size=v(gi,yi).size;
+    if(view==="portfolio") return {year:y,value:display(portfolios[gi][yi],y,size)};
+    // Growth view: dashed = total put in so far, solid = portfolio value; the gap is market growth.
+    if(view==="growth") return {year:y,base:display(contribs[gi][yi],y,size),value:display(portfolios[gi][yi],y,size)};
+    const base=display(view==="surplus"?v(gi,yi).residual:v(gi,yi).income,y,size);
+    return {year:y,base,value:base+display(gains[gi][yi],y,size)};
+  })}));
+  const trim=s=>({...s,data:s.data.filter(d=>state.showProjection||!isProjected(d.year))});
+  // Flag the 2013 break only when the raw BLS taxes are in use, since that's the only view where the cliff appears.
+  const markers=state.afterTax&&state.taxMethod==="bls"
+    ?[{year:2013,label:"BLS tax method changed",detail:"From 2013 BLS estimates taxes instead of asking households, so taxes jump. Pick a consistent tax method to remove the break."}]
+    :[];
+  // Mark big market losses (S&P 500 down 15% or more) on Fig. 2, on a second label row below any tax marker.
+  const marketMarkers=state.returnMode!=="sp500"?[]:YEARS.filter(y=>SP500[y]<=-.15).map(y=>{
+    const pct=`−${Math.round(Math.abs(SP500[y])*100)}%`;
+    return {year:y,label:`S&P 500 ${pct}`,short:pct,row:1,kind:"market",
+      detail:`The S&P 500 fell ${Math.abs(SP500[y]*100).toFixed(1)}% in ${y}, so portfolios lost value${view==="portfolio"?"":view==="growth"?" (red shading where it fell below the total put in)":" and the loss is subtracted from that year's amount (red shading)"}.`};
+  });
+  // The happiness line is about household income, so it's drawn only on income views with per-household amounts.
+  const happyOn=state.showHappiness&&state.unit==="household";
+  const happyRef=happyOn?{label:"Happiness plateau (least happy ~20%)",short:"Happiness plateau",data:YEARS.filter(y=>state.showProjection||!isProjected(y)).map(y=>({year:y,value:display(happinessThreshold(y),y,1)}))}:null;
+  lastCharts={income:[incomeSeries.map(trim),{zeroFloor:false,markers,refLine:state.incomeView==="income"?happyRef:null}],portfolio:[portfolioSeries.map(trim),{zeroFloor:view==="portfolio"||view==="growth",markers:[...markers,...marketMarkers],gainNote:view==="growth"?"+/− = worth more or less than the total put in":undefined,refLine:view==="income"?happyRef:null}]};
+  renderChart("incomeChart","incomeTooltip",...lastCharts.income);
+  renderChart("portfolioChart","portfolioTooltip",...lastCharts.portfolio);
+  renderDataTable("incomeTable",lastCharts.income[0],state.incomeView==="income"?"Income, by group and year":"Money left after essentials, by group and year");
+  renderDataTable("portfolioTable",lastCharts.portfolio[0],view==="portfolio"||view==="growth"?"Portfolio value, by group and year":"Yearly amount plus that year’s investment return, by group and year");
+
+  const yi=YEARS.indexOf(LAST_ACTUAL), top=groups.length-1, per=state.unit==="person"?"per person":"per household";
+  const bottomLeft=incomeSeries[0].data[yi].value, topLeft=incomeSeries[top].data[yi].value;
+  const finalP=groups.map((g,gi)=>display(portfolios[gi][yi],LAST_ACTUAL,v(gi,yi).size));
+  $("kpiBottom").textContent=fmtFull(bottomLeft);
+  $("kpiTop").textContent=fmtFull(topLeft);
+  $("kpiBottomName").textContent=`${groups[0].label} · ${per}`;
+  $("kpiTopName").textContent=`${groups[top].label} · ${per}`;
+  $("kpiPortfolio").textContent=fmtMoney(finalP[top]);
+  $("kpiInvestNote").textContent=`${groups[top].label} · ${per}`;
+  // Ignore near-empty portfolios (under $1,000) so a few dollars of contributions don't produce a meaningless ratio.
+  const positive=finalP.filter(x=>x>=1000);
+  const ratio=positive.length>1?Math.max(...positive)/Math.min(...positive):0;
+  $("kpiGap").textContent=ratio?(ratio>=100?Math.round(ratio).toLocaleString():ratio.toFixed(1))+"×":"—";
+
+  const dollarText=state.inflationMode==="nominal"?"Nominal $":state.inflationMode==="real2000"?"Real 2000 $":state.inflationMode==="realBase"?`Real ${state.baseYear} $`:`${state.inflationRate.toFixed(1)}% inflation`;
+  const costs=state.essentials.map(k=>ESSENTIAL_NAMES[k]);
+  if(state.kids) costs.push(`childcare for ${kidsText(state.kids)}`);
+  if(state.customAmount>0) costs.push(state.customName||"your custom expense");
+  const costText=listText(costs);
+  const incomeText=`${state.afterTax?"after-tax":"pre-tax"} income ${state.includeTransfers?"including":"excluding"} benefits`;
+  const who=state.unit==="person"?"person":"household";
+  const hadText=x=>x<0?`was <strong>${fmtFull(-x)} short</strong>`:`had <strong>${fmtFull(x)} left</strong>`;
+  const leftText=x=>x<0?`a <strong>${fmtFull(-x)} shortfall</strong>`:`<strong>${fmtFull(x)} left</strong>`;
+  const returnText=state.returnMode==="sp500"?"S&P 500 returns":`a ${state.returnRate.toFixed(1)}% yearly return`;
+  const bottomName=escapeHtml(groups[0].label.toLowerCase()), topName=escapeHtml(groups[top].label.toLowerCase());
+  const afterCosts=costs.length?`after paying for ${escapeHtml(costText)}`:"with no essential costs subtracted";
+  // Whether the lowest group had money left in any year through the last actual year.
+  const bottomEverSurplus=rows.slice(0,yi+1).some(r=>r.values[0].residual>0);
+  let investText;
+  if(state.investPct===0) investText=" With 0% invested, no portfolio builds up.";
+  else investText=` Investing ${state.investPct}% of any surplus each year since 2000, at ${returnText}, would have built <strong>${fmtMoney(finalP[top])}</strong> for the ${topName} from ${fmtMoney(display(contribs[top][yi],LAST_ACTUAL,v(top,yi).size))} put in`+
+    (bottomEverSurplus?` and <strong>${fmtMoney(finalP[0])}</strong> for the ${bottomName}.`:`, while the ${bottomName} never had a surplus to invest.`)+
+    (state.showProjection?` If incomes and costs simply keep pace with inflation, the ${topName} portfolio is projected to reach <strong>${fmtMoney(display(portfolios[top].at(-1),YEARS.at(-1),v(top,YEARS.length-1).size))}</strong> by ${YEARS.at(-1)}.`:"");
+  const dollarsNote={nominal:"",real2000:" Amounts in 2000 dollars.",realBase:` Amounts in ${state.baseYear} dollars.`,assumed:` Amounts in ${state.baseYear} dollars, assuming ${state.inflationRate.toFixed(1)}% yearly inflation.`}[state.inflationMode]||"";
+  $("summary").innerHTML=`Counting ${incomeText}: in ${LAST_ACTUAL}, the average ${who} in the ${bottomName} ${hadText(bottomLeft)} ${afterCosts}, compared with ${leftText(topLeft)} in the ${topName}.`+investText+dollarsNote;
+
+  // Explain the income basis next to the headline, since the defaults exclude taxes and benefits.
+  $("summaryNote").textContent="An illustrative model, not tax or investment advice."
+    +(state.includeTransfers?"":" Benefits such as Social Security are excluded, and many lower-income households (including retirees) rely on them; turn them on under 02 · Income concept.")
+    +(state.afterTax?"":" Figures are before taxes.");
+  const perText=state.unit==="person"?"Per person":"Per household";
+  $("fig1Title").textContent=state.incomeView==="income"?"Income":"Money left after essentials";
+  $("incomeSubtitle").textContent=(state.incomeView==="income"?`Yearly ${incomeText}, before essential costs. ${perText}.`:`Yearly ${incomeText}, ${costs.length?`minus ${costText}`:"with no essential costs subtracted"}. ${perText}.`)
+    +(state.incomeView==="income"&&happyOn?" Dotted green line: approximate happiness plateau (see ?).":"")
+    +(state.incomeView==="income"&&state.showHappiness&&state.unit==="person"?" Switch “Show amounts” to per household to see the happiness plateau line; the research uses household income.":"");
+  const baseName=view==="surplus"?"the surplus from Fig. 1":`${incomeText}`;
+  $("portfolioSubtitle").textContent=view==="growth"
+    ?`Dashed line: the total put in (${state.investPct}% of each year’s surplus since 2000). Solid line: what the portfolio is worth at ${returnText}. Shading is market growth: the group’s color when ahead, red when worth less than was put in.`
+    :view==="portfolio"
+    ?`Portfolio balance from investing ${state.investPct}% of each year's surplus since 2000, at ${returnText}.`
+    :`Dashed line: ${baseName}. Solid line: the same plus that year's return on a portfolio built from ${state.investPct}% of each year's surplus. Shading shows that year’s return: the group’s color for gains, red for losses.`;
+  // Plain-English takeaways under each chart.
+  {
+    const whoPer=state.unit==="person"?" per person":" per household";
+    const med=calcPercentile(LAST_ACTUAL,50.5), medVal=display(state.incomeView==="income"?med.income:med.residual,LAST_ACTUAL,med.size);
+    const amt=x=>state.incomeView==="income"?`had <strong>${fmtFull(x)}</strong> of income`:hadText(x).replace(/<\/strong>$/,"</strong>");
+    $("fig1Takeaway").innerHTML=`In ${LAST_ACTUAL}, the ${bottomName} ${amt(bottomLeft)}${whoPer}; the ${topName} ${amt(topLeft)}. The household right in the middle (the 50th percentile) ${amt(medVal)}${whoPer}; averages for a group can hide how much households inside it differ.`;
+    const contribTop=display(contribs[top][yi],LAST_ACTUAL,v(top,yi).size), growth=finalP[top]-contribTop;
+    const gainTop=display(gains[top][yi],LAST_ACTUAL,v(top,yi).size);
+    $("fig2Takeaway").innerHTML=state.investPct===0?"With 0% of the surplus invested, no portfolio builds up."
+      :(view==="portfolio"||view==="growth")
+        ?`By ${LAST_ACTUAL}, the ${topName} would have <strong>${fmtMoney(finalP[top])}</strong>${whoPer} from ${fmtMoney(contribTop)} put in, `+(growth>=0?`so <strong>${fmtMoney(growth)}</strong> is market growth.`:`<strong>${fmtMoney(-growth)} less</strong> than was put in.`)
+          +(bottomEverSurplus?` The ${bottomName} would have ${fmtMoney(finalP[0])}.`:` The ${bottomName} never had a surplus to invest.`)
+        :`In ${LAST_ACTUAL}, the portfolio’s return ${gainTop>=0?"added":"took away"} <strong>${fmtMoney(Math.abs(gainTop))}</strong>${whoPer} ${gainTop>=0?"to":"from"} the ${topName}’s ${view==="surplus"?"surplus":"income"}.`;
+  }
+  // ---- Fig. 3
+  {
+    const f3=wealthSeries(), view3=state.f3View, taxView=view3==="tax"||view3==="revenue";
+    $("wealthLegend").innerHTML=view3==="curve"?"":legendHTML(f3.labels.map(label=>({label})));
+    if(view3==="share") f3.opts.area=true;
+    if(view3==="curve") f3.opts.curve=wealthCurve();
+    if(taxView) f3.opts.emptyNote="Nothing raised: no group’s average net worth reaches the threshold";
+    lastCharts.wealth=[f3.series,f3.opts];
+    // Households vs wealth: the same groups as a share of all households and of all net worth, latest year.
+    {
+      const d=wealthGroupData(WEALTH_LAST), P=palette(), hhTotal=d.hh.reduce((t,x)=>t+x,0), wTotal=d.avg.reduce((t,a,j)=>t+a*d.hh[j],0);
+      const textOn=hex=>{ const n=parseInt(hex.slice(1),16); return .299*(n>>16)+.587*(n>>8&255)+.114*(n&255)>150?"#1a1916":"#fbfaf6"; };
+      const row=(label,vals)=>`<div class="split-row"><div class="split-label">${label}</div><div class="split-bar">${vals.map((v,j)=>{ const c=P.series[j%P.series.length]; return `<span style="width:${v}%;background:${c};color:${textOn(c)}">${v>=16?`${escapeHtml(d.labels[j])} · `:""}${v>=4?`${Math.round(v)}%`:""}</span>`; }).join("")}</div></div>`;
+      const hhShare=d.hh.map(x=>100*x/hhTotal), wShare=d.avg.map((a,j)=>100*a*d.hh[j]/wTotal);
+      $("wealthSplit").innerHTML=view3==="share"?row(`Share of households · ${WEALTH_LAST}`,hhShare)+row(`Share of wealth · ${WEALTH_LAST}`,wShare):"";
+      $("wealthSplit").setAttribute("aria-label",d.labels.map((l,j)=>`${l}: ${hhShare[j].toFixed(1)}% of households, ${wShare[j].toFixed(1)}% of wealth`).join("; "));
+    }
+    renderChart("wealthChart","wealthTooltip",...lastCharts.wealth);
+    const unitTitle={share:"Share of all household wealth",curve:"Cumulative net worth by percentile",avg:"Average net worth per household",tax:"What-if wealth tax per household",revenue:"What-if wealth tax revenue"}[view3];
+    if(view3==="curve"){
+      const cv=f3.opts.curve, tot=cv.points.at(-1).v;
+      $("wealthTable").innerHTML=`<caption class="sr-only">Cumulative net worth by percentile, ${cv.year}</caption><thead><tr><th scope="col">Households, from least</th><th scope="col">Net worth held</th><th scope="col">Share of all wealth</th></tr></thead><tbody>${cv.points.slice(1).map(q=>`<tr><th scope="row">${escapeHtml(q.label)}</th><td>${fmtMoney(q.v)}</td><td>${(100*q.v/tot).toFixed(1)}%</td></tr>`).join("")}</tbody>`;
+    }else renderDataTable("wealthTable",f3.series,`${unitTitle}, by group and year`,f3.opts.fmtTip,WEALTH_LAST);
+    const byText=state.f3Group==="wealth"?"households ranked by net worth":"households ranked by income";
+    const design=state.wealthMode==="flat"?`a flat ${state.wealthRate.toFixed(1)}% tax on net worth above ${fmtMoney(state.wealthThreshold)} (2024 $)`:`a Zucman-style minimum of ${state.wealthRate.toFixed(1)}% of net worth above ${fmtMoney(state.wealthThreshold)} (2024 $), minus ${state.wealthPaid.toFixed(1)}% already paid in tax`;
+    $("wealthSubtitle").textContent=view3==="curve"?`Households lined up from least to most ${state.f3Group==="wealth"?"wealth":"income"}, with the total net worth held by everyone up to each point, ${WEALTH_LAST} Q4. ${dollarText.replace(" $"," dollars")}. Dots are the Federal Reserve’s official group boundaries; the curve is smoothed between them.`:(view3==="share"?`How U.S. household net worth is split, ${byText}, Federal Reserve data 2000–${WEALTH_LAST}. The bars compare each group’s share of households with its share of wealth; the chart stacks the wealth shares to 100% for every year.`:`${unitTitle}, ${byText}, Federal Reserve data 2000–${WEALTH_LAST}.`)+(view3==="avg"||view3==="tax"||view3==="revenue"?` ${dollarText.replace(" $"," dollars")}.`:"");
+    $("wealthChart").setAttribute("aria-label",`Line chart: ${unitTitle.toLowerCase()}, ${byText}, by year. The numbers are in the data table below.`);
+    $("wealthControls").classList.toggle("show",taxView);
+    // Fig. 3 is always per household (or unit-free): the Fed doesn't publish household size by wealth group.
+    const perHH=view3==="avg"||view3==="tax";
+    $("f3UnitPill").textContent={share:"Shares of the total",curve:"Totals, all households",avg:"Per household",tax:"Per household",revenue:"Totals, all households"}[view3]+(perHH&&state.unit==="person"?" · not per person":"");
+    $("f3UnitPill").title=perHH&&state.unit==="person"?"The Federal Reserve doesn’t publish household size by wealth group, so Fig. 3 can’t show per-person amounts.":"";
+    const incomeTax=taxView&&state.f3Group==="income";
+    $("wealthPaidWrap").classList.toggle("show",state.wealthMode==="zucman");
+    const d=wealthGroupData(WEALTH_LAST), n=d.labels.length, total=d.avg.reduce((t,a,j)=>t+a*d.hh[j],0), f=inflationFactor(WEALTH_LAST);
+    const share=j=>(100*d.avg[j]*d.hh[j]/total).toFixed(1);
+    const taxes=d.avg.map((a,j)=>wealthTaxFor(a,WEALTH_LAST)*d.hh[j]), revenue=taxes.reduce((t,x)=>t+x,0);
+    const reached=d.labels.filter((_,j)=>taxes[j]>0).map(x=>x.toLowerCase());
+    const paying=d.hh.reduce((t,h,j)=>t+(taxes[j]>0?h:0),0), cutoffText=fmtMoney(state.wealthThreshold).replace(/\.0(?=[kMBT])/,"");
+    $("wealthAffects").textContent=incomeTax
+      ?"Grouped by income, this understates a wealth tax: even the top 1% by income averages under $50 million, and many of the wealthiest households aren’t top earners. Group by wealth for a closer estimate."
+      :reached.length?`Reaches the ${listText(reached)}, using each group’s average net worth. A rough order of magnitude: it ignores avoidance and valuation problems.`
+      :`No group’s average net worth is above ${cutoffText}, so nothing is raised. Try a lower threshold.`;
+    // Revenue at a glance, latest year.
+    const stat=(label,value,note)=>`<div class="tax-stat"><b>${label}</b><span>${value}</span><small>${note}</small></div>`;
+    $("wealthStats").innerHTML=taxView?
+      stat(`Raised in ${WEALTH_LAST}`,fmtMoney(revenue*f),revenue>0?"a year, from group averages":"nothing is taxed")+
+      stat("Households paying",paying?(paying>=1e6?`${(paying/1e6).toFixed(1)}M`:`${Math.round(paying/1000)}k`):"0",paying?`${(100*paying/d.hh.reduce((t,h)=>t+h,0)).toFixed(paying/d.hh.reduce((t,h)=>t+h,0)<.01?2:1)}% of all households`:"none above the threshold")+
+      stat("Per paying household",paying?fmtMoney(revenue*f/paying):"—",revenue>0?`${Math.round(100*taxes[n-1]/revenue)}% of revenue from the ${escapeHtml(d.labels[n-1].toLowerCase())}`:"")
+      :"";
+    $("fig3Takeaway").innerHTML=taxView
+      ?(revenue>0?`In ${WEALTH_LAST}, ${escapeHtml(design)} would raise roughly <strong>${fmtMoney(revenue*f)}</strong> a year. Real collections would differ: avoidance, hard-to-value assets and falling asset prices all matter.`:`This design raises $0 from group averages in ${WEALTH_LAST}.`)
+      :view3==="curve"
+        ?(()=>{ const cv=wealthCurve(), pts=cv.points, tot=pts.at(-1).v, first=pts[1], topHeld=tot-pts.at(-2).v;
+            return `In ${WEALTH_LAST}, the ${escapeHtml(first.label.toLowerCase())} of households ${state.f3Group==="wealth"?"by wealth":"by income"} held <strong>${fmtMoney(first.v)}</strong> combined (${(100*first.v/tot).toFixed(1)}% of the total). The ${d.labels[n-1].toLowerCase()} alone held <strong>${fmtMoney(topHeld)}</strong>. The curve stays flat for most households and shoots up at the very end.`; })()
+      :state.f3Group==="wealth"
+        ?`In ${WEALTH_LAST}, the top 0.1% of households by wealth (${householdsText(d.hh[n-1])}) held <strong>${share(n-1)}%</strong> of all U.S. household net worth, <strong>${fmtMoney(d.avg[n-1]*f)}</strong> each on average. The bottom 50% (${householdsText(d.hh[0])}) held <strong>${share(0)}%</strong> combined, ${fmtMoney(d.avg[0]*f)} each.`
+        :`In ${WEALTH_LAST}, the top 1% of households by income held <strong>${share(n-1)}%</strong> of household net worth, <strong>${fmtMoney(d.avg[n-1]*f)}</strong> each on average, <strong>${Math.round(d.avg[n-1]/d.avg[2])}×</strong> a household in the middle 20% (${fmtMoney(d.avg[2]*f)}).`;
+  }
+  updateCompare();
+  $("dollarModePill").textContent=dollarText;
+  $("groupPill").textContent=($("segmentation").selectedOptions[0]?.text||"").split("·")[0].trim();
+  $("unitPill").textContent=state.unit==="person"?"Per person":"Per household";
+  $("returnPill").textContent=state.returnMode==="sp500"?"S&P 500":`${state.returnRate.toFixed(1)}% return`;
+  $("investPill").textContent=`${state.investPct}% invested`;
+  $("expenseBadge").hidden=!expensesEdited();
+  announceSummary();
+  updateHash();
+}
+function syncStateFromUI(){
+  state.segmentation=$("segmentation").value;
+  state.customTop=+$("customTop").value;
+  state.unit=$("unit").value;
+  state.afterTax=$("afterTax").checked;
+  if($("taxMethod").value!==state.taxMethod){ state.taxMethod=$("taxMethod").value; rebuildTaxes(); }
+  state.includeTransfers=$("includeTransfers").checked;
+  state.transferScale=+$("transferScale").value;
+  state.kids=+$("kids").value;
+  state.childcareCost=Math.max(0,+$("childcareCost").value||0);
+  state.inflationMode=$("inflationMode").value;
+  state.baseYear=+$("baseYear").value;
+  state.inflationRate=+$("inflationRate").value;
+  state.minTaxMode=$("minTaxMode").value;
+  state.wealthMode=$("wealthMode").value;
+  state.f3View=$("f3View").value;
+  state.f3Group=$("f3Group").value;
+  state.wealthPaid=+$("wealthPaid").value;
+  state.wealthRate=+$("wealthRate").value;
+  state.wealthThreshold=Math.max(0,+$("wealthThreshold").value||0);
+  state.amtRate=+$("amtRate").value;
+  state.amtThreshold=Math.max(0,+$("amtThreshold").value||0);
+  // Show each 2024-dollar input in the charts' dollars when the charts use a single year's dollars.
+  {
+    const basis=dollarBasisYear();
+    const equiv=(amount,index)=>basis==null||basis===INPUT_DOLLAR_YEAR||!(amount>0)?"":`≈ ${fmtFull(amount*index[basis]/index[INPUT_DOLLAR_YEAR])} in ${basis} dollars, as in the charts`;
+    $("amtEquiv").textContent=equiv(state.amtThreshold,CPI);
+    { const we=equiv(state.wealthThreshold,CPI); $("wealthEquiv").textContent=state.wealthThreshold>0?`= ${fmtMoney(state.wealthThreshold).replace(/\.0(?=[kMBT])/,"")}${we?` · ${we}`:""}`:we; }
+    $("childcareEquiv").textContent=equiv(state.childcareCost,DAYCARE_CPI);
+    $("customEquiv").textContent=equiv(state.customAmount,CPI);
+  }
+  state.investPct=+$("investPct").value;
+  state.returnMode=$("returnMode").value;
+  state.returnRate=+$("returnRate").value;
+  state.portfolioView=$("portfolioView").value;
+  state.showProjection=$("showProjection").checked;
+  state.incomeView=$("incomeView").value;
+  state.showHappiness=$("showHappiness").checked;
+  // The happiness line only applies to income, so offer the toggle only when Fig. 1 shows income.
+  $("happinessWrap").hidden=state.incomeView!=="income";
+  state.essentials=[...document.querySelectorAll(".essential:checked")].map(x=>x.value);
+  $("customTopVal").textContent=state.customTop+"%";
+  $("transferScaleVal").textContent=state.transferScale+"%";
+  $("kidsVal").textContent=state.kids;
+  $("inflationRateVal").textContent=state.inflationRate.toFixed(1)+"%";
+  $("amtRateVal").textContent=state.amtRate+"%";
+  $("wealthRateVal").textContent=state.wealthRate.toFixed(1)+"%";
+  $("wealthPaidVal").textContent=state.wealthPaid.toFixed(1)+"%";
+  $("investPctVal").textContent=state.investPct+"%";
+  $("returnRateVal").textContent=state.returnRate.toFixed(1)+"%";
+  $("customTopWrap").classList.toggle("show",state.segmentation==="customTop");
+  $("baseYearWrap").classList.toggle("show",["realBase","assumed"].includes(state.inflationMode));
+  $("inflationRateWrap").classList.toggle("show",state.inflationMode==="assumed");
+  $("amtControls").classList.toggle("show",state.afterTax&&state.minTaxMode==="simple");
+  $("returnRateWrap").classList.toggle("show",state.returnMode==="assumed");
+  // Disable controls that have no effect under the current settings.
+  $("minTaxMode").disabled=!state.afterTax;
+  $("minTaxNote").textContent=!state.afterTax?"Turn on “After tax” to use this.":{off:"",simple:"The greater of normal tax or the rate below on income above the exemption.",amt:"That year’s AMT, married-filing-jointly rules, no deductions: a rough group-level estimate."}[state.minTaxMode]||"";
+  $("taxMethod").disabled=!state.afterTax;
+  $("taxMethodNote").textContent=!state.afterTax?"Turn on “After tax” to choose a method.":{cbo:"Federal income tax only, from CBO. 2023 onward uses 2022 rates.",splice:"BLS taxes, with years before 2013 raised by each group’s 2012→2013 jump.",fixed:"Each group’s 2013–2015 BLS tax rate in every year. Ignores real tax law changes.",bls:"Federal, state and local taxes as BLS published them. Jumps in 2013."}[state.taxMethod];
+  $("transferScale").disabled=!state.includeTransfers;
+  $("childcareCost").disabled=state.kids===0;
+}
+function applyStateToUI(){
+  Object.entries({
+    segmentation:state.segmentation,customTop:state.customTop,unit:state.unit,transferScale:state.transferScale,kids:state.kids,childcareCost:state.childcareCost,
+    inflationMode:state.inflationMode,baseYear:state.baseYear,inflationRate:state.inflationRate,amtRate:state.amtRate,amtThreshold:state.amtThreshold,minTaxMode:state.minTaxMode,wealthMode:state.wealthMode,wealthRate:state.wealthRate,wealthThreshold:state.wealthThreshold,wealthPaid:state.wealthPaid,f3View:state.f3View,f3Group:state.f3Group,
+    investPct:state.investPct,returnMode:state.returnMode,returnRate:state.returnRate,portfolioView:state.portfolioView
+  }).forEach(([k,v])=>{if($(k)) $(k).value=v;});
+  $("showProjection").checked=state.showProjection;$("incomeView").value=state.incomeView;$("showHappiness").checked=state.showHappiness;$("taxMethod").value=state.taxMethod;$("afterTax").checked=state.afterTax;$("includeTransfers").checked=state.includeTransfers;
+  document.querySelectorAll(".essential").forEach(x=>x.checked=state.essentials.includes(x.value));
+  // Open the Advanced panel whenever one of its settings is in use, so nothing that changes the charts is hidden.
+  if(state.taxMethod!=="cbo"||state.transferScale!==100||state.minTaxMode!=="off") $("advancedPanel").open=true;
+}
+function updateHash(){
+  const payload={s:state.segmentation,c:state.customTop,u:state.unit,t:state.afterTax?1:0,tm:state.taxMethod,b:state.includeTransfers?1:0,ts:state.transferScale,k:state.kids,cc:state.childcareCost,
+    im:state.inflationMode,by:state.baseYear,ir:state.inflationRate,mt:state.minTaxMode,v3:state.f3View,g3:state.f3Group,wm:state.wealthMode,wr:state.wealthRate,wt:Math.round(state.wealthThreshold),wp:state.wealthPaid,ar:state.amtRate,at:Math.round(state.amtThreshold),ip:state.investPct,rm:state.returnMode,rr:state.returnRate,pv:state.portfolioView,p:state.showProjection?1:0,iv:state.incomeView,hp:state.showHappiness?1:0,e:state.essentials.join(".")};
+  if(expensesEdited()) payload.x=JSON.stringify({s:state.expenseScale,e:state.expenseEdits,n:state.customName,a:state.customAmount});
+  history.replaceState(null,"","#"+new URLSearchParams(payload).toString());
+}
+function loadHash(){
+  if(!location.hash.slice(1)) return;
+  const q=new URLSearchParams(location.hash.slice(1));
+  const g=(k,d)=>q.has(k)?q.get(k):d;
+  // Only accept values the controls can hold, so an old or hand-edited link can't break the page.
+  const pick=(k,id,d)=>{ const val=g(k,d); return [...$(id).options].some(o=>o.value===val)?val:d; };
+  const num=(k,d,lo,hi)=>{ const val=Number(g(k,d)); return Number.isFinite(val)?clamp(val,lo,hi):d; };
+  state={...cloneDefaults(),
+    segmentation:pick("s","segmentation",DEFAULTS.segmentation), customTop:Math.round(num("c",1,1,50)), unit:pick("u","unit",DEFAULTS.unit),
+    afterTax:g("t","0")==="1", taxMethod:pick("tm","taxMethod",DEFAULTS.taxMethod), includeTransfers:g("b","0")==="1", transferScale:num("ts",100,0,200),
+    kids:Math.round(num("k",0,0,5)), childcareCost:num("cc",CHILDCARE_DEFAULT,0,1e6), inflationMode:pick("im","inflationMode",DEFAULTS.inflationMode),
+    baseYear:Math.round(num("by",2000,YEARS[0],YEARS.at(-1))), inflationRate:num("ir",2.5,0,8), minTaxMode:q.has("mt")?pick("mt","minTaxMode",DEFAULTS.minTaxMode):(g("ao","0")==="1"?"simple":"off"), f3View:pick("v3","f3View",DEFAULTS.f3View), f3Group:pick("g3","f3Group",DEFAULTS.f3Group), wealthMode:pick("wm","wealthMode",DEFAULTS.wealthMode), wealthRate:Math.round(num("wr",2,0.5,5)*2)/2, wealthThreshold:num("wt",DEFAULTS.wealthThreshold,0,1e12), wealthPaid:Math.round(num("wp",DEFAULTS.wealthPaid,0,3)*10)/10, amtRate:num("ar",20,5,45), amtThreshold:num("at",200000,0,1e8),
+    investPct:num("ip",10,0,40), returnMode:pick("rm","returnMode",DEFAULTS.returnMode), returnRate:num("rr",8,-5,20), portfolioView:pick("pv","portfolioView",DEFAULTS.portfolioView),
+    showProjection:g("p","1")==="1", incomeView:pick("iv","incomeView",DEFAULTS.incomeView), showHappiness:g("hp","1")==="1", essentials:g("e",DEFAULTS.essentials.join(".")).split(".").filter(k=>ESSENTIALS.includes(k))
+  };
+  if(q.has("x")){
+    try{
+      const x=JSON.parse(q.get("x"));
+      ESSENTIALS.forEach(k=>{ const val=Number(x?.s?.[k]); if(Number.isFinite(val)) state.expenseScale[k]=clamp(Math.round(val/5)*5,0,200); });
+      const edits={};
+      if(x?.e&&typeof x.e==="object") Object.keys(x.e).forEach(y=>{
+        if(!YEARS.includes(Number(y))||!x.e[y]||typeof x.e[y]!=="object") return;
+        ESSENTIALS.forEach(k=>{
+          const arr=x.e[y][k];
+          if(!Array.isArray(arr)||arr.length!==5) return;
+          const clean=arr.map(val=>val==null||!Number.isFinite(Number(val))?null:clamp(Number(val),0,1e7));
+          if(clean.some(val=>val!=null)) (edits[y]??={})[k]=clean;
+        });
+      });
+      state.expenseEdits=edits;
+      state.customName=String(x?.n??"").slice(0,40);
+      const amount=Number(x?.a);
+      state.customAmount=Number.isFinite(amount)?clamp(amount,0,1e7):0;
+    }catch(e){ /* ignore a malformed link and keep BLS values */ }
+  }
+}
+function exportCSV(){
+  const {groups,rows,portfolios,gains,contribs}=buildData();
+  // Dollar columns use the selected inflation display and unit. display_factor is the multiplier applied to nominal
+  // dollars for the inflation display (before any per-person division).
+  const heads=["year","group","range_low_pct","range_high_pct","unit","household_size","gross_income","tax","income_after_tax","transfers","childcare","custom_expense","total_essential_spending","left_after_essentials","investment_return","cumulative_contributions","portfolio_value","avg_net_worth_fed","display_factor","projected"];
+  const out=[heads.join(",")];
+  YEARS.forEach((y,yi)=>groups.forEach((g,gi)=>{
+    const r=rows[yi].values[gi], f=inflationFactor(y);
+    const money=[r.gross,r.tax,r.income,r.transfers,r.childcare,r.custom,r.essentials,r.residual,gains[gi][yi],contribs[gi][yi],portfolios[gi][yi],groupNetWorth(y,g)].map(n=>display(n,y,r.size).toFixed(2));
+    out.push([y,`"${g.label}"`,g.lo,g.hi,state.unit,r.size.toFixed(2),...money,f.toFixed(6),isProjected(y)?1:0].join(","));
+  }));
+  const blob=new Blob([out.join("\n")],{type:"text/csv"}), url=URL.createObjectURL(blob), a=document.createElement("a");
+  a.href=url;a.download="household-surplus-scenario.csv";a.click();URL.revokeObjectURL(url);
+}
+function reset(){
+  state=cloneDefaults();rebuildEssentials();rebuildTaxes();applyStateToUI();update();
+}
+$("baseYear").innerHTML=YEARS.map(y=>`<option value="${y}">${y}</option>`).join("");
+loadHash();rebuildEssentials();rebuildTaxes();applyStateToUI();
+document.querySelectorAll("select,input").forEach(el=>el.addEventListener("input",update));
+$("resetBtn").addEventListener("click",()=>{ reset(); markPreset("default"); });
+// One-click scenarios: each is a share-link hash applied on top of the defaults.
+const PRESETS={default:"",realistic:"t=1&b=1",top1:"s=99_1&t=1&b=1&u=household",family:"t=1&b=1&k=2&u=household",today:"t=1&b=1&im=realBase&by=2024"};
+function markPreset(key){ document.querySelectorAll(".preset").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.preset===key))); }
+function applyPreset(key){
+  history.replaceState(null,"",PRESETS[key]?"#"+PRESETS[key]:location.pathname+location.search);
+  state=cloneDefaults(); loadHash(); rebuildEssentials(); rebuildTaxes(); applyStateToUI(); update();
+  markPreset(key); announceStatus(`Scenario: ${document.querySelector(`.preset[data-preset="${key}"]`).textContent}.`);
+}
+document.querySelectorAll(".preset").forEach(b=>b.addEventListener("click",()=>applyPreset(b.dataset.preset)));
+// Any manual change leaves the preset, except inputs that don't change the scenario.
+document.querySelectorAll("#controls select,#controls input,.viewrow select,.viewrow input,#wealthControls input,#wealthControls select").forEach(el=>el.addEventListener("input",()=>markPreset(null)));
+{ const h=location.hash.slice(1); markPreset(h?(Object.keys(PRESETS).find(k=>PRESETS[k]&&PRESETS[k]===h)||null):"default"); }
+$("csvBtn").addEventListener("click",exportCSV);
+
+// ---- Expense editor
+const QUINTILE_NAMES=["Lowest 20%","Second 20%","Middle 20%","Fourth 20%","Highest 20%"];
+const capital=t=>t[0].toUpperCase()+t.slice(1);
+$("expenseYear").innerHTML=YEARS.slice().reverse().map(y=>`<option value="${y}">${y}${isProjected(y)?" · projected":""}</option>`).join("");
+function renderScaleGrid(){
+  $("scaleGrid").innerHTML=ESSENTIALS.map(k=>`<div class="control"><div class="rangehead"><label for="scale_${k}">${escapeHtml(capital(ESSENTIAL_NAMES[k]))}</label><span class="rangeval" id="scale_${k}_val">${state.expenseScale[k]}%</span></div><input id="scale_${k}" data-scale="${k}" type="range" min="0" max="200" step="5" value="${state.expenseScale[k]}"></div>`).join("");
+}
+function renderExpenseTotals(){
+  const y=+$("expenseYear").value;
+  const totals=[0,1,2,3,4].map(q=>ESSENTIALS.reduce((t,k)=>t+expenseValues(y,k)[q],0));
+  $("expenseTotals").innerHTML=`<tr><td>Total, all six categories${ESSENTIALS.some(k=>state.expenseScale[k]!==100)?" (after scaling)":""}</td>${totals.map(t=>`<td>${fmtFull(t)}</td>`).join("")}</tr>`;
+}
+function renderExpenseTable(){
+  const y=+$("expenseYear").value;
+  const body=ESSENTIALS.map(k=>{
+    const bls=baseExpense(y,k), edits=state.expenseEdits[y]?.[k], name=capital(ESSENTIAL_NAMES[k]);
+    return `<tr><td>${escapeHtml(name)}</td>${bls.map((v,q)=>{
+      const cur=edits&&edits[q]!=null?edits[q]:v;
+      return `<td><input type="number" min="0" step="50" inputmode="numeric" data-year="${y}" data-cat="${k}" data-q="${q}" value="${Number(cur)}" class="${cur!==v?"changed":""}" aria-label="${escapeHtml(name)}, ${QUINTILE_NAMES[q]}, ${y}"><span class="src">${isProjected(y)?"Projected":"BLS"} ${v.toLocaleString()}</span></td>`;
+    }).join("")}</tr>`;
+  }).join("");
+  $("expenseTable").innerHTML=`<thead><tr><th>${y}${isProjected(y)?" (projected)":""} · per household</th>${QUINTILE_NAMES.map(n=>`<th>${n}</th>`).join("")}</tr></thead><tbody>${body}</tbody><tfoot id="expenseTotals"></tfoot>`;
+  renderExpenseTotals();
+}
+$("openExpenses").addEventListener("click",()=>{
+  renderScaleGrid();renderExpenseTable();
+  $("customName").value=state.customName;$("customAmount").value=state.customAmount;
+  $("expenseModal").showModal();
+});
+["closeExpenses","doneExpenses"].forEach(id=>$(id).addEventListener("click",()=>$("expenseModal").close()));
+// Return focus to the button that opened the editor (not all browsers do this for <dialog>).
+$("expenseModal").addEventListener("close",()=>$("openExpenses").focus({preventScroll:true}));
+$("expenseModal").addEventListener("click",e=>{ if(e.target===$("expenseModal")) $("expenseModal").close(); });
+$("expenseModal").addEventListener("input",e=>{
+  const t=e.target;
+  if(t.id==="expenseYear"){ renderExpenseTable(); return; }
+  if(t.dataset.scale){
+    state.expenseScale[t.dataset.scale]=+t.value;
+    $(`scale_${t.dataset.scale}_val`).textContent=t.value+"%";
+  }else if(t.dataset.cat){
+    const y=t.dataset.year, k=t.dataset.cat, q=+t.dataset.q, bls=baseExpense(+y,k)[q];
+    const v=t.value===""?bls:Math.max(0,+t.value||0);
+    const edits=state.expenseEdits;
+    edits[y]??={}; edits[y][k]??=[null,null,null,null,null];
+    edits[y][k][q]=v===bls?null:v;
+    // Drop empty edit records so the share link stays short.
+    if(edits[y][k].every(x=>x==null)) delete edits[y][k];
+    if(!Object.keys(edits[y]).length) delete edits[y];
+    t.classList.toggle("changed",v!==bls);
+  }else if(t.id==="customName"||t.id==="customAmount"){
+    state.customName=$("customName").value.trim();
+    state.customAmount=Math.max(0,+$("customAmount").value||0);
+  }else return;
+  rebuildEssentials(); renderExpenseTotals(); update();
+});
+// Restore a cleared box to its BLS value when the user leaves it.
+$("expenseModal").addEventListener("focusout",e=>{ if(e.target.dataset.cat && e.target.value==="") e.target.value=baseExpense(+e.target.dataset.year,e.target.dataset.cat)[+e.target.dataset.q]; });
+$("resetExpenses").addEventListener("click",()=>{
+  const d=cloneDefaults();
+  state.expenseScale=d.expenseScale; state.expenseEdits={}; state.customName=""; state.customAmount=0;
+  renderScaleGrid(); renderExpenseTable(); $("customName").value=""; $("customAmount").value=0;
+  rebuildEssentials(); update();
+});
+$("shareBtn").addEventListener("click",async()=>{
+  updateHash();
+  // An unchanged preset gets its short share page, which carries its own preview image.
+  const preset=document.querySelector('.preset[aria-pressed="true"]')?.dataset.preset;
+  const link=preset&&preset!=="default"?`${location.origin}/s/${preset}/`:location.href;
+  try{
+    await navigator.clipboard.writeText(link);
+    $("shareBtn").textContent="Copied";
+    announceStatus("Scenario link copied.");
+    setTimeout(()=>$("shareBtn").textContent="Copy scenario link",1400);
+  }catch(e){ prompt("Copy this scenario URL:",location.href); }
+});
+// ---- Save as image: an off-screen report card with the charts and every setting, rendered to PNG.
+function settingsList(){
+  const seg=($("segmentation").selectedOptions[0]?.text||"")+(state.segmentation==="customTop"?` (top ${state.customTop}%)`:"");
+  const essentials=state.essentials.map(k=>ESSENTIAL_NAMES[k]);
+  const edits=ESSENTIALS.filter(k=>state.expenseScale[k]!==100).map(k=>`${ESSENTIAL_NAMES[k]} at ${state.expenseScale[k]}%`);
+  const cellEdits=Object.values(state.expenseEdits).reduce((t,cats)=>t+Object.values(cats).reduce((u,a)=>u+a.filter(x=>x!=null).length,0),0);
+  if(cellEdits) edits.push(`${cellEdits} single-year edit${cellEdits===1?"":"s"}`);
+  if(state.customAmount>0) edits.push(`${state.customName||"Custom expense"}: ${fmtFull(state.customAmount)} a year (2024 $)`);
+  return [
+    ["Income groups",seg],
+    ["Amounts shown",state.unit==="person"?"Per person":"Per household"],
+    ["Income",`${state.afterTax?"After tax":"Before tax"}; benefits ${state.includeTransfers?`included at ${state.transferScale}%`:"excluded"}`],
+    ["Taxes",state.afterTax?($("taxMethod").selectedOptions[0]?.text||""):"Not subtracted (before tax)"],
+    ["Essential costs",essentials.length?capital(listText(essentials)):"None selected"],
+    ["Expense amounts",edits.length?edits.join("; "):"BLS as published"],
+    ["Childcare",state.kids?`${kidsText(state.kids)} at ${fmtFull(state.childcareCost)} each (2024 $)`:"None"],
+    ["Dollars",$("dollarModePill").textContent],
+    ["Minimum tax",!state.afterTax||state.minTaxMode==="off"?"Off":state.minTaxMode==="amt"?"U.S.-style AMT, income-based (married filing jointly)":`${state.amtRate}% of income above ${fmtFull(state.amtThreshold)} (2024 $)`],
+    ["Investing",`${state.investPct}% of surplus; ${state.returnMode==="sp500"?"historical S&P 500 returns":`${state.returnRate.toFixed(1)}% a year`}`],
+    ["Fig. 1 view",$("incomeView").selectedOptions[0]?.text||""],
+    ["Happiness line",state.showHappiness?"Shown on income views (per household)":"Hidden"],
+    ["Fig. 2 view",$("portfolioView").selectedOptions[0]?.text||""],
+    ["Projection",state.showProjection?"2025–2026 shown (grown with CPI-U)":"Hidden"],
+    ["Fig. 3 view",`${$("f3View").selectedOptions[0]?.text||""}; grouped by ${state.f3Group}`],
+    ["Wealth tax (Fig. 3)",state.f3View==="tax"||state.f3View==="revenue"?(state.wealthMode==="flat"?`Flat ${state.wealthRate.toFixed(1)}% above ${fmtFull(state.wealthThreshold)} (2024 $)`:`Zucman-style ${state.wealthRate.toFixed(1)}% minimum above ${fmtFull(state.wealthThreshold)} (2024 $), ${state.wealthPaid.toFixed(1)}% already paid`):"Not shown"],
+  ];
+}
+function buildReport(){
+  const figure=(n,svgId,titleText,subId,legendId)=>{
+    // Re-render at desktop width so the saved image looks the same from any device.
+    const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+    const [series,opts]=lastCharts[{incomeChart:"income",portfolioChart:"portfolio",wealthChart:"wealth"}[svgId]];
+    renderChart(svgId,null,series,{...opts,width:960,target:svg,static:true,palette:THEMES.light});
+    svg.setAttribute("width","1072"); svg.setAttribute("height","469");
+    svg.setAttribute("font-family","JetBrains Mono, Consolas, monospace");
+    return `<section class="r-fig"><div class="r-fig-head"><div class="fig">Fig. ${n}</div><h2>${titleText}</h2><p>${escapeHtml($(subId).textContent)}</p></div><div class="legend">${legendHTML(series,THEMES.light)}</div>${svg.outerHTML}</section>`;
+  };
+  const kpis=document.querySelector(".kpis").cloneNode(true);
+  kpis.querySelectorAll(".tip").forEach(node=>node.remove());
+  const saved=new Date().toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
+  const card=document.createElement("div");
+  card.className="report";
+  card.innerHTML=`<div class="r-top"><span class="mark"><i></i>Household Surplus Lab</span><span>Scenario · saved ${saved}</span></div>
+    <h1>What’s left, and what it <em>becomes</em>.</h1>
+    <p class="r-summary">${$("summary").innerHTML}</p>
+    ${kpis.outerHTML}
+    ${figure(1,"incomeChart",escapeHtml($("fig1Title").textContent),"incomeSubtitle","incomeLegend")}
+    ${figure(2,"portfolioChart",escapeHtml($("fig2Title").textContent),"portfolioSubtitle","portfolioLegend")}
+    ${figure(3,"wealthChart",escapeHtml($("fig3Title").textContent),"wealthSubtitle","wealthLegend")}
+    <section class="r-settings"><h3>Scenario settings</h3><dl>${settingsList().map(([k,v])=>`<div><dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd></div>`).join("")}</dl>
+    <div class="r-link">Open this scenario: ${escapeHtml(location.href)}</div></section>
+    <div class="r-foot">Data: BLS Consumer Expenditure Survey quintile tables 2000–2024, with 2025–2026 projected using CPI-U; BLS CPI; CBO federal tax rates; Federal Reserve Distributional Financial Accounts (net worth); IRS AMT parameters; S&amp;P 500 total returns; Child Care Aware of America. An illustrative model, not tax or investment advice.</div>`;
+  return card;
+}
+function loadHtml2canvas(){
+  if(window.html2canvas) return Promise.resolve();
+  return new Promise((resolve,reject)=>{
+    const script=document.createElement("script");
+    script.src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+    script.integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==";
+    script.crossOrigin="anonymous";
+    script.referrerPolicy="no-referrer";
+    script.onload=resolve;
+    script.onerror=()=>reject(new Error("Couldn't load the image renderer (needs an internet connection)."));
+    document.head.appendChild(script);
+  });
+}
+async function renderReportCanvas(){
+  await Promise.race([loadHtml2canvas(),new Promise((_,reject)=>setTimeout(()=>reject(new Error("The image renderer took too long to load.")),15000))]);
+  await document.fonts.ready;
+  updateHash();
+  const card=buildReport();
+  document.body.appendChild(card);
+  try{
+    return await html2canvas(card,{scale:2,backgroundColor:"#f4f1ea",logging:false,windowWidth:1400});
+  }finally{
+    card.remove();
+  }
+}
+$("saveBtn").addEventListener("click",async()=>{
+  const btn=$("saveBtn");
+  btn.disabled=true; btn.textContent="Saving…";
+  let resetAfter=1600;
+  try{
+    const canvas=await renderReportCanvas();
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png"));
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download=`household-surplus-scenario-${new Date().toISOString().slice(0,10)}.png`;
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+    btn.textContent="Saved";
+    announceStatus("Image saved.");
+  }catch(err){
+    console.error(err);
+    btn.textContent="Couldn’t save (offline?)";
+    announceStatus(`Couldn’t save the image. ${err.message}`);
+    resetAfter=4000;
+  }finally{
+    setTimeout(()=>{btn.disabled=false;btn.textContent="Save as image";},resetAfter);
+  }
+});
+// ---- Mobile settings sheet
+function setDrawer(open){
+  const mobile=matchMedia("(max-width:1050px)").matches, c=$("controls");
+  c.classList.toggle("open",open);
+  // On phones and tablets the sheet is a modal dialog: announce it and make the page behind it inert.
+  if(mobile&&open){ c.setAttribute("role","dialog"); c.setAttribute("aria-modal","true"); c.setAttribute("aria-labelledby","drawerTitle"); }
+  else { c.removeAttribute("role"); c.removeAttribute("aria-modal"); c.removeAttribute("aria-labelledby"); }
+  document.querySelectorAll(".masthead,.main,footer,#openControls").forEach(el=>{ el.inert=mobile&&open; });
+  $("drawerBackdrop").hidden=!open;
+  $("openControls").setAttribute("aria-expanded",String(open));
+  document.body.classList.toggle("drawer-open",open);
+  if(open) $("closeControls").focus({preventScroll:true});
+  else if(mobile) $("openControls").focus({preventScroll:true});
+}
+$("openControls").addEventListener("click",()=>setDrawer(true));
+$("closeControls").addEventListener("click",()=>setDrawer(false));
+$("drawerBackdrop").addEventListener("click",()=>setDrawer(false));
+addEventListener("keydown",e=>{ if(e.key==="Escape"&&$("controls").classList.contains("open")&&!$("expenseModal").open) setDrawer(false); });
+matchMedia("(max-width:1050px)").addEventListener("change",e=>{ if(!e.matches) setDrawer(false); });
+// Redraw charts at the new width after resizing or rotating.
+let resizeTimer, lastChartWidth=$("incomeChartWrap").clientWidth;
+addEventListener("resize",()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(()=>{
+    const w=$("incomeChartWrap").clientWidth;
+    if(lastCharts&&w!==lastChartWidth){
+      lastChartWidth=w;
+      renderChart("incomeChart","incomeTooltip",...lastCharts.income);
+      renderChart("portfolioChart","portfolioTooltip",...lastCharts.portfolio);
+      renderChart("wealthChart","wealthTooltip",...lastCharts.wealth);
+    }
+  },120);
+});
+// Tapping outside a chart hides its tooltip (touch has no "mouse leave").
+document.addEventListener("pointerdown",e=>{
+  if(e.target.closest(".chart-wrap")) return;
+  document.querySelectorAll(".tooltip").forEach(t=>t.style.opacity=0);
+  document.querySelectorAll('line[id$="Cross"]').forEach(l=>l.setAttribute("opacity","0"));
+});
+// ---- Definitions ("?" tips): expose the text to screen readers, open on click, tap or Enter, close on Escape.
+const tipTexts=document.createElement("div");
+tipTexts.hidden=true;
+document.body.appendChild(tipTexts);
+document.querySelectorAll(".tip[data-tip]").forEach((t,i)=>{
+  const text=document.createElement("span");
+  text.id=`tipText${i}`; text.textContent=t.dataset.tip; tipTexts.appendChild(text);
+  const host=t.closest(".section-title,label,h2,.label,.viewrow")||t.parentElement;
+  const name=((host.querySelector("strong")||host).textContent||"").replace(/\?/g,"").trim().slice(0,60);
+  t.setAttribute("aria-label",`What is “${name}”?`);
+  t.setAttribute("aria-describedby",text.id);
+  t.setAttribute("aria-expanded","false");
+  t.addEventListener("blur",()=>t.classList.remove("dismissed"));
+});
+function closeTips(except){
+  document.querySelectorAll(".tip.open").forEach(t=>{ if(t!==except){ t.classList.remove("open"); t.setAttribute("aria-expanded","false"); } });
+}
+function toggleTip(t){
+  const open=!t.classList.contains("open");
+  closeTips(t);
+  t.classList.remove("dismissed");
+  t.classList.toggle("open",open);
+  t.setAttribute("aria-expanded",String(open));
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest(".tip[data-tip]");
+  // preventDefault stops a tip inside a <label> from also toggling or focusing that label's control.
+  if(t){ e.preventDefault(); toggleTip(t); } else closeTips();
+});
+document.addEventListener("keydown",e=>{
+  const t=e.target.closest?.(".tip[data-tip]");
+  if(t&&(e.key==="Enter"||e.key===" ")){ e.preventDefault(); toggleTip(t); }
+  if(e.key==="Escape"){
+    closeTips();
+    if(document.activeElement?.classList.contains("tip")) document.activeElement.classList.add("dismissed");
+    document.querySelectorAll(".tooltip").forEach(x=>x.style.opacity=0);
+    document.querySelectorAll('line[id$="Cross"]').forEach(l=>l.setAttribute("opacity","0"));
+  }
+});
+// ---- Color theme: follows the system until the viewer picks Light or Dark; the choice is remembered in this browser.
+const THEME_PREFS=["system","light","dark"];
+let themeMemory=null; // used if localStorage is unavailable
+function themePref(){
+  try{ const v=localStorage.getItem("hsl-theme"); if(THEME_PREFS.includes(v)) return v; }catch(e){ if(themeMemory) return themeMemory; }
+  return themeMemory||"system";
+}
+function applyTheme(){
+  const pref=themePref();
+  const dark=pref==="dark"||(pref==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.setAttribute("data-theme",dark?"dark":"light");
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content",THEMES[dark?"dark":"light"].paper);
+  $("themeBtn").textContent={system:"◐ System",light:"☀ Light",dark:"☾ Dark"}[pref];
+  $("themeBtn").setAttribute("aria-label",`Color theme: ${pref}. Click to change.`);
+  if(lastCharts) update();
+}
+$("themeBtn").addEventListener("click",()=>{
+  const next=THEME_PREFS[(THEME_PREFS.indexOf(themePref())+1)%THEME_PREFS.length];
+  themeMemory=next;
+  try{ localStorage.setItem("hsl-theme",next); }catch(e){}
+  applyTheme();
+  announceStatus(`Color theme: ${next}.`);
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{ if(themePref()==="system") applyTheme(); });
+applyTheme();
+update();
+</script>
+</body>
+</html>
