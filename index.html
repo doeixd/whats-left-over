@@ -284,12 +284,16 @@
   .preset[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
   .preset:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .f3-note{grid-column:1/-1;margin:6px 0;padding-left:10px;border-left:2px solid var(--accent);color:var(--ink-2);max-width:75ch}
+  .pill-est{border-color:var(--accent);color:var(--accent-text)}
+  .bridge{font:500 11px/1.5 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:8px 0 18px;padding-top:22px;border-top:1px solid var(--ink)}
   .split{display:grid;gap:8px;margin:18px 0 6px}
   .split-row{display:grid;grid-template-columns:150px minmax(0,1fr);align-items:center;gap:12px}
   .split-label{font:500 10px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
   .split-bar{display:flex;height:32px;border-radius:4px;overflow:hidden;background:var(--rule-soft)}
   .split-bar span{display:flex;align-items:center;justify-content:center;min-width:0;overflow:hidden;white-space:nowrap;font:500 11px/1 var(--mono);box-shadow:inset -1px 0 0 var(--paper)}
   .split:empty{display:none}
+  /* Labels sit on a light tag so they stay readable (WCAG AA) on every segment color. */
+  .split-bar em{font-style:normal;background:rgba(251,250,246,.92);color:#1a1916;padding:3px 6px;border-radius:3px;overflow:hidden;text-overflow:ellipsis;max-width:calc(100% - 6px)}
   @media(max-width:650px){.split-row{grid-template-columns:1fr;gap:4px}.split-bar span{font-size:10px}}
   .takeaway{font:400 18px/1.5 var(--serif);color:var(--ink-2);margin:14px 0 4px;max-width:70ch}
   .takeaway strong{font-weight:500;color:var(--ink)}
@@ -303,6 +307,8 @@
   #wealthControls #wealthAffects{grid-column:1/-1;margin:0 0 10px;max-width:75ch}
   .tax-stats{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--ink);margin:4px 0 6px}
   .tax-stats:empty{display:none}
+  .tax-stats:empty+.tax-compare{display:none}
+  .tax-compare{grid-column:1/-1;margin:2px 0 10px;max-width:80ch}
   .tax-stat{padding:12px 14px 4px;border-left:1px solid var(--rule)}
   .tax-stat:first-child{border-left:0;padding-left:0}
   .tax-stat b{display:block;font:500 10px/1.3 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
@@ -624,7 +630,7 @@
     </aside>
 
     <main class="main" id="results" tabindex="-1">
-      <div class="presets" role="group" aria-label="Scenario presets"><span class="presets-label">Try a scenario</span><button type="button" class="preset" data-preset="default" aria-pressed="true">Default</button><button type="button" class="preset" data-preset="realistic" aria-pressed="false">After tax &amp; benefits</button><button type="button" class="preset" data-preset="top1" aria-pressed="false">Top 1% vs everyone</button><button type="button" class="preset" data-preset="family" aria-pressed="false">Family, 2 kids in childcare</button><button type="button" class="preset" data-preset="today" aria-pressed="false">In 2024 dollars</button><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="One-click starting points. “After tax &amp; benefits” is the most realistic picture of spendable income. Every preset can be changed further in the settings, and the scenario link keeps your changes.">?</span></div>
+      <div class="presets" role="group" aria-label="Scenario presets"><span class="presets-label">Try a scenario</span><button type="button" class="preset" data-preset="default" aria-pressed="true">Default</button><button type="button" class="preset" data-preset="realistic" aria-pressed="false">After tax &amp; benefits</button><button type="button" class="preset" data-preset="top1" aria-pressed="false">Top 1% vs everyone (estimated)</button><button type="button" class="preset" data-preset="family" aria-pressed="false">Family, 2 kids in childcare</button><button type="button" class="preset" data-preset="today" aria-pressed="false">In 2024 dollars</button><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="One-click starting points. “After tax &amp; benefits” is the most realistic picture of spendable income. Every preset can be changed further in the settings, and the scenario link keeps your changes.">?</span></div>
       <div class="kpis">
         <div class="kpi"><div class="label">Lowest group · left in 2024<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="What the lowest-income group had left in 2024, the latest year of BLS data, after essentials, per household or per person (see Show amounts). Negative means a shortfall.">?</span></div><div class="value" id="kpiBottom">—</div><div class="small" id="kpiBottomName">—</div></div>
         <div class="kpi"><div class="label">Highest group · left in 2024<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="What the highest-income group had left in 2024 after essentials, per household or per person (see Show amounts).">?</span></div><div class="value" id="kpiTop">—</div><div class="small" id="kpiTopName">—</div></div>
@@ -639,7 +645,7 @@
       <section class="card">
         <div class="card-head">
           <div><div class="fig">Fig. 1</div><h2><span id="fig1Title">Money left after essentials</span><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Income under your settings minus the essential costs you selected, averaged across the group. The dark horizontal line marks $0.">?</span></h2><p id="incomeSubtitle">Yearly pre-tax income excluding benefits, minus essential costs. Per person.</p></div>
-          <div class="metric-strip"><span class="pill" id="dollarModePill">Nominal $</span><span class="pill" id="groupPill">Quintiles</span><span class="pill" id="unitPill">Per person</span></div>
+          <div class="metric-strip"><span class="pill" id="dollarModePill">Nominal $</span><span class="pill" id="groupPill">Quintiles</span><span class="pill" id="unitPill">Per person</span><span class="pill pill-est" id="estPill1" title="BLS publishes five income groups (fifths). Finer groups, such as deciles or the top 1%, are estimated from a smooth curve fitted inside those fifths. The top 1% is the least certain: BLS’s survey is known to miss very high incomes." hidden>Estimated groups</span></div>
         </div>
         <div class="viewrow"><label for="incomeView">Show<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Money left after essentials: income minus the costs you selected. Income: income alone, before any essential costs (before or after tax, with or without benefits, per your settings). Well-being research compares happiness with income, so the happiness plateau line appears on the income view.">?</span></label><select id="incomeView"><option value="left">Money left after essentials</option><option value="income">Income</option></select><span class="inline-group" id="happinessWrap" hidden><label class="checkrow"><input type="checkbox" id="showHappiness" checked>Happiness plateau line</label><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A dotted reference line on income views, at about $110,000 of yearly household income in 2024. Kahneman &amp; Deaton (2010), using 450,000+ Gallup responses from 2008–09, found day-to-day emotional well-being stopped improving above roughly $75,000 of household income, while overall life satisfaction kept rising. A 2023 reanalysis by Killingsworth, Kahneman &amp; Mellers (33,391 employed U.S. adults) found that plateau only for the least happy 15–20% of people, at about $100,000; for most people happiness keeps rising with income. The line is $75,000 in 2008–09 dollars adjusted with CPI-U for each year. Shown only for per-household amounts, since the research uses household income.">?</span></span></div>
         <div class="viewrow"><label class="checkrow"><input type="checkbox" id="showProjection" checked>Show 2025–2026 projection</label><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="BLS hasn&#x27;t published household data for 2025 or 2026 yet. Projected years start from 2024 and grow every income and cost with inflation (CPI-U). They&#x27;re shaded and drawn with dashed lines.">?</span></div>
@@ -652,7 +658,7 @@
       <section class="card">
         <div class="card-head">
           <div><div class="fig">Fig. 2</div><h2><span id="fig2Title">What investing it adds up to</span><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="A what-if: each group invests part of whatever it has left every year from 2000. Use “Show as” to see the portfolio balance, that year's investment return stacked on top of surplus or income. Fig. 3 shows what households actually own.">?</span></h2><p id="portfolioSubtitle">Portfolio balance from investing part of each year’s surplus since 2000.</p></div>
-          <div class="metric-strip"><span class="pill" id="returnPill">S&amp;P 500</span><span class="pill" id="investPill">10% invested</span></div>
+          <div class="metric-strip"><span class="pill" id="returnPill">S&amp;P 500</span><span class="pill" id="investPill">10% invested</span><span class="pill pill-est" id="estPill2" title="BLS publishes five income groups (fifths). Finer groups, such as deciles or the top 1%, are estimated from a smooth curve fitted inside those fifths. The top 1% is the least certain: BLS’s survey is known to miss very high incomes." hidden>Estimated groups</span></div>
         </div>
         <div class="viewrow"><label for="portfolioView">Show as<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Portfolio value: the balance built up since 2000. Contributions vs. growth: the dashed line is the total put in so far and the solid line is what it&#x27;s worth, so the gap is compounding. Stacked views show one year at a time: the dashed line is that year&#x27;s surplus (or income) and the solid line adds that year&#x27;s investment return. Returns can be negative, as in 2008.">?</span></label><select id="portfolioView"><option value="portfolio">Portfolio value</option><option value="growth">Contributions vs. growth</option><option value="surplus">Return stacked on yearly surplus</option><option value="income">Return stacked on yearly income</option></select></div>
         <div class="legend" id="portfolioLegend"></div>
@@ -661,6 +667,7 @@
         <details class="datatable"><summary>Show the numbers</summary><div class="etable-wrap"><table class="etable" id="portfolioTable"></table></div></details>
       </section>
 
+      <p class="bridge">Figs. 1–2 follow yearly cash flow. Fig. 3 turns to what households actually own.</p>
       <section class="card" id="fig3">
         <div class="card-head">
           <div><div class="fig">Fig. 3</div><h2><span id="fig3Title">Where the wealth is</span><span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Real household net worth (assets such as homes, businesses, stocks and pensions, minus debts) from the Federal Reserve’s Distributional Financial Accounts, which scale survey data to match the national balance sheet. Unlike Figs. 1–2 it is measured, not a what-if, and it is per household. Group by wealth to see the very top (the top 0.1%), or by income to compare with the income groups above.">?</span></h2><p id="wealthSubtitle"></p></div>
@@ -674,6 +681,7 @@
           <div class="control advanced" id="wealthPaidWrap"><div class="rangehead"><label for="wealthPaid">Tax already paid, % of wealth<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Zucman-style only: the taxes covered households already pay each year, as a share of their net worth; they count toward the minimum. The default, 0.3%, is Zucman’s 2024 G20 report estimate of U.S. and global billionaires’ effective tax rate relative to wealth; less wealthy households usually pay more relative to their wealth.">?</span></label><span class="rangeval" id="wealthPaidVal">0.3%</span></div><input id="wealthPaid" type="range" min="0" max="3" step="0.1" value="0.3"></div>
           <div class="subnote" id="wealthAffects" aria-live="polite"></div>
           <div class="tax-stats" id="wealthStats" aria-live="polite"></div>
+          <p class="subnote tax-compare" id="wealthCompare">Published estimates for Warren’s design (2% above $50 million, 3% above $1 billion): <a href="https://eml.berkeley.edu/~saez/saez-zucman-wealthtax-warren-feb21.pdf" target="_blank" rel="noopener noreferrer">Saez &amp; Zucman</a> put it at about $250 billion a year (2021 score, 2023–2032), <a href="https://budgetmodel.wharton.upenn.edu/p/2021-03-15-conventional-budgetary-effects-of-senator-elizabeth-warrens-wealth-tax-legislation/" target="_blank" rel="noopener noreferrer">Penn Wharton</a> at $2.1–2.7 trillion over ten years, and the <a href="https://taxfoundation.org/research/all/federal/wealth-tax/" target="_blank" rel="noopener noreferrer">Tax Foundation</a> at $2.6 trillion over ten years before behavioral effects. Critics such as Summers &amp; Sarin (2019) argued real collections would be far lower. No official congressional score exists. This chart uses one flat rate on group averages, so treat it as a rough cross-check, not a forecast.</p>
         </div>
         <div class="split" id="wealthSplit" role="img"></div>
         <div class="legend" id="wealthLegend"></div>
@@ -1475,6 +1483,7 @@ function update(){
 
   // Explain the income basis next to the headline, since the defaults exclude taxes and benefits.
   $("summaryNote").textContent="An illustrative model, not tax or investment advice."
+    +(state.segmentation!=="quintiles"?" Groups finer than BLS’s five income groups are estimated; the top 1% is the least certain.":"")
     +(state.includeTransfers?"":" Benefits such as Social Security are excluded, and many lower-income households (including retirees) rely on them; turn them on under 02 · Income concept.")
     +(state.afterTax?"":" Figures are before taxes.");
   const perText=state.unit==="person"?"Per person":"Per household";
@@ -1513,8 +1522,7 @@ function update(){
     // Households vs wealth: the same groups as a share of all households and of all net worth, latest year.
     {
       const d=wealthGroupData(WEALTH_LAST), P=palette(), hhTotal=d.hh.reduce((t,x)=>t+x,0), wTotal=d.avg.reduce((t,a,j)=>t+a*d.hh[j],0);
-      const textOn=hex=>{ const n=parseInt(hex.slice(1),16); return .299*(n>>16)+.587*(n>>8&255)+.114*(n&255)>150?"#1a1916":"#fbfaf6"; };
-      const row=(label,vals)=>`<div class="split-row"><div class="split-label">${label}</div><div class="split-bar">${vals.map((v,j)=>{ const c=P.series[j%P.series.length]; return `<span style="width:${v}%;background:${c};color:${textOn(c)}">${v>=16?`${escapeHtml(d.labels[j])} · `:""}${v>=4?`${Math.round(v)}%`:""}</span>`; }).join("")}</div></div>`;
+      const row=(label,vals)=>`<div class="split-row"><div class="split-label">${label}</div><div class="split-bar">${vals.map((v,j)=>{ const c=P.series[j%P.series.length]; const txt=`${v>=16?`${escapeHtml(d.labels[j])} · `:""}${v>=4?`${Math.round(v)}%`:""}`; return `<span style="width:${v}%;background:${c}">${txt?`<em>${txt}</em>`:""}</span>`; }).join("")}</div></div>`;
       const hhShare=d.hh.map(x=>100*x/hhTotal), wShare=d.avg.map((a,j)=>100*a*d.hh[j]/wTotal);
       $("wealthSplit").innerHTML=view3==="share"?row(`Share of households · ${WEALTH_LAST}`,hhShare)+row(`Share of wealth · ${WEALTH_LAST}`,wShare):"";
       $("wealthSplit").setAttribute("aria-label",d.labels.map((l,j)=>`${l}: ${hhShare[j].toFixed(1)}% of households, ${wShare[j].toFixed(1)}% of wealth`).join("; "));
@@ -1567,6 +1575,8 @@ function update(){
   $("unitPill").textContent=state.unit==="person"?"Per person":"Per household";
   $("returnPill").textContent=state.returnMode==="sp500"?"S&P 500":`${state.returnRate.toFixed(1)}% return`;
   $("investPill").textContent=`${state.investPct}% invested`;
+  // Flag estimates: anything finer than the five BLS quintiles is modeled inside them.
+  { const est=state.segmentation!=="quintiles"; $("estPill1").hidden=!est; $("estPill2").hidden=!est; }
   $("expenseBadge").hidden=!expensesEdited();
   announceSummary();
   updateHash();

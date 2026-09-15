@@ -11,6 +11,9 @@ Open `index.html` in a modern browser, or serve the folder with any static serve
 - **Save as image** loads html2canvas 1.4.1 from cdnjs (with Subresource Integrity) the first time it is used, so it needs an internet connection.
 - Every setting is stored in the URL hash, so a scenario link reopens exactly the same view. Links never hit the server, so old links can't 404.
 
+## Tests
+`node tests/model.test.mjs` checks the model against the embedded source tables: every quintile reproduces the BLS averages, the CBO method matches CBO's published quintile rates, portfolios stay finite, Fig. 3 shares sum to 100% and the cumulative curve ends at total wealth, and the wealth-tax and AMT formulas behave as documented. Run it before every deploy.
+
 ## Features
 - Income groups: quintiles, quartiles, deciles, 90/10, 95/5, 99/1, 50/40/10, or a custom top share.
 - Amounts per person (default) or per household.
