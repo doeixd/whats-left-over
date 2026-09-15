@@ -27,13 +27,13 @@
 <meta property="og:image" content="https://whats-left-over.pages.dev/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="In 2024 the average person in the bottom 50% of U.S. households was $7,204 short after essentials; the average person in the top 10% had $66,610 left. Gap $73,814 per person; the top 10% investing 10% since 2000 grew $110k to $453k per person.">
+<meta property="og:image:alt" content="In 2024 the average U.S. household in the lowest 20% was $10,393 short after essentials, counting taxes and benefits; the average household in the highest 20% had $106,529 left.">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="What’s left, and what it becomes">
 <meta name="twitter:description" content="How much U.S. households have left after essentials, by income group, and what investing it would add up to.">
 <meta name="twitter:image" content="https://whats-left-over.pages.dev/og-image.png">
-<meta name="twitter:image:alt" content="In 2024 the average person in the bottom 50% of U.S. households was $7,204 short after essentials; the average person in the top 10% had $66,610 left. Gap $73,814 per person; the top 10% investing 10% since 2000 grew $110k to $453k per person.">
+<meta name="twitter:image:alt" content="In 2024 the average U.S. household in the lowest 20% was $10,393 short after essentials, counting taxes and benefits; the average household in the highest 20% had $106,529 left.">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebApplication","name":"Household Surplus Lab","url":"https://whats-left-over.pages.dev/","image":"https://whats-left-over.pages.dev/og-image.png","applicationCategory":"EducationalApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"inLanguage":"en-US","author":{"@type":"Person","name":"Patrick Glenn by way of Claude and ChatGPT"},"license":"https://creativecommons.org/licenses/by/4.0/","dateModified":"2026-09-15","description":"Interactive simulator of how much U.S. households have left after essential spending, by income group, 2000–2026, with hypothetical S&P 500 investing. Based on BLS Consumer Expenditure Survey, CBO and BLS CPI data.","isBasedOn":["https://www.bls.gov/cex/tables.htm","https://www.cbo.gov/publication/61911","https://data.bls.gov/timeseries/CUUR0000SEEB03"]}
 </script>
@@ -529,7 +529,7 @@
           </div>
           <div class="control">
             <label for="unit">Show amounts<span class="tip" tabindex="0" role="button" aria-label="More info" data-tip="Per household: totals for the whole household. Per person: divided by the average number of people in households in that group (BLS: about 1.6 in the lowest 20% to 3.2 in the highest), plus any children you add under Childcare. This is a simple headcount; it doesn&#x27;t adjust for shared household costs the way economists&#x27; equivalence scales do.">?</span></label>
-            <select id="unit"><option value="household">Per household</option><option value="person" selected>Per person</option></select>
+            <select id="unit"><option value="household" selected>Per household</option><option value="person">Per person</option></select>
           </div>
         </div>
 
@@ -909,7 +909,7 @@ const DEFAULT_ESSENTIALS = ["food","housing","transport","health","insurance"];
 const ESSENTIAL_NAMES = {food:"food at home",housing:"housing",transport:"transportation",health:"healthcare",insurance:"insurance & pensions",education:"education"};
 
 const DEFAULTS = {
-  segmentation:"quintiles", customTop:1, unit:"person", afterTax:true, taxMethod:"cbo", includeTransfers:true, transferScale:100,
+  segmentation:"quintiles", customTop:1, unit:"household", afterTax:true, taxMethod:"cbo", includeTransfers:true, transferScale:100,
   kids:0, childcareCost:CHILDCARE_DEFAULT,
   inflationMode:"nominal", baseYear:2000, inflationRate:2.5, minTaxMode:"off", amtRate:20, amtThreshold:200000, f3View:"share", f3Group:"wealth", f4View:"revenue", f4Group:"wealth", wealthMode:"flat", wealthRate:2, wealthThreshold:50000000, wealthPaid:0.3,
   investPct:10, returnMode:"sp500", returnRate:8, portfolioView:"portfolio", showProjection:true, incomeView:"left", showHappiness:true, essentials:[...DEFAULT_ESSENTIALS],
@@ -1794,7 +1794,7 @@ function markPreset(key){ document.querySelectorAll(".preset").forEach(b=>b.setA
 function applyPreset(key){
   history.replaceState(null,"",PRESETS[key]?"#"+PRESETS[key]:location.pathname+location.search);
   state=cloneDefaults(); loadHash(); rebuildEssentials(); rebuildTaxes(); applyStateToUI(); update();
-  markPreset(key); announceStatus(`Scenario: ${document.querySelector(`.preset[data-preset="${key}"]`).textContent}.`);
+  markPreset(key); announceStatus(`Scenario: ${document.querySelector(`.preset[data-preset="${key}"]`)?.textContent||"defaults"}.`);
 }
 document.querySelectorAll(".preset").forEach(b=>b.addEventListener("click",()=>applyPreset(b.dataset.preset)));
 // Any manual change leaves the preset, except inputs that don't change the scenario.
