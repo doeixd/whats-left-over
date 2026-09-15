@@ -153,7 +153,8 @@
   .card h2{font:400 36px/1.1 var(--serif);letter-spacing:-.015em;margin:0}
   .card p{color:var(--ink-2);margin:6px 0 0;font-size:14px}
   .metric-strip{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-  .pill{font:500 11px/1 var(--mono);border:1px solid var(--rule);border-radius:4px;padding:6px 8px;color:var(--ink-2);background:var(--sheet);white-space:nowrap}
+  /* Labels, not controls: transparent on the page background with a faint rule, so they don't read as inputs or buttons. */
+  .pill{font:500 11px/1 var(--mono);border:1px solid var(--rule-soft);border-radius:4px;padding:5px 7px;color:var(--muted);background:transparent;white-space:nowrap;cursor:default}
   .legend{display:flex;gap:6px 18px;flex-wrap:wrap;margin:16px 0 6px;min-height:22px}
   .legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-2)}
   .swatch{width:14px;height:2px}
