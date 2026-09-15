@@ -509,6 +509,12 @@
     .kpis{border-top:0}
     .summary-note{font-size:11.5px;line-height:1.45}
   }
+  /* ---- Phones and tablets: never pan sideways because of stray painted overflow (chart labels, hidden tip bubbles).
+     clip (where supported) doesn't create a scroll container, so fixed and sticky elements keep working. */
+  @media(max-width:1050px){
+    html,body{overflow-x:hidden}
+    @supports (overflow:clip){ html,body{overflow-x:clip} }
+  }
 </style>
 </head>
 <body>
@@ -1337,7 +1343,8 @@ function renderChart(svgId,tipId,series,opts){
   (compact?[2000,2008,2016,x1]:[2000,2004,2008,2012,2016,2020,LA,x1]).filter((y,i,a)=>y<=x1&&a.indexOf(y)===i).forEach(y=>{
     const px=x(y);
     parts.push(`<line x1="${px}" y1="${M.t+ih}" x2="${px}" y2="${M.t+ih+5}" stroke="${P.ink}"/>`);
-    parts.push(`<text x="${px}" y="${H-20}" text-anchor="middle" font-size="11" fill="${P.axis}">${y}</text>`);
+    // The last tick sits on the plot's right edge; right-align it so its label stays inside the chart (Safari counts overflow toward page width).
+    parts.push(`<text x="${px}" y="${H-20}" text-anchor="${px>=M.l+iw-1?"end":"middle"}" font-size="11" fill="${P.axis}">${y}</text>`);
   });
   if(opts.emptyNote&&series.every(s=>s.data.every(d=>!d.value))) parts.push(`<text x="${M.l+iw/2}" y="${M.t+ih/2}" text-anchor="middle" font-size="${compact?11:13}" fill="${P.axis}">${escapeHtml(opts.emptyNote)}</text>`);
   if(mn<0 && mx>0) parts.push(`<line x1="${M.l}" y1="${yy(0)}" x2="${M.l+iw}" y2="${yy(0)}" stroke="${P.ink}" stroke-width="1"/>`);
@@ -1357,7 +1364,8 @@ function renderChart(svgId,tipId,series,opts){
   (opts.markers||[]).filter(mk=>mk.year>x0&&mk.year<x1).forEach(mk=>{
     const px=x(mk.year);
     parts.push(`<line x1="${px}" y1="${M.t}" x2="${px}" y2="${M.t+ih}" stroke="${mk.kind==="market"?P.marketLine:P.accent}" stroke-width="1" stroke-dasharray="3 3"/>`);
-    parts.push(`<text x="${px+6}" y="${M.t+12+(mk.row||0)*14}" font-size="${compact?9:10}" fill="${mk.kind==="market"?P.marketText:P.accentText}">${escapeHtml(compact&&mk.short?mk.short:mk.label)}</text>`);
+    const mkText=compact&&mk.short?mk.short:mk.label, mkFlip=px+6+mkText.length*(compact?5.8:6.4)>W-2;
+    parts.push(`<text x="${mkFlip?px-6:px+6}" y="${M.t+12+(mk.row||0)*14}" text-anchor="${mkFlip?"end":"start"}" font-size="${compact?9:10}" fill="${mk.kind==="market"?P.marketText:P.accentText}">${escapeHtml(mkText)}</text>`);
   });
   const dense=series.length>6, labels=[];
   if(opts.area){
@@ -1446,7 +1454,7 @@ function renderCurve(svgId,tipId,opts){
   let lastX=-1e9; const xl=[];
   pts.forEach(q=>{ parts.push(`<line x1="${x(q.p)}" y1="${M.t}" x2="${x(q.p)}" y2="${M.t+ih}" stroke="${P.grid}" stroke-dasharray="3 4"/>`,`<line x1="${x(q.p)}" y1="${M.t+ih}" x2="${x(q.p)}" y2="${M.t+ih+5}" stroke="${P.ink}"/>`); });
   pts.forEach((q,i)=>{ const px=x(q.p); if(i===pts.length-1){ while(xl.length&&px-xl.at(-1).px<38) xl.pop(); xl.push({px,q}); } else if(px-lastX>=38){ xl.push({px,q}); lastX=px; } });
-  xl.forEach(({px,q})=>parts.push(`<text x="${px}" y="${M.t+ih+20}" text-anchor="middle" font-size="11" fill="${P.axis}">${q.p}%</text>`));
+  xl.forEach(({px,q})=>parts.push(`<text x="${px}" y="${M.t+ih+20}" text-anchor="${px>=M.l+iw-1?"end":"middle"}" font-size="11" fill="${P.axis}">${q.p}%</text>`));
   // Monotone cubic (Fritsch–Carlson) tangents.
   const n=pts.length, xs=pts.map(q=>q.p), ys=pts.map(q=>q.v), dx=[], m=[];
   for(let k=0;k<n-1;k++){ dx[k]=xs[k+1]-xs[k]; m[k]=(ys[k+1]-ys[k])/dx[k]; }
