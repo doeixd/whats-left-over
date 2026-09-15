@@ -238,7 +238,8 @@
   .checkrow input{accent-color:var(--ink);width:15px;height:15px;margin:0}
   .tt-proj{font:500 9px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;opacity:.6;margin-left:8px;vertical-align:3px}
   .notice+.notice{margin-top:14px}
-  .notice p{margin:0 0 10px}
+  /* Paragraphs inside a notice keep the notice's own type, not the method section's small body text. */
+  .method .notice p{margin:0 0 10px;font:inherit;color:inherit}
   .notice p:last-child{margin-bottom:0}
   .notice p b{font-style:normal;font-weight:600}
   .report{position:absolute;left:-10000px;top:0;width:1200px;padding:40px 64px 44px;background:var(--paper);color:var(--ink);font:14px/1.5 var(--sans)}
