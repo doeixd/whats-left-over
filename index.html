@@ -304,9 +304,6 @@
   .fig-anchor:hover,.fig-anchor:focus-visible{text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:1px;text-underline-offset:6px}
   .fig-anchor:hover::after{content:"#";margin-left:8px;font:400 .6em/1 var(--mono);color:var(--accent-text);vertical-align:.35em}
   .card{scroll-margin-top:16px}
-  .caveat{border-left:2px solid var(--accent);padding:6px 0 6px 14px;margin:14px 0 6px;font-size:13px;line-height:1.55;color:var(--ink-2);max-width:80ch}
-  .caveat strong{display:block;color:var(--ink);font-weight:600;margin-bottom:2px}
-  .caveat b{font-weight:600;color:var(--ink)}
   .takeaway{font:400 18px/1.5 var(--serif);color:var(--ink-2);margin:14px 0 4px;max-width:70ch}
   .takeaway strong{font-weight:500;color:var(--ink)}
   .takeaway:empty{display:none}
@@ -681,7 +678,6 @@
         <div class="legend" id="incomeLegend"></div>
         <div class="chart-wrap" id="incomeChartWrap"><svg class="chart" id="incomeChart" viewBox="0 0 960 420" role="img" aria-label="Line chart: money left after essentials for each income group by year. The numbers are in the data table below." aria-describedby="incomeSubtitle"></svg><div class="tooltip" id="incomeTooltip" aria-hidden="true"></div></div>
         <p class="takeaway" id="fig1Takeaway"></p>
-        <div class="caveat" role="note"><strong>How reliable is the lowest group’s shortfall?</strong> Less than it looks. This site uses BLS’s Consumer Expenditure Survey, which is known to under-report income, especially for lower-income households, many of whom report spending more than their income. The Congressional Budget Office’s fuller measure puts the lowest 20% at about <b>$44,800</b> of income after taxes and transfers in 2022, versus about <b>$17,300</b> after taxes in the BLS data used here for 2024. CBO counts things BLS doesn’t, such as the value of Medicaid, SNAP and refundable tax credits, and groups people differently, so the two aren’t directly comparable, and in-kind benefits like Medicaid aren’t cash left over. Still, the shortfall shown for the lowest groups is likely overstated. <a href="https://www.cbo.gov/publication/61911" target="_blank" rel="noopener noreferrer">CBO, The Distribution of Household Income, 2022</a>.</div>
         <details class="datatable"><summary>Show the numbers</summary><div class="etable-wrap"><table class="etable" id="incomeTable"></table></div></details>
       </section>
 
