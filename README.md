@@ -2,7 +2,7 @@
 
 An interactive simulator of how much U.S. households have left after paying for essentials, by income group, from 2000 to 2024 (projected to 2026), and what investing part of that surplus would grow to.
 
-**Live:** https://whats-left-over.pages.dev/ · **Version:** 1.0 · **Data last updated:** September 15, 2026
+**Live:** https://whats-left-over.pages.dev/ · **Source:** https://github.com/doeixd/whats-left-over · **Version:** 1.0 · **Data last updated:** September 15, 2026
 
 ## Run it
 Open `index.html` in a modern browser, or serve the folder with any static server (for example `python -m http.server`). There is no build step.
