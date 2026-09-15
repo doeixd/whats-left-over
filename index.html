@@ -496,6 +496,14 @@
     #summary{display:none}
     .summary-note{margin:0 0 22px;font-size:11.5px;line-height:1.45}
   }
+  /* ---- Phones: figure pills shrink and sit at the top right of each figure header, on the "Fig. N" line. */
+  @media(max-width:650px){
+    .card-head{position:relative}
+    .card-head .metric-strip{position:absolute;top:-3px;right:0;max-width:calc(100% - 64px);gap:4px;justify-content:flex-end}
+    .card-head .pill{font-size:9px;padding:3px 5px;letter-spacing:0}
+    /* If the "Estimated groups" pill wraps the strip onto a second row, push the title down to clear it. */
+    .card-head:has(#estPill1:not([hidden]),#estPill2:not([hidden])) h2{margin-top:18px}
+  }
 </style>
 </head>
 <body>
